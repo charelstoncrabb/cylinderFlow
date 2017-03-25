@@ -5,7 +5,6 @@
 //  Created by Nicholas Crabb on 3/23/17.
 //  Copyright © 2017 Nicholas Crabb. All rights reserved.
 //
-
 #ifndef Includes_h
 #define Includes_h
 #include <iostream>
@@ -14,8 +13,5 @@
 #include <math.h>
 #include <time.h>
 #include <vector>
-//#include "Constants.h"
-
 using namespace std;
-
 #endif /* Includes_h */
