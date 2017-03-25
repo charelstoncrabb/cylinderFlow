@@ -6,7 +6,7 @@
 //  Copyright © 2017 Nicholas Crabb. All rights reserved.
 //
 
-#include "Matrix.h"
+#include "Matrix.hpp"
 
 int main(int argc, const char * argv[]) {
     Matrix acceptTest(0,0,{});
