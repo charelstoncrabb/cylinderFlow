@@ -84,6 +84,18 @@ void Matrix::rref(void){
     }
 }//----------------------------------------------------------------------------------------------------
 
+// EIGENVALUE SOLVER -- MATRIX MUST BE SQUARE
+vector<double> Matrix::eig(void){
+    vector<double> eigenvalues;
+    return eigenvalues;
+}//----------------------------------------------------------------------------------------------------
+
+// SINGULAR VALUE DECOMPOSITION
+vector<double> Matrix::svd(void){
+    vector<double> singularValues;
+    return singularValues;
+}//----------------------------------------------------------------------------------------------------
+
 // CONCATENATE GIVEN ROW VECTOR TO BOTTOM OF MATRIX
 void Matrix::catRow(std::vector<double> newRow){
     if( newRow.size() != numCols ){

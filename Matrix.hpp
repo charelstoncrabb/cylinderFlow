@@ -19,8 +19,8 @@ public:
     void rref(void);
     void catRow(std::vector<double> newRow);
     void catCol(std::vector<double> newCol);
-    
-    // TODO: ADD SVD/EIGENVALUE SOLVER
+    vector<double> eig(void);
+    vector<double> svd(void);
     
     Matrix operator=(const Matrix& rhs);
     Matrix operator+(const Matrix& b);
@@ -28,7 +28,6 @@ public:
     Matrix operator*(const Matrix& b);
     bool operator==(const Matrix& b);
     double operator[](const int ij);
-    // TODO: Add index searching?
     
     int numRows;
     int numCols;
