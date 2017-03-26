@@ -13,5 +13,5 @@
 #include <math.h>
 #include <time.h>
 #include <vector>
-using namespace std;
+#include <complex>
 #endif /* Includes_h */

@@ -13,4 +13,4 @@ Matrix.o: Matrix.cpp Matrix.hpp
 	$(CPP) $(CFLAGS) -c Matrix.cpp
 
 clean:
-	$(RM) mat *.o *~
+	$(RM) mat *.o *~ *.gch

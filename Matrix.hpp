@@ -12,18 +12,20 @@
 class Matrix{
 public:
     Matrix();
-    Matrix(int numRows, int numCols, vector<double> initVals = {});
+    Matrix(int numRows, int numCols, std::vector<double> initVals = {});
 
     // Public Methods
     void RunMatrixTests(void);
-    vector<double> solveAxb(vector<double> b);
+    std::vector<double> solveAxb(std::vector<double> b);
     void rref(void);
-    vector<double> getRow(int rowNum);
-    vector<double> getCol(int colNum);
+    std::vector<double> getRow(int rowNum);
+    std::vector<double> getCol(int colNum);
+    std::vector<double> getDiag(void);
     void transpose(void);
-    vector<double> eig(void);
-    vector<Matrix> QRdecomp(void);
-    vector<double> svd(void);
+    std::vector<double> eigQR(double tolerance, bool verbose = true);
+    std::vector<double> eigAI(double tolerance, bool verbose = true);
+    std::vector<Matrix> QRdecomp(void);
+    std::vector<double> svd(void);
     
     Matrix operator=(const Matrix& rhs);
     Matrix operator+(const Matrix& b);
@@ -34,7 +36,7 @@ public:
     
     int numRows;
     int numCols;
-    vector<double> matrixEntries;
+    std::vector<double> entries;
 
     friend std::ostream& operator<<(std::ostream& os, const Matrix A);
 private:
