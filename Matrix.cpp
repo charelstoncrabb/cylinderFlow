@@ -8,8 +8,48 @@
 
 #include "Matrix.hpp"
 
+// ============================= MISCELLANEOUS VECTOR OPERATIONS ======================================
+// DOT PRODUCT OF TWO VECTORS
+double dot(std::vector<double> u, std::vector<double> v){
+    double dotProd = 0;
+    if( u.size() == v.size() ){
+        for(int i = 0; i < u.size(); i++){
+            dotProd = dotProd + u[i]*v[i];
+        }
+    }else{
+        std::cout << "ERROR IN dot(): vectors different lengths!" << std::endl;
+    }
+    return dotProd;
+}//----------------------------------------------------------------------------------------------------
 
+// NORM OF VECTOR
+double norm(std::vector<double> u, double p = 2){
+    double norm = 0;
+    for( int i = 0; i < u.size(); i++ ){
+        norm = norm + pow(u[i],p);
+    }
+    return pow(norm,1.0/p);
+}//----------------------------------------------------------------------------------------------------
+
+// SCALAR MULTIPLICATION
+std::vector<double> scale(std::vector<double> u, double c){
+    std::vector<double> scaledU(u.size());
+    for(int i = 0; i < u.size(); i++){
+        scaledU[i] = c*u[i];
+    }
+    return scaledU;
+}//----------------------------------------------------------------------------------------------------
+
+// VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV  MATRIX CLASS  VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
+// ====================================================================================================
 // ================================== PUBLIC MATRIX METHODS: ==========================================
+// DEFAULT CONSTRUCTOR
+Matrix::Matrix(){
+    numRows = 0;
+    numCols = 0;
+}//----------------------------------------------------------------------------------------------------
+
+// INITILIZED CONSTRUCTOR
 Matrix::Matrix(int numRows, int numCols, vector<double> initVals) : numRows(numRows), numCols(numCols){
     if( ( initVals.size() == 0 ) && ( initVals.size() != numRows*numCols ) ){
         matrixEntries.resize(numRows*numCols);
@@ -19,17 +59,20 @@ Matrix::Matrix(int numRows, int numCols, vector<double> initVals) : numRows(numR
     }else{
         matrixEntries = initVals;
     }
-}
+}//----------------------------------------------------------------------------------------------------
 
 // SOLVE LINEAR SYSTEM Ax = b
 vector<double> Matrix::solveAxb(vector<double> b){
-    vector<double> x;
+    vector<double> x(numRows);
     Matrix system(numRows,numCols,matrixEntries);
+    std::cout << system << std::endl;
     system.catCol(b);
+    std::cout << system << std::endl;
     system.rref();
+    std::cout << system << std::endl;
     // TODO: Check for inconsistency
     for(int i = 0; i < system.numRows; i++){
-        x.push_back(system.matrixEntries[i*system.numCols+numRows]);
+        x[i] = system.matrixEntries[i*system.numCols+numRows];
     }
     return x;
 }//----------------------------------------------------------------------------------------------------
@@ -84,11 +127,48 @@ void Matrix::rref(void){
     }
 }//----------------------------------------------------------------------------------------------------
 
-// EIGENVALUE SOLVER -- MATRIX MUST BE SQUARE
+// RETURNS THE ROW CORRESPONDING GIVEN ROW NUMBER
+vector<double> Matrix::getRow(int rowNum){
+    vector<double> row(numCols,0);
+    for(int i = 0; i < numCols; i++){
+        row[i] = matrixEntries[i*numCols+rowNum];
+    }
+    return row;
+}//----------------------------------------------------------------------------------------------------
+
+// RETURNS THE COLUMN CORRESPONDING TO GIVEN COLUMN NUMBER
+vector<double> Matrix::getCol(int colNum){
+    vector<double> col;
+    for(int i = 0; i < numRows; i++){
+        col[i] = matrixEntries[colNum*numCols+i];
+    }
+    return col;
+}//----------------------------------------------------------------------------------------------------
+
+// EIGENVALUE SOLVER VIA QR ALGORITHM -- MATRIX MUST BE SQUARE
 vector<double> Matrix::eig(void){
     vector<double> eigenvalues;
     return eigenvalues;
 }//----------------------------------------------------------------------------------------------------
+
+// QR DECOMPOSITION USING GRAM-SCHIDT PROCESS
+vector<Matrix> Matrix::QRdecomp(void){
+    vector<Matrix> QR(2);
+    Matrix Q(0,0), R(0,0);
+    // PSEUDO:
+    // Set e1 = a1/norm(a1)
+    // For each column j in this:
+    //   uj = aj - sum_k<j dot(ak,ek)ek
+    //   ej = uj/norm(uj)
+    //   colj of Q = ej, rowj of R = coeffs dot(ak,ek)
+    vector<double> uj = this->getCol(1);
+    double ujNorm = norm(uj);
+    vector<double> ej = scale(uj,1.0/ujNorm);
+    QR[0] = Q;
+    R.transpose();
+    QR[1] = R;
+    return QR;
+}
 
 // SINGULAR VALUE DECOMPOSITION
 vector<double> Matrix::svd(void){
@@ -96,38 +176,61 @@ vector<double> Matrix::svd(void){
     return singularValues;
 }//----------------------------------------------------------------------------------------------------
 
+// TRANSPOSES MATRIX
+void Matrix::transpose(void){
+    Matrix tpTemp(numCols,numRows);
+    for(int i = 0; i < numRows; i++){
+        for(int j = 0; j < numCols; j++){
+            tpTemp.matrixEntries[j*numRows+i] = matrixEntries[i*numCols+j];
+        }
+    }
+    numRows = tpTemp.numRows;
+    numCols = tpTemp.numCols;
+    matrixEntries = tpTemp.matrixEntries;
+}//----------------------------------------------------------------------------------------------------
+
 // CONCATENATE GIVEN ROW VECTOR TO BOTTOM OF MATRIX
 void Matrix::catRow(std::vector<double> newRow){
-    if( newRow.size() != numCols ){
-        std::cout << "ERROR: dimension inconsistent in catRow!" << std::endl;
+    if( this->isEmpty() ){
+        Matrix newMat(1,(int)newRow.size(),newRow);
+        *this = newMat;
     }else{
-        int k = 0;
-        matrixEntries.resize((numRows+1)*numCols);
-        for( int ij = numRows*numCols; ij < matrixEntries.size(); ij++ ){
-            matrixEntries[ij] = newRow[k];
-            k++;
+        if( newRow.size() != numCols ){
+            std::cout << "ERROR: dimension inconsistent in catRow!" << std::endl;
+        }else{
+            int k = 0;
+            matrixEntries.resize((numRows+1)*numCols);
+            for( int ij = numRows*numCols; ij < matrixEntries.size(); ij++ ){
+                matrixEntries[ij] = newRow[k];
+                k++;
+            }
+            numRows++;
         }
-        numRows++;
     }
 }//----------------------------------------------------------------------------------------------------
 
 // CONCATENATE GIVEN COLUMN VECTOR TO RIGHT OF MATRIX
 void Matrix::catCol(std::vector<double> newCol){
-    if( newCol.size() != numRows ){
-        std::cout << "ERROR: dimension inconsistent in catCol!" << std::endl;
+    if( this->isEmpty() ){
+        Matrix newMat((int)newCol.size(),1,newCol);
+        *this = newMat;
     }else{
-        Matrix temp(numRows,numCols,matrixEntries);
-        matrixEntries.resize(numRows*(numCols+1));
-        for( int i = 0; i < numRows; i++ ){
-            for( int j = 0; j < numCols+1; j++ ){
-                if( j == numCols ){
-                    matrixEntries[i*(numCols+1)+j] = newCol[i];
-                }else{
-                    matrixEntries[i*(numCols+1)+j] = temp.matrixEntries[i*numCols+j];
+        if( newCol.size() != numRows ){
+            std::cout << "ERROR: dimension inconsistent in catCol!" << std::endl;
+        }else{
+            Matrix temp(numRows,numCols,matrixEntries);
+            matrixEntries.resize(numRows*(numCols+1));
+            for( int i = 0; i < numRows; i++ ){
+                for( int j = 0; j < numCols+1; j++ ){
+                    if( j == numCols ){
+                        matrixEntries[i*(numCols+1)+j] = newCol[i];
+                    }else{
+                        matrixEntries[i*(numCols+1)+j] = temp.matrixEntries[i*numCols+j];
+                    }
                 }
             }
+            numCols++;
         }
-        numCols++;
     }
 }//----------------------------------------------------------------------------------------------------
 
@@ -158,6 +261,13 @@ void Matrix::repRowWithDiff(int row1, int row2){
     }
 }//----------------------------------------------------------------------------------------------------
 
+bool Matrix::isEmpty(void){
+    bool emptyFlag = false;
+    if( !numRows || !numCols ){
+        emptyFlag = true;
+    }
+    return emptyFlag;
+}
 
 // ================================ OVERLOADED OPERATORS: =============================================
 
@@ -223,11 +333,13 @@ bool Matrix::operator==(const Matrix& b){
     return true;
 }//----------------------------------------------------------------------------------------------------
 
+// ================================= MISCELLANEOUS FUNCTIONS ==========================================
+
 // FORMATTED OUTPUT <<
-std::ostream & operator<<(std::ostream& os, const Matrix outMat){
-    for(int i = 0; i < outMat.numRows; i++){
-        for(int j = 0; j < outMat.numCols; j++){
-            os << outMat.matrixEntries[i*outMat.numCols+j] << ' ';
+std::ostream & operator<<(std::ostream& os, const Matrix A){
+    for(int i = 0; i < A.numRows; i++){
+        for(int j = 0; j < A.numCols; j++){
+            os << A.matrixEntries[i*A.numCols+j] << ' ';
         }
         os << endl;
     }
@@ -246,6 +358,8 @@ std::ostream& operator<<(std::ostream& os,std::vector<double> vect){
 double Matrix::operator[](const int ij){
     return matrixEntries[ij];
 }//----------------------------------------------------------------------------------------------------
+
+
 
 // RUN VARIOUS ACCEPTANCE TESTS FOR MATRIX CLASS
 void Matrix::RunMatrixTests(void) {
@@ -283,7 +397,7 @@ void Matrix::RunMatrixTests(void) {
     
     // System Solver Tests
     std::cout << "SOLVING Ax=b TESTS:" << std::endl;
-    int n = 10;
+    int n = 3;
     Matrix testMat8(n,n);
     std::vector<double> b;
     for(int i = 0; i < n; i++){
