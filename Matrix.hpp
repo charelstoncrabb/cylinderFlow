@@ -25,8 +25,9 @@ public:
     void transpose(void);
     std::vector<double> charPoly(void);
     double det(void);
-    std::vector<double> eigQR(double tolerance, bool verbose = true);
-    std::vector<double> eigAI(double tolerance, bool verbose = true);
+    std::vector<double> eigQR(double tolerance, bool verbose = false);
+    std::vector<double> eigCP(double tolerance, bool verbose = false);
+    std::vector<double> eigAI(double tolerance, bool verbose = false);
     std::vector<Matrix> QRdecomp(void);
     std::vector<double> svd(void);
     
@@ -42,8 +43,7 @@ public:
     std::vector<double> entries;
 
     friend std::ostream& operator<<(std::ostream& os, const Matrix A);
-private:
-    // Private methods used within public methods
+
     Matrix principalSubmatrix(std::vector<int> exInds);
     void swapRows(int row1, int row2);
     void scaleRow(int row, double scalar);

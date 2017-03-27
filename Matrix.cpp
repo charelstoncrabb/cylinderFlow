@@ -49,6 +49,24 @@ Matrix triDiag(int n, double diag, double offDiag){
 	return tridiag;
 }
 
+// BUILDS COMPANION MATRIX OF POLYNOMIAL WITH COEFFICIENTS GIVEN
+Matrix compMat(std::vector<double> coefficients){
+	int N = (int)coefficients.size();
+	if( N <=0 ){
+		Matrix err(0,0);
+		std::cout << "ERROR IN compMat(): coefficients must contain at least one element!" << std::endl;
+		return err;
+	}else{
+		Matrix compmat(N,N);
+		compmat.entries[N-1] = -coefficients[N-1];
+		for(int i = 1; i < N; i++){
+			compmat.entries[i*N+i-1] = 1.0;
+			compmat.entries[i*N+N-1] = -coefficients[N-1-i];
+		}
+		return compmat;
+	}
+}
+
 // BUILDS AN INDEXING VECTOR IND = {1,2,...,n}
 std::vector<int> indexVect(int n){
 	std::vector<int> iv(n);
@@ -277,7 +295,19 @@ std::vector<double> Matrix::eigQR(double tolerance, bool verbose){
 }//----------------------------------------------------------------------------------------------------
 
 // EIGENVALUE SOLVER USING CHARACTERISTIC POLYNOMIAL/COMPANION MATRIX
-// TODO: Finish charPoly()
+// PSEUDO:
+// Calculate characteristic polynomial
+// Count multiplicity of lambda = 0
+// Set up nonsingular submatrix removing rows corresponding to lambda = 0
+// Run QR algorithm on submatrix to compute remaining eigenvalues
+std::vector<double> Matrix::eigCP(double tolerance, bool verbose){
+	std::vector<double> currEigs, prevEigs, charpoly = charPoly();
+	int zeroMultiplicity = 0, cpInd = numRows-1;
+	while( fabs(charpoly[cpInd]) < 10e-15 ){
+		zeroMultiplicity++;
+	}
+	return currEigs;
+}
 
 // EIGENVALUE SOLVER USING ARNOLDI ITERATION  ---------------------------------------------------------
 std::vector<double> Matrix::eigAI(double tolerance, bool verbose){
@@ -287,25 +317,25 @@ std::vector<double> Matrix::eigAI(double tolerance, bool verbose){
 }//----------------------------------------------------------------------------------------------------
 
 // EIGENVALUE SOLVER USING CHARACTERISTIC POLYNOMIAL
-// TODO: TROUBLESHOOT charPoly()
 std::vector<double> Matrix::charPoly(void){
 	if( numRows == numCols && numRows > 0 ){
+		int k;
 		double coefficient;
 		std::vector<double> coefficients(numRows);
 		std::vector<int> I = indexVect(numRows);
 		std::vector<std::vector<int>> subMatInds;
 		Combinatorics combinatorics;
 		Matrix currSubMat(0,0);
-		for(int k = 0; k < numRows-1; k++){
+		for(k = 0; k < numRows-1; k++){
 			coefficient = 0;
-			subMatInds = combinatorics.nChoosek(I,k+1);
+			subMatInds = combinatorics.nChoosek(I,numRows-k-1);
 			for(int j = 0; j < subMatInds.size(); j++){
 				currSubMat = principalSubmatrix(subMatInds[j]);
 				coefficient = coefficient + currSubMat.det();
 			}
-			coefficients[k] = coefficient;
+			coefficients[k] = pow(-1.0,k+1)*coefficient;
 		}
-		coefficients[numRows-1] = this->det();
+		coefficients[numRows-1] = pow(-1.0,k+1)*this->det();
 		return coefficients;
 	}else{
 		std::vector<double> err;
@@ -731,17 +761,32 @@ void Matrix::RunMatrixTests(void) {
 //	std::cout << "det(A3) = " << testMat17.det() << std::endl;
 //	std::cout << "det(A4) = " << testMat18.det() << std::endl;
 //	std::cout << "det(A5) = " << testMat19.det() << std::endl;
+//	
+//	Matrix testMat20 = triDiag(n,2.0,1.0);
+//	std::cout << "CHARACTERISTIC POLYNOMIAL TESTS:" << std::endl;
+//	std::cout << "A = " << std::endl << testMat20 << std::endl;
+//	std::vector<double> coeffs = testMat20.charPoly();
+//	std::cout << "Characteristic Polynomial: " << std::endl << "p(x) = x^" << coeffs.size();
+//	for(int i = 0; i < coeffs.size()-1; i++){
+//		std::cout << " + " << coeffs[i] << "x^" << coeffs.size()-i-1;
+//	}
+//	std::cout << " + " << coeffs[n-1];
+//	std::cout << std::endl << std::endl;
+//	
+//	Matrix testMat21(5,5,{0,0,0,0,0,  1,0,0,0,1,  0,1,0,0,1,  0,0,1,0,1,  0,0,0,1,1});
+//	std::cout << "CHARACTERISTIC POLYNOMIAL TESTS:" << std::endl;
+//	std::cout << "A = " << std::endl << testMat21 << std::endl;
+//	std::vector<double> coeffs2 = testMat21.charPoly();
+//	std::cout << "Characteristic Polynomial: " << std::endl << "p(x) = x^" << coeffs2.size();
+//	for(int i = 0; i < coeffs2.size()-1; i++){
+//		std::cout << " + " << coeffs2[i] << "x^" << coeffs2.size()-i-1;
+//	}
+//	std::cout << " + " << coeffs2[n-1];
+//	std::cout << std::endl << std::endl;
 	
-	Matrix testMat20 = triDiag(n,2.0,1.0);
-	std::cout << "CHARACTERISTIC POLYNOMIAL TESTS:" << std::endl;
-	std::cout << "A = " << std::endl << testMat20 << std::endl;
-	std::vector<double> coeffs = testMat20.charPoly();
-	std::cout << "Characteristic Polynomial coefficients: " << std::endl << "p(x) = x^" << coeffs.size();
-	for(int i = 0; i < coeffs.size()-1; i++){
-		std::cout << " + " << coeffs[i] << "x^" << coeffs.size()-i-1;
-	}
-	std::cout << " + " << coeffs[n-1];
-	std::cout << std::endl << std::endl;
+	Matrix testMat22 = compMat({6,15,20,15,6,1});
+	std::cout << testMat22 << std::endl << std::endl << testMat22.eigQR(0.00000001,false) << std::endl;
+	
 }//----------------------------------------------------------------------------------------------------
 
 

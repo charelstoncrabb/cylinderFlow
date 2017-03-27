@@ -34,7 +34,7 @@ std::vector<std::vector<int>> Combinatorics::nChoosek(std::vector<int> values, i
         }
         return combinations;
     }else{
-        for(int i = 0; i < K; i++){
+        for(int i = 0; i < N-K+1; i++){
             currentHead = values[i];
             tail.clear();
             tailCombinations.clear();
@@ -53,7 +53,7 @@ std::vector<std::vector<int>> Combinatorics::nChoosek(std::vector<int> values, i
 
 // BASIC TEST FOR nChoosek() FUNCTION
 void Combinatorics::testnChoosek(void){
-    int k = 5;
+    int k = 4;
     std::vector<int> vals = {1,2,3,4,5};
     std::vector<std::vector<int>> combs = nChoosek(vals,k);
     for(int i = 0; i < combs.size(); i++){
