@@ -8,11 +8,12 @@
 #ifndef _MATRIX_H_
 #define _MATRIX_H_
 #include "Includes.hpp"
+#include "Math.hpp"
 
 class Matrix{
 public:
     Matrix();
-    Matrix(int numRows, int numCols, std::vector<double> initVals = {});
+    Matrix(int numRows, int numCols = -1, std::vector<double> initVals = {});
 
     // Public Methods
     void RunMatrixTests(void);
@@ -22,6 +23,8 @@ public:
     std::vector<double> getCol(int colNum);
     std::vector<double> getDiag(void);
     void transpose(void);
+    std::vector<double> charPoly(void);
+    double det(void);
     std::vector<double> eigQR(double tolerance, bool verbose = true);
     std::vector<double> eigAI(double tolerance, bool verbose = true);
     std::vector<Matrix> QRdecomp(void);
@@ -41,11 +44,14 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const Matrix A);
 private:
     // Private methods used within public methods
+    Matrix principalSubmatrix(std::vector<int> exInds);
     void swapRows(int row1, int row2);
     void scaleRow(int row, double scalar);
     void repRowWithDiff(int row1, int row2);
     void catRow(std::vector<double> newRow);
     void catCol(std::vector<double> newCol);
+    void rmRow(int rowNum);
+    void rmCol(int colNum);
     bool isEmpty(void);
 };
 

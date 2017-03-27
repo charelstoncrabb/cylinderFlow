@@ -7,9 +7,13 @@
 //
 
 #include "Matrix.hpp"
+#include "Math.hpp"
+
 
 int main(int argc, const char * argv[]) {
-    Matrix acceptTest(0,0,{});
-    acceptTest.RunMatrixTests();
+    Matrix acceptTest1(0,0,{});
+    Combinatorics acceptTest2;
+    acceptTest1.RunMatrixTests();
+//    acceptTest2.testnChoosek();
     return 1;
 }

@@ -8,7 +8,20 @@
 
 #include "Matrix.hpp"
 
-// ================================ USEFUL MATRIX TEMPLATES ===========================================
+
+// FORWARD DECLARATIONS
+
+
+// ============================= USEFUL MATRIX/VECTOR TEMPLATES ===========================================
+
+// BUILDS SIZE N IDENTITY MATRIX
+Matrix eye(int n){
+	Matrix I(n,n);
+	for(int ii = 0; ii < n; ii++){
+		I.entries[ii*n+ii] = 1.0;
+	}
+	return I;
+}
 
 // BUILDS AN ALL-ONES MATRIX
 Matrix ones(int numRows, int numCols = -1){
@@ -34,6 +47,15 @@ Matrix triDiag(int n, double diag, double offDiag){
 		}
 	}
 	return tridiag;
+}
+
+// BUILDS AN INDEXING VECTOR IND = {1,2,...,n}
+std::vector<int> indexVect(int n){
+	std::vector<int> iv(n);
+	for(int i = 0; i < n; i++){
+		iv[i] = i+1;
+	}
+	return iv;
 }
 
 // ============================= MISCELLANEOUS VECTOR OPERATIONS ======================================
@@ -110,7 +132,10 @@ Matrix::Matrix(){
 
 // INITILIZED CONSTRUCTOR  ----------------------------------------------------------------------------
 Matrix::Matrix(int numRows, int numCols, std::vector<double> initVals) : numRows(numRows), numCols(numCols){
-    if( ( initVals.size() == 0 ) && ( initVals.size() != numRows*numCols ) ){
+	if( numCols == -1 ){
+		numCols = numRows;
+	}
+	if( ( initVals.size() == 0 ) && ( initVals.size() != numRows*numCols ) ){
         entries.resize(numRows*numCols);
         for(int i = 0; i < numRows*numCols; i++){
             entries[i] = 0;
@@ -129,7 +154,7 @@ std::vector<double> Matrix::solveAxb(std::vector<double> b){
     std::cout << system << std::endl;
     system.rref();
     std::cout << system << std::endl;
-    // TODO: Check for inconsistency
+    // TODO: Check for inconsistency/generalize the solver
     for(int i = 0; i < system.numRows; i++){
         x[i] = system.entries[i*system.numCols+numRows];
     }
@@ -215,7 +240,7 @@ std::vector<double> Matrix::getDiag(void){
 }
 //----------------------------------------------------------------------------------------------------
 
-// EIGENVALUE SOLVER VIA QR ALGORITHM -- MATRIX MUST BE SYMMETRIC  -----------------------------------
+// EIGENVALUE SOLVER VIA QR ALGORITHM ----------------------------------------------------------------
 std::vector<double> Matrix::eigQR(double tolerance, bool verbose){
 	if( numRows == numCols ){
 		std::fstream outfile("QR_ITERATIONS.out",std::fstream::out | std::fstream::trunc);
@@ -226,7 +251,7 @@ std::vector<double> Matrix::eigQR(double tolerance, bool verbose){
 		Ak = QR[1]*QR[0];
 		prevEigs = Ak.getDiag();
 		double currTol = 999999;
-		while( currTol >= tolerance ){
+		while( currTol >= tolerance && itrCount < 10000 ){
 			if(verbose){
 				outfile << "At iteration: " << itrCount << std::endl <<
 				"Q*R = " << std::endl << QR[0]*QR[1] << "Current error = "
@@ -246,17 +271,84 @@ std::vector<double> Matrix::eigQR(double tolerance, bool verbose){
 		return currEigs;
 	}else{
 		std::vector<double> err;
-		std::cout << "ERROR IN eig(): matrix must be square!" << std::endl;
+		std::cout << "ERROR IN eig(): matrix must be non-empty square!" << std::endl;
 		return err;
 	}
 }//----------------------------------------------------------------------------------------------------
 
+// EIGENVALUE SOLVER USING CHARACTERISTIC POLYNOMIAL/COMPANION MATRIX
+// TODO: Finish charPoly()
+
 // EIGENVALUE SOLVER USING ARNOLDI ITERATION  ---------------------------------------------------------
 std::vector<double> Matrix::eigAI(double tolerance, bool verbose){
 	std::vector<double> currEigs;
-	// TODO: Implement Arnoldi Iteration for general matrices
+// TODO: Implement Arnoldi Iteration for general matrices
 	return currEigs;
 }//----------------------------------------------------------------------------------------------------
+
+// EIGENVALUE SOLVER USING CHARACTERISTIC POLYNOMIAL
+// TODO: TROUBLESHOOT charPoly()
+std::vector<double> Matrix::charPoly(void){
+	if( numRows == numCols && numRows > 0 ){
+		double coefficient;
+		std::vector<double> coefficients(numRows);
+		std::vector<int> I = indexVect(numRows);
+		std::vector<std::vector<int>> subMatInds;
+		Combinatorics combinatorics;
+		Matrix currSubMat(0,0);
+		for(int k = 0; k < numRows-1; k++){
+			coefficient = 0;
+			subMatInds = combinatorics.nChoosek(I,k+1);
+			for(int j = 0; j < subMatInds.size(); j++){
+				currSubMat = principalSubmatrix(subMatInds[j]);
+				coefficient = coefficient + currSubMat.det();
+			}
+			coefficients[k] = coefficient;
+		}
+		coefficients[numRows-1] = this->det();
+		return coefficients;
+	}else{
+		std::vector<double> err;
+		std::cout << "ERROR IN charPoly(): matrix must be non-empty square!" << std:: endl;
+		return err;
+	}
+}
+
+// COMPUTES DETERMINANT OF SQUARE MATRIX VIA 1ST COLUMN EXPANSION (RECURSIVE ALGORITHM)
+double Matrix::det(void){
+	Matrix colExpansion = *this;
+	colExpansion.rmCol(0);
+	Matrix subMat = colExpansion;
+	double determinant = 0;
+	if( numRows == numCols && numRows > 0 ){
+		if( numRows == 1 ){
+			determinant = entries[0];
+		}
+		else if( numRows == 2 ){
+			determinant = entries[0]*entries[3] - entries[1]*entries[2];
+		}
+		else{
+			for(int i = 0; i < numRows; i++){
+				subMat.rmRow(i);
+				determinant = determinant + pow(-1.0,i)*entries[i*numCols]*subMat.det();
+				subMat = colExpansion;
+			}
+		}
+	}else{
+		std::cout << "ERROR IN det(): matrix must be non-empty square!" << std::endl;
+	}
+	return determinant;
+}
+
+// RETURNS PRINCIPAL SUBMATRIX GIVEN BY DELETING ROWS/COLUMNS INDEXED BY INPUT LIST
+Matrix Matrix::principalSubmatrix(std::vector<int> exInds){
+	Matrix prnplSubMat(numRows,numCols,entries);
+	for(int k = 0; k < exInds.size(); k++ ){
+		prnplSubMat.rmRow(exInds[k]-1-k);
+		prnplSubMat.rmCol(exInds[k]-1-k);
+	}
+	return prnplSubMat;
+}
 
 // QR DECOMPOSITION USING GRAM-SCHIDT PROCESS  --------------------------------------------------------
 std::vector<Matrix> Matrix::QRdecomp(void){
@@ -294,7 +386,7 @@ std::vector<Matrix> Matrix::QRdecomp(void){
 // SINGULAR VALUE DECOMPOSITION
 std::vector<double> Matrix::svd(void){
     std::vector<double> singularValues;
-    // TODO: Finish SVD logic
+    // TODO: Pick method
     return singularValues;
 }//----------------------------------------------------------------------------------------------------
 
@@ -310,6 +402,37 @@ void Matrix::transpose(void){
     numCols = tpTemp.numCols;
     entries = tpTemp.entries;
 }//----------------------------------------------------------------------------------------------------
+
+// REMOVE ROW CORRESPONDING TO GIVEN ROW INDEX  -------------------------------------------------------
+void Matrix::rmRow(int colNum){
+	Matrix subMat(numRows-1,numCols);
+	for(int i = 0; i < numRows; i++){
+		for(int j = 0; j < numCols; j++){
+			if( i < colNum ){
+				subMat.entries[i*numCols+j] = entries[i*numCols+j];
+			}else if( i > colNum ){
+				subMat.entries[(i-1)*numCols+j] = entries[i*numCols+j];
+			}
+		}
+	}
+	*this = subMat;
+}//----------------------------------------------------------------------------------------------------
+
+// REMOVE COLUMN CORRESPONDING TO GIVEN COLUMN INDEX  -------------------------------------------------
+void Matrix::rmCol(int colNum){
+	Matrix subMat(numRows,numCols-1);
+	for(int i = 0; i < numRows; i++){
+		for(int j = 0; j < numCols; j++){
+			if( j < colNum ){
+				subMat.entries[i*numCols+j-i] = entries[i*numCols+j];
+			}else if( j > colNum ){
+				subMat.entries[i*numCols+j-1-i] = entries[i*numCols+j];
+			}
+		}
+	}
+	*this = subMat;
+}//----------------------------------------------------------------------------------------------------
+
 
 // CONCATENATE GIVEN ROW VECTOR TO BOTTOM OF MATRIX  --------------------------------------------------
 void Matrix::catRow(std::vector<double> newRow){
@@ -491,86 +614,135 @@ double Matrix::operator[](const int ij){
 }//----------------------------------------------------------------------------------------------------
 
 
-
+// TODO: Move all testing to separate classes, possibly derived class
 // RUN VARIOUS ACCEPTANCE TESTS FOR MATRIX CLASS  -----------------------------------------------------
 void Matrix::RunMatrixTests(void) {
-    // Arithmetic Tests
-    std::cout << "ARITHMETIC TESTS:" << std::endl;
-    Matrix testMat1(2,2,{2.1,1,1,2}), testMat2(2,2,{0,1,1,0});
-    Matrix testMat3(2,2), testMat4(2,2);
-    testMat3 = testMat1 + testMat2;
-    testMat4 = testMat1 * testMat2;
-    //    std::cout << "Test Matrix #1:" << std::endl << testMat1 << std::endl;
-    //    std::cout << "Test Matrix #2:" << std::endl << testMat2 << std::endl;
-    std::cout << "Test Matrix #3 ( #1 + #2 ):" << std::endl << testMat3 << std::endl;
-    std::cout << "Test Matrix #4 ( #1 * #2 ):" << std::endl << testMat4 << std::endl;
-    std::clock_t startcputime = std::clock();
-    
-    // Gaussian Elimination Test
-    std::cout << "GAUSSIAN ELIMINATION TESTS:" << std::endl;
-    Matrix testMat5(5,4,{1,1,1,1,1,  1,2,1,1,1,  1,1,1,1,1,  1,1,1,1,1,   1,1,1,1,1});
-    std::cout << "Test Matrix #5:" << std::endl << testMat5 << std::endl;
-    testMat5.rref();
-    std::cout << "Test Matrix #6 ( rref(#5) ):" << std::endl << testMat5 << std::endl;
-    double cpu_duration = (std::clock() - startcputime) / (double)CLOCKS_PER_SEC;
-    std::cout << "Finished in " << cpu_duration << " seconds [CPU Clock] " << std::endl; // About 40X faster than MATLAB
-    
-    // Concatenation Tests
-    std::cout << "CONCATENATION TESTS:" << std::endl;
-    Matrix testMat6(2,3,{1,2,3,4,5,6});
-    Matrix testMat7(2,3,{1,2,3,4,5,6});
-    std::vector<double> newRow = {7,7,7};
-    std::vector<double> newCol = {7,7};
-    testMat6.catRow(newRow);
-    std::cout << testMat6 << std::endl;
-    testMat7.catCol(newCol);
-    std::cout << testMat7 << std::endl;
-    
-    // System Solver Tests
-    std::cout << "SOLVING Ax=b TESTS:" << std::endl;
-    int n = 3;
-    Matrix testMat8 = triDiag(n,2.0,1.0), testMat9 = triDiag(n,2.0,1.0);
-    std::vector<double> b;
-    for(int i = 0; i < n; i++){
-        b.push_back((double)i+1);
-    }
-    std::cout << "A = " << std::endl << testMat9 << std::endl;
-    std::cout << "b = " << std::endl << b << std::endl;
-    startcputime = std::clock();
-    std::cout << "x = " << std::endl << testMat9.solveAxb(b) << std::endl;
-    cpu_duration = (std::clock() - startcputime) / (double)CLOCKS_PER_SEC;
-    std::cout << "Finished in " << cpu_duration << " seconds [CPU Clock] " << std::endl; // About 60X faster than MATLAB
+	int n = 5;
+//    // Arithmetic Tests
+//    std::cout << "ARITHMETIC TESTS:" << std::endl;
+//    Matrix testMat1(2,2,{2.1,1,1,2}), testMat2(2,2,{0,1,1,0});
+//    Matrix testMat3(2,2), testMat4(2,2);
+//    testMat3 = testMat1 + testMat2;
+//    testMat4 = testMat1 * testMat2;
+//    //    std::cout << "Test Matrix #1:" << std::endl << testMat1 << std::endl;
+//    //    std::cout << "Test Matrix #2:" << std::endl << testMat2 << std::endl;
+//    std::cout << "Test Matrix #3 ( #1 + #2 ):" << std::endl << testMat3 << std::endl;
+//    std::cout << "Test Matrix #4 ( #1 * #2 ):" << std::endl << testMat4 << std::endl;
+//    std::clock_t startcputime = std::clock();
+//    
+//    // Gaussian Elimination Test
+//    std::cout << "GAUSSIAN ELIMINATION TESTS:" << std::endl;
+//    Matrix testMat5(5,4,{1,1,1,1,1,  1,2,1,1,1,  1,1,1,1,1,  1,1,1,1,1,   1,1,1,1,1});
+//    std::cout << "Test Matrix #5:" << std::endl << testMat5 << std::endl;
+//    testMat5.rref();
+//    std::cout << "Test Matrix #6 ( rref(#5) ):" << std::endl << testMat5 << std::endl;
+//    double cpu_duration = (std::clock() - startcputime) / (double)CLOCKS_PER_SEC;
+//    std::cout << "Finished in " << cpu_duration << " seconds [CPU Clock] " << std::endl; // About 40X faster than MATLAB
+//    
+//    // Concatenation Tests
+//    std::cout << "CONCATENATION TESTS:" << std::endl;
+//    Matrix testMat6(2,3,{1,2,3,4,5,6});
+//    Matrix testMat7(2,3,{1,2,3,4,5,6});
+//    std::vector<double> newRow = {7,7,7};
+//    std::vector<double> newCol = {7,7};
+//    testMat6.catRow(newRow);
+//    std::cout << testMat6 << std::endl;
+//    testMat7.catCol(newCol);
+//    std::cout << testMat7 << std::endl;
+//    
+//    // System Solver Tests
+//    std::cout << "SOLVING Ax=b TESTS:" << std::endl;
+//    Matrix testMat8 = triDiag(n,2.0,1.0), testMat9 = triDiag(n,2.0,1.0);
+//    std::vector<double> b;
+//    for(int i = 0; i < n; i++){
+//        b.push_back((double)i+1);
+//    }
+//    std::cout << "A = " << std::endl << testMat9 << std::endl;
+//    std::cout << "b = " << std::endl << b << std::endl;
+//    startcputime = std::clock();
+//    std::cout << "x = " << std::endl << testMat9.solveAxb(b) << std::endl;
+//    cpu_duration = (std::clock() - startcputime) / (double)CLOCKS_PER_SEC;
+//    std::cout << "Finished in " << cpu_duration << " seconds [CPU Clock] " << std::endl; // About 60X faster than MATLAB
+//	
+//	startcputime = std::clock();
+//	std::vector<Matrix> QR = testMat9.QRdecomp();
+//	std::cout << "QR DECOMPOSITION TESTS:" << std::endl;
+//	std::cout << "Finished in " << cpu_duration << " seconds [CPU Clock] " << std::endl;
+//	std::cout << "A = " << std::endl << testMat9 << std::endl;
+//	std::cout << "Q = " << std::endl << QR[0] << std::endl;
+//	std::cout << "R = " << std::endl << QR[1] << std::endl;
+//	std::cout << "Q*R = " << std::endl << QR[0]*QR[1] << std::endl;
+//
+//    Matrix testMat10(5,4,{2,1,0,0,  1,2,1,0,  0,1,2,1,  0,0,1,2,  0,0,0,1});
+//	std::cout << "Computing QR of A = " << std::endl << testMat10 << std::endl;
+//	startcputime = std::clock();
+//    std::vector<Matrix> QR2 = testMat10.QRdecomp();
+//    std::cout << "Finished in " << cpu_duration << " seconds [CPU Clock] " << std::endl;
+//    std::cout << "A = " << std::endl << testMat10 << std::endl;
+//    std::cout << "Q = " << std::endl << QR2[0] << std::endl;
+//    std::cout << "R = " << std::endl << QR2[1] << std::endl;
+//    std::cout << "Q*R = " << std::endl << QR2[0]*QR2[1] << std::endl;
+//	
+//	double tol = 0.001;
+//	std::cout << "EIGENVALUE TESTS:" << std::endl;
+//	std::cout << "Computing eigenvalues of " << std::endl << "A = " << std::endl << testMat9 << std::endl;
+//	startcputime = std::clock();
+//	std::vector<double> eigs = testMat9.eigQR(tol,false);
+//	std::cout << "eigs = " << std::endl << eigs << std::endl;
+//	std::cout << "Finished in " << cpu_duration << " seconds [CPU Clock] " << std::endl;
+//	std::cout << "COMPANION MATRIX EIGENVALUES TEST: " << std::endl;
+//	Matrix testMat11(4,4,{0,0,0,-24,  1,0,0,50,  0,1,0,-35,  0,0,1,10});
+//	std::cout << "Computing eigenvalues of " << std::endl << "A = " << std::endl << testMat11 << std::endl;
+//	startcputime = std::clock();
+//	std::vector<double> eigs2 = testMat11.eigQR(tol);
+//	std::cout << "eigs = " << std::endl << eigs2 << std::endl;
+//	std::cout << "Finished in " << cpu_duration << " seconds [CPU Clock] " << std::endl;
+//	
+//	Matrix testMat12(4,4,{1,2,3,4,  5,6,7,8,  9,10,11,12,  13,14,15,16});
+//	Matrix testMat13 = testMat12;
+//	std::cout << "ROW/COL REMOVAL TESTS:" << std::endl;
+//	std::cout << "Removing row 3 of " << std::endl << "A = " << std::endl << testMat12 << std::endl;
+//	testMat12.rmRow(2);
+//	std::cout << testMat12 << std::endl;
+//	testMat13.rmCol(2);
+//	std::cout << "Removing column 2 of A:" << std::endl << testMat13 << std::endl;
+//
+//	Matrix testMat14(3,3,{1,2,3,4,5,6,7,8,9});
+//	Matrix psm(0,0);
+//	std::vector<int> inds1 = {1}, inds2 = {0,1}, inds3 = {0};
+//	std::cout << "PRINCIPAL SUBMATRIX TESTS:" << std::endl;
+//	psm = testMat14.principalSubmatrix(inds1);
+//	std::cout << psm << std::endl;
+//	psm = testMat14.principalSubmatrix(inds2);
+//	std::cout << psm << std::endl;
+//	psm = testMat14.principalSubmatrix(inds3);
+//	std::cout << psm << std::endl;
+//	
+//	Matrix testMat15(1,1,{100}), testMat16(2,2,{2,1,-1,0.5}), testMat17(3,3,{1,0,0,  0,2,1,  0,-1,0.5}),
+//	testMat18 = eye(10), testMat19 = triDiag(5,2,1);
+//	std::cout << "DETERMINANT TESTS:" << std::endl;
+//	std::cout << "A1 = " << std::endl << testMat15 << std::endl;
+//	std::cout << "A2 = " << std::endl << testMat16 << std::endl;
+//	std::cout << "A3 = " << std::endl << testMat17 << std::endl;
+//	std::cout << "A4 = " << std::endl << testMat18 << std::endl;
+//	std::cout << "A5 = " << std::endl << testMat19 << std::endl;
+//	std::cout << "det(A1) = " << testMat15.det() << std::endl;
+//	std::cout << "det(A2) = " << testMat16.det() << std::endl;
+//	std::cout << "det(A3) = " << testMat17.det() << std::endl;
+//	std::cout << "det(A4) = " << testMat18.det() << std::endl;
+//	std::cout << "det(A5) = " << testMat19.det() << std::endl;
 	
-	startcputime = std::clock();
-	std::vector<Matrix> QR = testMat9.QRdecomp();
-	std::cout << "QR DECOMPOSITION TESTS:" << std::endl;
-	std::cout << "Finished in " << cpu_duration << " seconds [CPU Clock] " << std::endl;
-	std::cout << "A = " << std::endl << testMat9 << std::endl;
-	std::cout << "Q = " << std::endl << QR[0] << std::endl;
-	std::cout << "R = " << std::endl << QR[1] << std::endl;
-	std::cout << "Q*R = " << std::endl << QR[0]*QR[1] << std::endl;
-
-    Matrix testMat10(5,4,{2,1,0,0,  1,2,1,0,  0,1,2,1,  0,0,1,2,  0,0,0,1});
-	std::cout << "Computing QR of A = " << std::endl << testMat10 << std::endl;
-	startcputime = std::clock();
-    std::vector<Matrix> QR2 = testMat10.QRdecomp();
-    std::cout << "Finished in " << cpu_duration << " seconds [CPU Clock] " << std::endl;
-    std::cout << "A = " << std::endl << testMat10 << std::endl;
-    std::cout << "Q = " << std::endl << QR2[0] << std::endl;
-    std::cout << "R = " << std::endl << QR2[1] << std::endl;
-    std::cout << "Q*R = " << std::endl << QR2[0]*QR2[1] << std::endl;
-	
-	double tol = 0.001;
-	std::cout << "EIGENVALUE TESTS:" << std::endl;
-	std::cout << "Computing eigenvalues of " << std::endl << "A = " << std::endl << testMat9 << std::endl;
-	startcputime = std::clock();
-	std::vector<double> eigs = testMat9.eigQR(tol);
-	std::cout << "eigs = " << std::endl << eigs << std::endl;
-	std::cout << "Finished in " << cpu_duration << " seconds [CPU Clock] " << std::endl;
+	Matrix testMat20 = triDiag(n,2.0,1.0);
+	std::cout << "CHARACTERISTIC POLYNOMIAL TESTS:" << std::endl;
+	std::cout << "A = " << std::endl << testMat20 << std::endl;
+	std::vector<double> coeffs = testMat20.charPoly();
+	std::cout << "Characteristic Polynomial coefficients: " << std::endl << "p(x) = x^" << coeffs.size();
+	for(int i = 0; i < coeffs.size()-1; i++){
+		std::cout << " + " << coeffs[i] << "x^" << coeffs.size()-i-1;
+	}
+	std::cout << " + " << coeffs[n-1];
+	std::cout << std::endl << std::endl;
 }//----------------------------------------------------------------------------------------------------
-
-
-
 
 
 
