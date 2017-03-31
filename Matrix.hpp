@@ -7,7 +7,6 @@
 //
 #ifndef _MATRIX_H_
 #define _MATRIX_H_
-#include "Includes.hpp"
 #include "Math.hpp"
 
 class Matrix{
@@ -29,7 +28,7 @@ public:
     std::vector<double> eigCP(double tolerance, bool verbose = false);
     std::vector<double> eigAI(double tolerance, bool verbose = false);
     std::vector<Matrix> QRdecomp(void);
-    std::vector<double> svd(void);
+    std::vector<double> svd(double tolerance, bool verbose = false);
     
     Matrix operator=(const Matrix& rhs);
     Matrix operator+(const Matrix& b);

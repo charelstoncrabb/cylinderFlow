@@ -8,12 +8,14 @@
 
 #include "Matrix.hpp"
 #include "Math.hpp"
+#include "Mesh.hpp"
 
 
 int main(int argc, const char * argv[]) {
     Matrix acceptTest1(0,0,{});
     Combinatorics acceptTest2;
-    acceptTest1.RunMatrixTests();
+    Mesh myFirstMesh(argv[1]);
+//    acceptTest1.RunMatrixTests();
 //    acceptTest2.testnChoosek();
     return 1;
 }
