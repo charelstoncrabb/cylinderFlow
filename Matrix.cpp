@@ -12,18 +12,18 @@
 // FORWARD DECLARATIONS
 
 
-// ============================= USEFUL MATRIX/VECTOR TEMPLATES ===========================================
+// ============================= USEFUL MATRIX/VECTOR TEMPLATES =======================================
 
-// BUILDS SIZE N IDENTITY MATRIX
+// BUILDS SIZE N IDENTITY MATRIX  ---------------------------------------------------------------------
 Matrix eye(int n){
 	Matrix I(n,n);
 	for(int ii = 0; ii < n; ii++){
 		I.entries[ii*n+ii] = 1.0;
 	}
 	return I;
-}
+}//----------------------------------------------------------------------------------------------------
 
-// BUILDS AN ALL-ONES MATRIX
+// BUILDS AN ALL-ONES MATRIX  -------------------------------------------------------------------------
 Matrix ones(int numRows, int numCols = -1){
 	if( numCols == -1 ){
 		numCols = numRows;
@@ -31,9 +31,9 @@ Matrix ones(int numRows, int numCols = -1){
 	std::vector<double> onesEntries(numRows*numCols,1);
 	Matrix onesMatrix(numRows,numCols,onesEntries);
 	return onesMatrix;
-}
+}//----------------------------------------------------------------------------------------------------
 
-// BUILD TRI-DIAGONAL MATRIX WITH GIVEN VALUES
+// BUILD TRI-DIAGONAL MATRIX WITH GIVEN VALUES  -------------------------------------------------------
 Matrix triDiag(int n, double diag, double offDiag){
 	Matrix tridiag(n,n);
 	for(int i = 0; i < n; i++){
@@ -47,9 +47,9 @@ Matrix triDiag(int n, double diag, double offDiag){
 		}
 	}
 	return tridiag;
-}
+}//----------------------------------------------------------------------------------------------------
 
-// BUILDS COMPANION MATRIX OF POLYNOMIAL WITH COEFFICIENTS GIVEN
+// BUILDS COMPANION MATRIX OF POLYNOMIAL WITH COEFFICIENTS GIVEN  -------------------------------------
 Matrix compMat(std::vector<double> coefficients){
 	int N = (int)coefficients.size();
 	if( N <=0 ){
@@ -65,16 +65,16 @@ Matrix compMat(std::vector<double> coefficients){
 		}
 		return compmat;
 	}
-}
+}//----------------------------------------------------------------------------------------------------
 
-// BUILDS AN INDEXING VECTOR IND = {1,2,...,n}
+// BUILDS AN INDEXING VECTOR IND = {1,2,...,n}  -------------------------------------------------------
 std::vector<int> indexVect(int n){
 	std::vector<int> iv(n);
 	for(int i = 0; i < n; i++){
 		iv[i] = i+1;
 	}
 	return iv;
-}
+}//----------------------------------------------------------------------------------------------------
 
 // ============================= MISCELLANEOUS VECTOR OPERATIONS ======================================
 
@@ -137,13 +137,26 @@ std::vector<double> scale(std::vector<double> u, double c){
     return scaledU;
 }//----------------------------------------------------------------------------------------------------
 
-// POINTWISE POWER
+// POINTWISE POWER  -----------------------------------------------------------------------------------
 std::vector<double> vectPow(std::vector<double> u, double p){
     for(int i = 0; i < u.size(); i++){
         u[i] = pow(u[i],p);
     }
     return u;
-}
+}//----------------------------------------------------------------------------------------------------
+
+// CONTINUOUS RANGE OF VECTOR  ------------------------------------------------------------------------
+// RETURNS SUBVECTOR u[min:max]
+template<class T>
+std::vector<T> range(std::vector<T> u, int min, int max){
+	std::vector<T> subU(max-min+1);
+	for(int i = 0; i < max-min+1; i++){
+		subU[i] = u[i+min];
+	}
+	return subU;
+}//----------------------------------------------------------------------------------------------------
+
+
 // ====================================================================================================
 // VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV  MATRIX CLASS  VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
 // ====================================================================================================

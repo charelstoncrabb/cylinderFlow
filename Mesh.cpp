@@ -8,6 +8,18 @@
 
 #include "Mesh.hpp"
 
+// CONTINUOUS RANGE OF VECTOR  ------------------------------------------------------------------------
+// RETURNS SUBVECTOR u[min:max]
+template<class T>
+std::vector<T> range(std::vector<T> u, int min, int max){
+    std::vector<T> subU(max-min+1);
+    for(int i = 0; i < max-min+1; i++){
+        subU[i] = u[i+min];
+    }
+    return subU;
+}//----------------------------------------------------------------------------------------------------
+
+
 // ========================  MESH CLASS MEMBERS  ======================================================
 // CONSTRUCTOR - USES NODE LOCATIONS FROM meshDataFilename  -------------------------------------------
 Mesh::Mesh(std::string meshDataFilename){
@@ -44,6 +56,28 @@ void Mesh::triangulate(void){
     // If nodeList.size() > 3
     //   Build two submeshes with nodes nodeList[0:size/2] & nodeList[size/2:end]
     //   Combine submeshes
+    if( nodeList.size() <= 1 ){
+        std::cout << "ERROR IN triangulate(): error subdividing mesh!" << std::endl;
+        return;
+    }else if( nodeList.size() == 2 ){
+        // Facet is line segment
+    }
+    else if( nodeList.size() == 3 ){
+        // Facet is triangle
+    }else{
+        int halfInd = (int)nodeList.size()/2;
+        std::vector<Node> leftNodeList = range<Node>(nodeList,0,halfInd),
+            rightNodeList = range<Node>(nodeList,halfInd+1,(int)nodeList.size()-1);
+        Mesh leftSubmesh(leftNodeList);
+        Mesh rightSubmesh(rightNodeList);
+        *this = mergeMeshes(leftSubmesh,rightSubmesh);
+    }
+}//----------------------------------------------------------------------------------------------------
+
+// HELPER FUNCTION FOR triangulate() - MERGES SUBMESHES  ----------------------------------------------
+Mesh Mesh::mergeMeshes(Mesh leftMesh, Mesh rightMesh){
+    Mesh newMesh;
+    return newMesh;
 }//----------------------------------------------------------------------------------------------------
 
 // ========================  NODE CLASS MEMBERS  ======================================================
@@ -66,6 +100,7 @@ void Node::setNode(int ID, double x, double y){
 Facet::Facet(std::vector<Node> nodeList) : nodes(nodeList){
     std::vector<double> node1Loc = nodes[0].getLoc(), node2Loc = nodes[1].getLoc(),
         node3Loc = nodes[2].getLoc();
+// TODO: Catch case if nodeList.size() == 2 
     Matrix facetVects(2,2,{ node2Loc[0]-node1Loc[0], node2Loc[1]-node1Loc[1],
         node3Loc[0]-node1Loc[0], node3Loc[1]-node1Loc[1]});
     area = fabs(facetVects.det())/2.0;

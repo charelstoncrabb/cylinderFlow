@@ -17,9 +17,11 @@ class Mesh{
 public:
     Mesh(std::string meshDataFilename);
 private:
+    Mesh();
     Mesh(std::vector<Node> nodes);
     void parseMeshData(std::string meshDataFilename);
     void triangulate(void);
+    Mesh mergeMeshes(Mesh leftMesh, Mesh rightMesh);
     std::vector<Node> nodeList;
     std::vector<Facet> facetGraph;
 };
@@ -33,6 +35,8 @@ private:
     int nodeID;
     std::vector<double> loc;
     std::vector<Node> adjacent;
+    
+    friend class Mesh;
 };
 
 class Facet{
@@ -43,5 +47,7 @@ private:
     double area;
     std::vector<Node> nodes;
     std::vector<Facet> adjacent;
+    
+    friend class Facet;
 };
 #endif /* Mesh_h */

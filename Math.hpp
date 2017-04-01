@@ -17,4 +17,8 @@ public:
 private:
 };
 
+class Func2D{
+public:
+    Func2D();
+};
 #endif /* Math_h */
