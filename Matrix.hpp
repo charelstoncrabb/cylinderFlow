@@ -7,7 +7,9 @@
 //
 #ifndef _MATRIX_H_
 #define _MATRIX_H_
+#include "Includes.hpp"
 #include "Math.hpp"
+#include "VectOps.hpp"
 
 class Matrix{
 public:

@@ -63,3 +63,4 @@ void Combinatorics::testnChoosek(void){
         std::cout << std::endl;
     }
 }
+
