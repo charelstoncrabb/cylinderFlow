@@ -17,9 +17,9 @@ Mesh::Mesh(std::string meshDataFilename){
 
 void Mesh::writeMesh(std::string meshOutFile){
     std::fstream outfile(meshOutFile,std::fstream::out | std::fstream::trunc);
-    outfile << "ID  (X,Y)  ADJ" << std::endl;
+    outfile << "ID X Y ADJ" << std::endl;
     for(int i = 0; i < nodeList.size(); i++){
-        outfile << nodeList[i].nodeID << " (" << nodeList[i].loc[0] << "," << nodeList[i].loc[1] << ")  ";
+        outfile << nodeList[i].nodeID << " " << nodeList[i].loc[0] << " " << nodeList[i].loc[1] << " ";
         for(int j = 0; j < nodeList[i].adjacent.size(); j++){
             outfile << nodeList[i].adjacent[j].nodeID << " ";
         }
