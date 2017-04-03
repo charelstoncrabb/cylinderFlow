@@ -16,5 +16,6 @@ int main(int argc, const char * argv[]) {
 
     Mesh myFirstMesh(argv[1]);
     myFirstMesh.writeMesh(argv[2]);
+    system("./MeshPlot.py");
     return 1;
 }

@@ -25,7 +25,7 @@ private:
     Mesh(std::vector<Node> nodes);
     void parseMeshData(std::string meshDataFilename);
     void triangulate(void);
-    Mesh mergeMeshes(Mesh leftMesh, Mesh rightMesh);
+    void mergeMeshes(Mesh leftMesh, Mesh rightMesh);
     int findLeftBaseNode(void);
     int findRightBaseNode(void);
     void setEdges(std::vector<Node*> nodes);
