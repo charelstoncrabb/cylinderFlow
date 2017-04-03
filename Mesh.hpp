@@ -21,6 +21,7 @@ public:
     Mesh operator=(const Mesh& rhs);
 private:
     Mesh(){};
+    Mesh(std::vector<Node> nodes, std::vector<Facet> facets);
     Mesh(std::vector<Node> nodes);
     void parseMeshData(std::string meshDataFilename);
     void triangulate(void);
@@ -28,7 +29,7 @@ private:
     int findLeftBaseNode(void);
     int findRightBaseNode(void);
     void setEdges(std::vector<Node*> nodes);
-    
+    void rmEdges(std::vector<Node*> nodes);
     // Data members
     std::vector<Node> nodeList;
     std::vector<Facet> facetList;
@@ -43,6 +44,8 @@ public:
     double calcAngle(Node P, Node Q);
     bool isInCirc(Node A, Node B, Node C);
     std::vector<int> ordCandList(Node node);
+    bool isAdjacent(Node node);
+    int findIndByID(std::vector<Node> nodes);
     Node operator=(Node& rhs);
     
 private:

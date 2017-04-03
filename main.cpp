@@ -13,6 +13,7 @@
 
 int main(int argc, const char * argv[]) {
 // TODO: Add options module (e.g., --help, -i FirstMesh.dat, -o FirstMesh.out, etc...)
+
     Mesh myFirstMesh(argv[1]);
     myFirstMesh.writeMesh(argv[2]);
     return 1;

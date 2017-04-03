@@ -27,7 +27,11 @@ void Mesh::writeMesh(std::string meshOutFile){
     }
 }
 
-// PRIVATE CONSTRUCTOR CONSTRUCTS MESH GIVEN NODE LIST  -----------------------------------------------
+// PRIVATE CONSTRUCTOR CONSTRUCTS MESH GIVEN NODE/FACET LISTS (ALREADY TRIANGULATED) ------------------
+Mesh::Mesh(std::vector<Node> nodes, std::vector<Facet> facets) : nodeList(nodes), facetList(facets){
+}//----------------------------------------------------------------------------------------------------
+
+// PRIVATE CONSTRUCTOR CONSTRUCTS MESH GIVEN NODE LIST (CREATES TRIANGULATION)  -----------------------
 Mesh::Mesh(std::vector<Node> nodes) : nodeList(nodes){
     triangulate();
 }//----------------------------------------------------------------------------------------------------
@@ -48,8 +52,7 @@ void Mesh::parseMeshData(std::string meshDataFilename){
     std::string header;
     if( meshData.is_open() ){
         getline(meshData,header);
-        do{
-            meshData >> ID >> xLoc >> yLoc;
+        while(meshData >> ID >> xLoc >> yLoc){
             if( ID == i ){
                 currNode.setNode(ID,xLoc,yLoc);
                 nodeList.push_back(currNode);
@@ -57,12 +60,13 @@ void Mesh::parseMeshData(std::string meshDataFilename){
                 std::cout << "WARNING IN parseMeshData(): non-sequential nodes detected and skipped." << std::endl;
             }
             i++;
-        }while( !meshData.eof() );
+        }
         meshData.close();
     }else{
         std::cout << "ERROR IN parseMeshData(): cannot open file "
         << meshDataFilename << "!" << std::endl;
     }
+// TODO: Sort nodes by (x,y) dictionary order
 }//----------------------------------------------------------------------------------------------------
 
 // BUILDS DELAUNAY TRIANGULATION OF NODES IN MESH USING D&C ALGORITHM  --------------------------------
@@ -78,15 +82,13 @@ void Mesh::triangulate(void){
         return;
     }else if( nodeList.size() == 2 ){
         setEdges({&nodeList[0],&nodeList[1]});
-        Facet newFacet(nodeList);
-        facetList.push_back(newFacet);
     }
     else if( nodeList.size() == 3 ){
         setEdges({&nodeList[0],&nodeList[1],&nodeList[2]});
         Facet newFacet(nodeList);
         facetList.push_back(newFacet);
     }else{
-        int halfInd = (int)nodeList.size()/2;
+        int halfInd = ((int)nodeList.size()-1)/2;
         std::vector<Node> leftNodeList = range<Node>(nodeList,0,halfInd),
             rightNodeList = range<Node>(nodeList,halfInd+1,(int)nodeList.size()-1);
         Mesh leftSubmesh(leftNodeList), rightSubmesh(rightNodeList);
@@ -96,8 +98,12 @@ void Mesh::triangulate(void){
 
 // HELPER FUNCTION FOR triangulate() - MERGES SUBMESHES  ----------------------------------------------
 Mesh Mesh::mergeMeshes(Mesh leftMesh, Mesh rightMesh){
-    bool noCandidate = false;
-    Mesh mergedMesh;
+    int itr = 0;
+    bool noCandidate = false, rightCand = false, leftCand = false;
+    Node rightCandidate, leftCandidate;
+    std::vector<Node> mergedNodes = cat(leftMesh.nodeList,rightMesh.nodeList);
+    std::vector<Facet> mergedFacets = cat(leftMesh.facetList,rightMesh.facetList);
+    Mesh mergedMesh(mergedNodes,mergedFacets);
     // Find bottom-most nodes from left and right meshes to create base LR edge
     // Find a right candidate:
     //   Potential candidate = Find right base endpoint-adjacent node with smallest angle to base LR edge
@@ -115,10 +121,69 @@ Mesh Mesh::mergeMeshes(Mesh leftMesh, Mesh rightMesh){
     //   2. Is left candidate outside base-right cand. circumcircle?
     //   If yes to 1., create left candidate-right base edge, and set this edge as new base edge
     //   If yes to 2., create right candidate-left base edge, and set this edge as new base edge
-//    int leftBaseInd = leftMesh.findLeftBaseNode(), rightBaseInd = rightMesh.findRightBaseNode();
     while( noCandidate == false ){
-// TODO: Finish implementing submesh merging logic
+        int leftBaseInd = leftMesh.findLeftBaseNode(), rightBaseInd = rightMesh.findRightBaseNode();
+        Node leftBase = leftMesh.nodeList[leftBaseInd], rightBase = rightMesh.nodeList[rightBaseInd];
+        setEdges({&leftBase,&rightBase});
+        std::vector<int> potRtCandInds = rightMesh.nodeList[rightBaseInd].ordCandList(leftBase);
+        std::vector<int> potLtCandInds = leftMesh.nodeList[rightBaseInd].ordCandList(rightBase);
+        while( rightCand == false && itr < potRtCandInds.size() ){
+            if( potRtCandInds.size() == 0 ){
+                rightCandidate = rightBase;
+                rightCand = true;
+            }
+            else if( rightBase.calcAngle(leftBase,rightBase.adjacent[potRtCandInds[itr]]) == acos(-1) ){
+                rightCandidate = rightBase;
+                rightCand = true;
+            }else if( potRtCandInds.size() >= 2 &&
+                     !rightBase.adjacent[potRtCandInds[itr+1]].isInCirc(leftBase,rightBase,rightBase.adjacent[potRtCandInds[itr]]) ){
+                rightCandidate = rightBase.adjacent[potRtCandInds[itr]];
+                rightCand = true;
+            }else{
+                rightMesh.rmEdges({&rightBase,&rightBase.adjacent[potRtCandInds[itr]]});
+                potRtCandInds.erase(potRtCandInds.begin() + itr);
+                itr++;
+            }
+        }
+        itr = 0;
+        while( leftCand == false && itr < potLtCandInds.size() ){
+            if( potLtCandInds.size() == 0 ){
+                leftCandidate = leftBase;
+                leftCand = true;
+            }
+            else if( leftBase.calcAngle(rightBase,leftBase.adjacent[potLtCandInds[itr]]) == acos(-1) ){
+                leftCandidate = leftBase;
+                leftCand = true;
+            }else if( potLtCandInds.size() >= 2 &&
+                     !leftBase.adjacent[potLtCandInds[itr+1]].isInCirc(rightBase,leftBase,leftBase.adjacent[potLtCandInds[itr]]) ){
+                leftCandidate = leftBase.adjacent[potLtCandInds[itr]];
+                leftCand = true;
+            }else{
+                leftMesh.rmEdges({&leftBase,&leftBase.adjacent[potLtCandInds[itr]]});
+                potLtCandInds.erase(potLtCandInds.begin() + itr);
+                itr++;
+            }
+        }
+        if( leftCand && rightCand ){
+            bool isLtCandInRtCirc = leftCandidate.isInCirc(leftBase,rightBase,rightCandidate);
+            bool isRtCandInLtCirc = rightCandidate.isInCirc(leftBase,rightBase,leftCandidate);
+            int ltBaseInd = leftBase.findIndByID(mergedNodes), rtBaseInd = rightBase.findIndByID(mergedNodes);
+            if( isLtCandInRtCirc ){
+                int ltCandInd = leftCandidate.findIndByID(mergedNodes);
+                setEdges({&nodeList[rtBaseInd],&nodeList[ltCandInd]});
+                Facet newFacet({nodeList[ltBaseInd],nodeList[rtBaseInd],nodeList[ltCandInd]});
+                facetList.push_back(newFacet);
+                leftBase = leftCandidate;
+            }else if( isRtCandInLtCirc ){
+                int rtCandInd = rightCandidate.findIndByID(mergedNodes);
+                setEdges({&nodeList[ltBaseInd],&nodeList[rtCandInd]});
+                Facet newFacet({nodeList[ltBaseInd],nodeList[rtBaseInd],nodeList[rtCandInd]});
+                facetList.push_back(newFacet);
+                rightBase = rightCandidate;
+            }
+        }
     }
+// TODO: Debug mergeMeshes()
     return mergedMesh;
 }//----------------------------------------------------------------------------------------------------
 
@@ -163,6 +228,22 @@ void Mesh::setEdges(std::vector<Node*> nodes){
     }
 }//----------------------------------------------------------------------------------------------------
 
+// REMOVES ALL EDGES BETWEEN GIVEN NODES  -------------------------------------------------------------
+void Mesh::rmEdges(std::vector<Node*> nodes){
+    int N = (int)nodes.size();
+    for(int i = 0; i < N; i++){
+        int currNodeID = nodes[i]->nodeID;
+        for(int j = 0; j < N; j++){
+            for(int k = 0; k < nodes[j]->adjacent.size(); k++){
+                if( nodes[j]->adjacent[k].nodeID == currNodeID ){
+                    nodes[j]->adjacent = rmEl(nodes[j]->adjacent,k);
+                }
+            }
+        }
+    }
+}//----------------------------------------------------------------------------------------------------
+
+
 
 // ========================  NODE CLASS MEMBERS  ======================================================
 // CONSTRUCTOR  ---------------------------------------------------------------------------------------
@@ -202,7 +283,7 @@ bool Node::isInCirc(Node A, Node B, Node C){
     }
 }//----------------------------------------------------------------------------------------------------
 
-// SORTS ADJACENT NODES BY ANGLE WITH GIVEN NODE
+// SORTS ADJACENT NODES BY ANGLE WITH GIVEN NODE  -----------------------------------------------------
 std::vector<int> Node::ordCandList(Node node){
     int N = (int)adjacent.size();
     std::vector<double> angles(N);
@@ -225,6 +306,25 @@ std::vector<int> Node::ordCandList(Node node){
     return ordered;
 }//----------------------------------------------------------------------------------------------------
 
+// DECIDES IF GIVEN NODE IS ADJACENT TO this
+bool Node::isAdjacent(Node node){
+    for(int i = 0; i < adjacent.size(); i++)
+        if( node.nodeID == adjacent[i].nodeID )
+            return true;
+    return false;
+}//----------------------------------------------------------------------------------------------------
+
+// RETURNS INDEX OF this IN LIST nodes - RETURNS -1 IF this IS NOT IN LIST  ---------------------------
+int Node::findIndByID(std::vector<Node> nodes){
+    int ind = -1;
+    for(int i = 0; i < nodes.size(); i++){
+        if( nodes[i].nodeID == nodeID ){
+            return i;
+        }
+    }
+    return ind;
+}//----------------------------------------------------------------------------------------------------
+
 // ASSIGNMENT OPERATOR  -------------------------------------------------------------------------------
 Node Node::operator=(Node& rhs){
     nodeID = rhs.nodeID;
@@ -232,6 +332,7 @@ Node Node::operator=(Node& rhs){
     adjacent = rhs.adjacent;
     return *this;
 }//----------------------------------------------------------------------------------------------------
+
 
 // =======================  FACET CLASS MEMBERS  ======================================================
 Facet::Facet(std::vector<Node> nodeList) : nodes(nodeList){

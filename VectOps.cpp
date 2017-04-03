@@ -93,5 +93,34 @@ std::vector<T> subind(std::vector<T> u, std::vector<int> inds){
     return subU;
 }//----------------------------------------------------------------------------------------------------
 
+// CONCATENATES GIVEN VECTOR IN ORDER {u,v}  ----------------------------------------------------------
+template<class T>
+std::vector<T> cat(std::vector<T> u, std::vector<T> v){
+    std::vector<T> catted(u.size()+v.size());
+    for(int i = 0; i < u.size(); i++)
+        catted[i] = u[i];
+    for(int i = 0; i < v.size(); i++)
+        catted[i+u.size()] = v[i];
+    return catted;
+}//----------------------------------------------------------------------------------------------------
+
+// REMOVES VECTOR ELEMENT AT INDEX ind2rm  ------------------------------------------------------------
+template<class T>
+std::vector<T> rmEl(std::vector<T> u, int ind2rm){
+    std::vector<T> newVec(u.size()-1);
+    int i;
+    for(i = 0; i < ind2rm; i++)
+        newVec[i] = u[i];
+    i++;
+    for(; i < u.size(); i++)
+        newVec[i-1] = u[i];
+    return newVec;
+}//----------------------------------------------------------------------------------------------------
+
 // FORWARD DECLARATIONS FOR TEMPLATE INSTANTIATION
 template std::vector<Node> range(std::vector<Node>, int, int);
+template std::vector<Node> cat(std::vector<Node>,std::vector<Node>);
+template std::vector<Facet> cat(std::vector<Facet>,std::vector<Facet>);
+template std::vector<Node> rmEl(std::vector<Node>, int);
+
+
