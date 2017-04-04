@@ -169,14 +169,14 @@ void Mesh::mergeMeshes(Mesh leftMesh, Mesh rightMesh){
                 setEdges({&nodeList[rtBaseInd],&nodeList[ltCandInd]});
                 Facet newFacet({nodeList[ltBaseInd],nodeList[rtBaseInd],nodeList[ltCandInd]});
                 facetList.push_back(newFacet);
-                leftBase = leftCandidate;
+                leftBase = nodeList[ltCandInd];
                 leftBaseInd = leftBase.findIndByID(leftMesh.nodeList);
             }else if( isRtCandInLtCirc ){
                 int rtCandInd = rightCandidate.findIndByID(nodeList);
                 setEdges({&nodeList[ltBaseInd],&nodeList[rtCandInd]});
                 Facet newFacet({nodeList[ltBaseInd],nodeList[rtBaseInd],nodeList[rtCandInd]});
                 facetList.push_back(newFacet);
-                rightBase = rightCandidate;
+                rightBase = nodeList[rtCandInd];
                 rightBaseInd = rightBase.findIndByID(rightMesh.nodeList);
             }
         }else if( leftCand ){
@@ -185,7 +185,7 @@ void Mesh::mergeMeshes(Mesh leftMesh, Mesh rightMesh){
             setEdges({&nodeList[rtBaseInd],&nodeList[ltCandInd]});
             Facet newFacet({nodeList[ltBaseInd],nodeList[rtBaseInd],nodeList[ltCandInd]});
             facetList.push_back(newFacet);
-            leftBase = leftCandidate;
+            leftBase = nodeList[ltCandInd];
             leftBaseInd = leftBase.findIndByID(leftMesh.nodeList);
         }else if( rightCand ){
             int ltBaseInd = leftBase.findIndByID(nodeList), rtBaseInd = rightBase.findIndByID(nodeList),
@@ -193,7 +193,7 @@ void Mesh::mergeMeshes(Mesh leftMesh, Mesh rightMesh){
             setEdges({&nodeList[ltBaseInd],&nodeList[rtCandInd]});
             Facet newFacet({nodeList[ltBaseInd],nodeList[rtBaseInd],nodeList[rtCandInd]});
             facetList.push_back(newFacet);
-            rightBase = rightCandidate;
+            rightBase = nodeList[rtCandInd];
             rightBaseInd = rightBase.findIndByID(rightMesh.nodeList);
         }else{
             noCandidate = true;
@@ -300,11 +300,12 @@ bool Node::isInCirc(Node A, Node B, Node C){
 
 // SORTS ADJACENT NODES BY ANGLE WITH GIVEN NODE  -----------------------------------------------------
 std::vector<int> Node::ordCandList(Node node){
-    int N = (int)adjacent.size();
+    int N = (int)adjacent.size(), minInd;
+    bool minIndSet = false;
     std::vector<double> angles(N);
     std::vector<int> ordered;
     Node temp;
-    double theta1 = acos(-1), theta2 = -1;
+    double theta1 = acos(-1), theta2 = -1, tol = 1e-5;
     for(int i = 0; i < N; i++){
         if( loc[1] <= adjacent[i].loc[1] )
             angles[i] = calcAngle(adjacent[i],node);
@@ -313,12 +314,17 @@ std::vector<int> Node::ordCandList(Node node){
     }
     for(int i = 0; i < N; i++){
         for(int j = 0; j < N; j++){
-            if( angles[j] < theta1 && angles[j] > theta2 ){
-                ordered.push_back(j);
+            if( angles[j] < theta1 - tol && angles[j] > theta2 ){
+                minInd = j;
                 theta1 = angles[j];
+                minIndSet = true;
             }
         }
+        if( minIndSet )
+            ordered.push_back(minInd);
         theta2 = theta1;
+        theta1 = acos(-1);
+        minIndSet = false;
     }
     return ordered;
 }//----------------------------------------------------------------------------------------------------
