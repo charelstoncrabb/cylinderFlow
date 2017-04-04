@@ -47,27 +47,22 @@ Mesh Mesh::operator=(const Mesh& rhs){
 // PARSES MESH .DAT FILE FOR MESH NODES  --------------------------------------------------------------
 void Mesh::parseMeshData(std::string meshDataFilename){
     std::ifstream meshData(meshDataFilename);
-    int ID, i = 1;
+    int ID;
     double xLoc, yLoc;
     Node currNode(0,0,0);
     std::string header;
     if( meshData.is_open() ){
         getline(meshData,header);
         while(meshData >> ID >> xLoc >> yLoc){
-            if( ID == i ){
-                currNode.setNode(ID,xLoc,yLoc);
-                nodeList.push_back(currNode);
-            }else{
-                std::cout << "WARNING IN parseMeshData(): non-sequential nodes detected and skipped." << std::endl;
-            }
-            i++;
+            currNode.setNode(ID,xLoc,yLoc);
+            nodeList.push_back(currNode);
         }
         meshData.close();
     }else{
         std::cout << "ERROR IN parseMeshData(): cannot open file "
         << meshDataFilename << "!" << std::endl;
     }
-// TODO: Sort nodes by (x,y) dictionary order
+    sortNodeList();
 }//----------------------------------------------------------------------------------------------------
 
 // BUILDS DELAUNAY TRIANGULATION OF NODES IN MESH USING D&C ALGORITHM  --------------------------------
@@ -258,6 +253,20 @@ void Mesh::rmEdges(std::vector<Node*> nodes){
     }
 }//----------------------------------------------------------------------------------------------------
 
+// parseMeshData HELPER - SORTS PARSED MESH DATA  -----------------------------------------------------
+void Mesh::sortNodeList(void){
+    int N = (int)nodeList.size();
+    Node temp;
+    for(int i = N; i > 0; i--){
+        for(int j = 0; j < i-1; j++){
+            if( nodeList[j+1] < nodeList[j] ){
+                temp = nodeList[j+1];
+                nodeList[j+1] = nodeList[j];
+                nodeList[j] = temp;
+            }
+        }
+    }
+}//----------------------------------------------------------------------------------------------------
 
 
 // ========================  NODE CLASS MEMBERS  ======================================================
@@ -356,6 +365,15 @@ Node Node::operator=(Node& rhs){
     return *this;
 }//----------------------------------------------------------------------------------------------------
 
+// COMPARISON OPERATOR - USES STANDARD (X,Y) DICTIONARY ORDER  ----------------------------------------
+bool Node::operator<(Node& rhs){
+    if(loc[0] < rhs.loc[0]){
+        return true;
+    }else if(loc[0] == rhs.loc[0] && loc[1] < rhs.loc[1]){
+        return true;
+    }
+    return false;
+}//----------------------------------------------------------------------------------------------------
 
 // =======================  FACET CLASS MEMBERS  ======================================================
 Facet::Facet(std::vector<Node> nodeList) : nodes(nodeList){

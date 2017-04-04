@@ -30,6 +30,7 @@ private:
     int findRightBaseNode(void);
     void setEdges(std::vector<Node*> nodes);
     void rmEdges(std::vector<Node*> nodes);
+    void sortNodeList(void);
     // Data members
     std::vector<Node> nodeList;
     std::vector<Facet> facetList;
@@ -47,7 +48,7 @@ public:
     bool isAdjacent(Node node);
     int findIndByID(std::vector<Node> nodes);
     Node operator=(Node& rhs);
-    
+    bool operator<(Node& rhs);
 private:
     
     
