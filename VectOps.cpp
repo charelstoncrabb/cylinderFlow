@@ -72,8 +72,8 @@ std::vector<double> vectPow(std::vector<double> u, double p){
 // CONTINUOUS RANGE OF VECTOR  ------------------------------------------------------------------------
 // RETURNS SUBVECTOR u[min:max]
 template<class T>
-std::vector<T> range(std::vector<T> u, int min, int max){
-    std::vector<T> subU(max-min+1);
+std::vector<T*> range(std::vector<T*> u, int min, int max){
+    std::vector<T*> subU(max-min+1);
     for(int i = 0; i < max-min+1; i++){
         subU[i] = u[i+min];
     }
@@ -83,9 +83,9 @@ std::vector<T> range(std::vector<T> u, int min, int max){
 // SUBINDEXING OF VECTOR  -----------------------------------------------------------------------------
 // RETURNS SUBVECTOR u[inds]
 template<class T>
-std::vector<T> subind(std::vector<T> u, std::vector<int> inds){
+std::vector<T*> subind(std::vector<T*> u, std::vector<int> inds){
     int N = (int)inds.size();
-    std::vector<T> subU(N);
+    std::vector<T*> subU(N);
     // TODO: Check that inds is not outside range of u
     for(int i = 0; i < N; i++){
         subU[i] = u[inds[i]];
@@ -95,8 +95,8 @@ std::vector<T> subind(std::vector<T> u, std::vector<int> inds){
 
 // CONCATENATES GIVEN VECTOR IN ORDER {u,v}  ----------------------------------------------------------
 template<class T>
-std::vector<T> cat(std::vector<T> u, std::vector<T> v){
-    std::vector<T> catted(u.size()+v.size());
+std::vector<T*> cat(std::vector<T*> u, std::vector<T*> v){
+    std::vector<T*> catted(u.size()+v.size());
     for(int i = 0; i < u.size(); i++)
         catted[i] = u[i];
     for(int i = 0; i < v.size(); i++)
@@ -106,8 +106,8 @@ std::vector<T> cat(std::vector<T> u, std::vector<T> v){
 
 // REMOVES VECTOR ELEMENT AT INDEX ind2rm  ------------------------------------------------------------
 template<class T>
-std::vector<T> rmEl(std::vector<T> u, int ind2rm){
-    std::vector<T> newVec(u.size()-1);
+std::vector<T*> rmEl(std::vector<T*> u, int ind2rm){
+    std::vector<T*> newVec(u.size()-1);
     int i;
     for(i = 0; i < ind2rm; i++)
         newVec[i] = u[i];
@@ -117,10 +117,26 @@ std::vector<T> rmEl(std::vector<T> u, int ind2rm){
     return newVec;
 }//----------------------------------------------------------------------------------------------------
 
-// FORWARD DECLARATIONS FOR TEMPLATE INSTANTIATION
-template std::vector<Node> range(std::vector<Node>, int, int);
-template std::vector<Node> cat(std::vector<Node>,std::vector<Node>);
-template std::vector<Facet> cat(std::vector<Facet>,std::vector<Facet>);
-template std::vector<Node> rmEl(std::vector<Node>, int);
+// SORTS VECTOR IN REVERSE ORDER  ---------------------------------------------------------------------
+template<class T>
+void revSort(std::vector<T*> u){
+    int N = (int)u.size();
+    T* temp;
+    for(int i = N; i > 0; i--){
+        for(int j = 0; j < i-1; j++){
+            if( *u[j] < *u[j+1] ){
+                temp = u[j+1];
+                u[j+1] = u[j];
+                u[j] = temp;
+            }
+        }
+    }
+}//----------------------------------------------------------------------------------------------------
 
+// FORWARD DECLARATIONS FOR TEMPLATE INSTANTIATION
+template std::vector<Node*> range(std::vector<Node*>, int, int);
+template std::vector<Node*> cat(std::vector<Node*>,std::vector<Node*>);
+template std::vector<Facet*> cat(std::vector<Facet*>,std::vector<Facet*>);
+template std::vector<Node*> rmEl(std::vector<Node*>, int);
+template void revSort(std::vector<Node*>);
 

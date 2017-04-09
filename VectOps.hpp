@@ -16,15 +16,17 @@ std::vector<double> scale(std::vector<double> u, double c);
 std::vector<double> vectPow(std::vector<double> u, double p);
 
 template<class T>
-std::vector<T> range(std::vector<T> u, int min, int max);
+std::vector<T*> range(std::vector<T*> u, int min, int max);
 
 template<class T>
-std::vector<T> subind(std::vector<T> u, std::vector<int> inds);
+std::vector<T*> subind(std::vector<T*> u, std::vector<int> inds);
 
 template<class T>
-std::vector<T> cat(std::vector<T> u, std::vector<T> v);
+std::vector<T*> cat(std::vector<T*> u, std::vector<T*> v);
 
 template<class T>
-std::vector<T> rmEl(std::vector<T> u, int ind2rm);
+std::vector<T*> rmEl(std::vector<T*> u, int ind2rm);
 
+template<class T>
+void revSort(std::vector<T*> u);
 #endif

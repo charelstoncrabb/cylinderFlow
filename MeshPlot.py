@@ -5,9 +5,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 class node:
-	id = 0
-	x = 0
-	y = 0
+	id = -1
+	x = -1
+	y = -1
 	adj = []
 
 def openOutfile():
@@ -25,6 +25,11 @@ def openOutfile():
 			print "ERROR IN openOutfile(): file FirstMesh.out not found!"
 			return 0
 
+def findIndByID(nodes,ID):
+	for i in range(0,len(nodes)):
+		if nodes[i].id == ID:
+			return i
+
 # Main function:
 if __name__ == "__main__":
 	meshOut = openOutfile()
@@ -41,12 +46,23 @@ if __name__ == "__main__":
 			for i in range(3,len(nodedata)-1):
 				n.adj.append(int(nodedata[i]))
 			nodes.append(n)
+		maxX = -1
+		maxY = -1
 		for nd in nodes:
 			print nd.id, nd.x, nd.y, nd.adj
+			if nd.x > maxX:
+				maxX = nd.x
+			if nd.y > maxY:
+				maxY = nd.y
+			plt.plot(nd.x,nd.y,'bs')
 			for adjnode in nd.adj:
-				plt.plot([nd.x, nodes[adjnode-1].x],[nd.y, nodes[adjnode-1].y], 'k')
-		plt.xlim([-1,3])
-		plt.ylim([-1,3])
+				plt.plot([nd.x, nodes[findIndByID(nodes,adjnode)].x],[nd.y, nodes[findIndByID(nodes,adjnode)].y], 'k')
+		plt.xlim([-1,maxX+1])
+		plt.ylim([-1,maxY+1])
 		plt.show()
 	else:
 		print "ERROR IN main(): unable to open mesh output file!"
+
+
+
+

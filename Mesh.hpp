@@ -17,23 +17,27 @@ class Facet;
 class Mesh{
 public:
     Mesh(std::string meshDataFilename);
+    ~Mesh();
     void writeMesh(std::string meshOutFile = "Mesh.out");
     Mesh operator=(const Mesh& rhs);
 private:
     Mesh(){};
-    Mesh(std::vector<Node> nodes, std::vector<Facet> facets);
-    Mesh(std::vector<Node> nodes);
+    Mesh(std::vector<Node*> nodes, std::vector<Facet*> facets);
+    Mesh(std::vector<Node*> nodes);
+    void cleanUp();
     void parseMeshData(std::string meshDataFilename);
     void triangulate(void);
-    void mergeMeshes(Mesh leftMesh, Mesh rightMesh);
+    void setSubmeshAdjacency(const Mesh* submesh);
+    void mergeMeshes(const Mesh* leftSubMesh, const Mesh* rightSubMesh);
     int findLeftBaseNode(void);
     int findRightBaseNode(void);
     void setEdges(std::vector<Node*> nodes);
     void rmEdges(std::vector<Node*> nodes);
     void sortNodeList(void);
+    std::vector<int> isAdjacent(Node a, Node b);
     // Data members
-    std::vector<Node> nodeList;
-    std::vector<Facet> facetList;
+    std::vector<Node*> nodeList;
+    std::vector<Facet*> facetList;
 };
 
 class Node{
@@ -42,34 +46,32 @@ public:
     Node(int ID, double x, double y);
     std::vector<double> getLoc(void){return loc;};
     void setNode(int ID, double x, double y);
-    double calcAngle(Node P, Node Q);
+    double calcAngle(Node P, Node Q, std::string orientation = "ccw");
     bool isInCirc(Node A, Node B, Node C);
-    std::vector<int> ordCandList(Node node);
+    std::vector<int> ordCandList(Node* node, std::string orientation = "ccw");
     bool isAdjacent(Node node);
-    int findIndByID(std::vector<Node> nodes);
-    Node operator=(Node& rhs);
-    bool operator<(Node& rhs);
+    int findIndByID(std::vector<Node*> nodes);
+//    void operator=(Node& rhs);
+    bool operator<(Node& rhs) const;
 private:
-    
-    
     int nodeID;
     std::vector<double> loc;
-    std::vector<Node> adjacent;
+    std::vector<Node*> adjacent;
     
     friend class Mesh;
 };
 
 class Facet{
 public:
-    Facet(){};
-    Facet(std::vector<Node> nodeList);
+    Facet(double a):area(a){};
+    Facet(std::vector<Node*> nodeList);
     double getArea(void){return area;};
-    Facet operator=(Facet& rhs);
+//    Facet operator=(Facet& rhs);
 private:
     double area;
-    std::vector<Node> nodes;
-    std::vector<Facet> adjacent;
+    std::vector<Node*> nodes;
+    std::vector<Facet*> adjacent;
     
-    friend class Facet;
+    friend class Mesh;
 };
 #endif /* Mesh_h */
