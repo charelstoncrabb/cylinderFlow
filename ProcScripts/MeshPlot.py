@@ -49,7 +49,7 @@ if __name__ == "__main__":
 		maxX = -1
 		maxY = -1
 		for nd in nodes:
-			print nd.id, nd.x, nd.y, nd.adj
+			#print nd.id, nd.x, nd.y, nd.adj
 			if nd.x > maxX:
 				maxX = nd.x
 			if nd.y > maxY:
@@ -59,6 +59,7 @@ if __name__ == "__main__":
 				plt.plot([nd.x, nodes[findIndByID(nodes,adjnode)].x],[nd.y, nodes[findIndByID(nodes,adjnode)].y], 'k')
 		plt.xlim([-1,maxX+1])
 		plt.ylim([-1,maxY+1])
+		plt.title(sys.argv[1] + ': ' + str(len(nodes)) + ' nodes')
 		plt.show()
 	else:
 		print "ERROR IN main(): unable to open mesh output file!"
