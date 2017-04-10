@@ -59,13 +59,6 @@ Mesh::~Mesh(){
             delete facetList[i];
 }
 
-// ASSIGNMENT OPERATOR  -------------------------------------------------------------------------------
-//Mesh Mesh::operator=(const Mesh& rhs){
-//    nodeList = rhs.nodeList;
-//    facetList = rhs.facetList;
-//    return *this;
-//}//----------------------------------------------------------------------------------------------------
-
 // PARSES MESH .DAT FILE FOR MESH NODES  --------------------------------------------------------------
 void Mesh::parseMeshData(std::string meshDataFilename){
     std::ifstream meshData(meshDataFilename);
@@ -148,6 +141,7 @@ void Mesh::mergeMeshes(const Mesh* leftSubMesh, const Mesh* rightSubMesh){
     //   2. Is left candidate outside base-right cand. circumcircle?
     //   If yes to 1., create left candidate-right base edge, and set this edge as new base edge
     //   If yes to 2., create right candidate-left base edge, and set this edge as new base edge
+// TODO: Clean up code a bit
     int leftBaseInd = leftMesh.findLeftBaseNode(), rightBaseInd = rightMesh.findRightBaseNode();
     Node* leftBase = leftMesh.nodeList[leftBaseInd];
     Node* rightBase = rightMesh.nodeList[rightBaseInd];
@@ -187,6 +181,7 @@ void Mesh::mergeMeshes(const Mesh* leftSubMesh, const Mesh* rightSubMesh){
             }else{
 //                rmEdges({leftBase,leftBase->adjacent[potLtCandInds[itr]]});
                 rmEdges({nodeList[leftBase->findIndByID(nodeList)],nodeList[ leftBase->adjacent[potLtCandInds[itr]]->findIndByID(nodeList)]});
+// TODO: Figure out how to handle facet deletion when an edge is removed
                 potLtCandInds.erase(potLtCandInds.begin() + itr);
 //                itr++;
             }
@@ -298,7 +293,7 @@ void Mesh::sortNodeList(void){
     }
 }//----------------------------------------------------------------------------------------------------
 
-// RETURNS INDICES OF NODES a,b IF THEY ARE ADJACENT IN this MESH
+// RETURNS INDICES OF NODES a,b IF THEY ARE ADJACENT IN this MESH  ------------------------------------
 std::vector<int> Mesh::isAdjacent(Node a, Node b){
     std::vector<int> inds;
     int aN = (int)a.adjacent.size(), bN = (int)b.adjacent.size();
@@ -326,7 +321,7 @@ void Node::setNode(int ID, double x, double y){
 //    nodeID = ID;
 //    loc[0] = x;
 //    loc[1] = y;
-    std::cout << "ERROR: setNode() method is depracated!" << std::endl;
+    std::cout << "ERROR: setNode() method is deprecated!" << std::endl;
 }//----------------------------------------------------------------------------------------------------
 
 // RETURNS ANGLE BETWEEN LINE SEGMENTS this-P AND this-Q  ---------------------------------------------
@@ -372,7 +367,7 @@ std::vector<int> Node::ordCandList(Node* node, std::string orientation){
         if( orientation == "ccw" )
             angles[i] = calcAngle(*node,*adjacent[i],orientation);
     }
-    
+// TODO: play with tolerance to nail down the "best"
     double theta1 = acos(-1), theta2 = -1, tol = 1e-5;
     for(int i = 0; i < N; i++){
         for(int j = 0; j < N; j++){

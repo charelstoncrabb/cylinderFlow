@@ -74,4 +74,6 @@ private:
     
     friend class Mesh;
 };
+
+//TODO: Possibly make edge class to ease communication between nodes and facets?
 #endif /* Mesh_h */
