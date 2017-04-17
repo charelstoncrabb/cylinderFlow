@@ -4,6 +4,9 @@ import sys
 import numpy as np
 import matplotlib.pyplot as plt
 
+helpDict = {}
+helpDict['h'] = 'MeshPlot.py:\nPlots the mesh defined in the output file.\nsyntax: \"./MeshPlot.py <output file>\"'
+
 class node:
 	id = -1
 	x = -1
@@ -12,11 +15,16 @@ class node:
 
 def openOutfile():
 	if len(sys.argv) > 1:
-		if os.path.isfile(sys.argv[1]):
-			return open(sys.argv[1])
-		else:
-			print "ERROR in openOutfile(): file ", sys.argv[1], " not found!"
+		if sys.argv[1][0] == '-':
+			if sys.argv[1][1] in helpDict:
+				print '\n' + helpDict[sys.argv[1][1]] + '\n'
 			return 0
+		else:
+			if os.path.isfile(sys.argv[1]):
+				return open(sys.argv[1])
+			else:
+				print "ERROR in openOutfile(): file ", sys.argv[1], " not found!"
+				return 0
 	else:
 		if os.path.isfile("FirstMesh.out"):
 			print "Warning: using default file FirstMesh.out."
@@ -36,7 +44,9 @@ if __name__ == "__main__":
 	if meshOut:
 		nodes = []
 		header = meshOut.readline()
-		for line in meshOut:
+		header = meshOut.readline()
+		line = meshOut.readline()
+		while len(line) > 1:
 			n = node()
 			n.adj = []
 			nodedata = line.split(' ')
@@ -46,6 +56,7 @@ if __name__ == "__main__":
 			for i in range(3,len(nodedata)-1):
 				n.adj.append(int(nodedata[i]))
 			nodes.append(n)
+			line = meshOut.readline()
 		maxX = -1
 		maxY = -1
 		for nd in nodes:
@@ -61,9 +72,3 @@ if __name__ == "__main__":
 		plt.ylim([-1,maxY+1])
 		plt.title(sys.argv[1] + ': ' + str(len(nodes)) + ' nodes')
 		plt.show()
-	else:
-		print "ERROR IN main(): unable to open mesh output file!"
-
-
-
-

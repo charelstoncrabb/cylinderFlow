@@ -10,6 +10,16 @@
 
 #ifndef Mesh_h
 #define Mesh_h
+template<class T>
+class classInstanceCounter{
+public:
+    classInstanceCounter(){ciCounter++;};
+protected:
+    static int ciCounter;
+};
+
+template<class T>
+int classInstanceCounter<T>::ciCounter = 0;
 
 class Node; //Forward declarations
 class Facet;
@@ -29,15 +39,18 @@ private:
     void triangulate(void);
     void setSubmeshAdjacency(const Mesh* submesh);
     void mergeMeshes(const Mesh* leftSubMesh, const Mesh* rightSubMesh);
-    int findLeftBaseNode(void);
-    int findRightBaseNode(void);
+    std::vector<int> findBaseIndices(const Mesh* leftMesh, const Mesh* rightMesh);
+    int findLeftBaseNode(void) const;
+    int findRightBaseNode(void) const;
     void setEdges(std::vector<Node*> nodes);
     void rmEdges(std::vector<Node*> nodes);
     void sortNodeList(void);
     std::vector<int> isAdjacent(Node a, Node b);
+    bool areColinear(Node a, Node b, Node c);
     // Data members
     std::vector<Node*> nodeList;
     std::vector<Facet*> facetList;
+    std::stringstream output;
 };
 
 class Node{
@@ -61,13 +74,15 @@ private:
     friend class Mesh;
 };
 
-class Facet{
+class Facet : public classInstanceCounter<Facet>{
 public:
-    Facet(double a):area(a){};
+    Facet(double a): ID(ciCounter+1) ,area(a){};
     Facet(std::vector<Node*> nodeList);
+    ~Facet(){ciCounter--;};
     double getArea(void){return area;};
 //    Facet operator=(Facet& rhs);
 private:
+    const int ID;
     double area;
     std::vector<Node*> nodes;
     std::vector<Facet*> adjacent;

@@ -1,5 +1,5 @@
 CPP = g++
-CFLAGS  = -g -Wall -std=c++11
+CFLAGS  = -g -O3 -Wall -std=c++11
 
 default: mat
 

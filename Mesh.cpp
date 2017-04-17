@@ -18,7 +18,9 @@ Mesh::Mesh(std::string meshDataFilename){
 // WRITES MESH DATA TO OUTPUT FILE  -------------------------------------------------------------------
 void Mesh::writeMesh(std::string meshOutFile){
     std::fstream outfile(meshOutFile,std::fstream::out | std::fstream::trunc);
-    outfile << "ID X Y ADJ" << std::endl;
+    std::fstream mainOut("Meshing.out",std::fstream::out | std::fstream::trunc);
+    mainOut << output.str();
+    outfile << "NODE DATA:" << std::endl << "ID X Y ADJ" << std::endl;
     for(int i = 0; i < nodeList.size(); i++){
         outfile << nodeList[i]->nodeID << " " << nodeList[i]->loc[0] << " " << nodeList[i]->loc[1] << " ";
         for(int j = 0; j < nodeList[i]->adjacent.size(); j++){
@@ -26,6 +28,12 @@ void Mesh::writeMesh(std::string meshOutFile){
         }
         outfile << std::endl;
     }
+    outfile << std::endl << std::endl << "FACET DATA:" << std::endl;
+    for(int i = 0; i < facetList.size(); i++){
+        outfile << facetList[i]->ID << " " << facetList[i]->area << " " << facetList[i]->nodes[0]->nodeID << " " << facetList[i]->nodes[1]->nodeID << " "<< facetList[i]->nodes[2]->nodeID << std::endl;
+    }
+    outfile.close();
+    mainOut.close();
 }//----------------------------------------------------------------------------------------------------
 
 // PRIVATE CONSTRUCTOR CONSTRUCTS MESH GIVEN NODE/FACET LISTS (ALREADY TRIANGULATED) ------------------
@@ -88,9 +96,26 @@ void Mesh::triangulate(void){
         setEdges({nodeList[0],nodeList[1]});
     }
     else if( nodeList.size() == 3 ){
-        setEdges({nodeList[0],nodeList[1],nodeList[2]});
-        Facet* newFacet = new Facet(nodeList);
-        facetList.push_back(newFacet);
+        if( !areColinear(*nodeList[0],*nodeList[1],*nodeList[2]) )
+        {
+            setEdges({nodeList[0],nodeList[1],nodeList[2]});
+            Facet* newFacet = new Facet(nodeList);
+            facetList.push_back(newFacet);
+        }else{
+            bool _0lt1_ = *nodeList[0] < *nodeList[1], _0lt2_ = *nodeList[0] < *nodeList[2], _1lt2_ = *nodeList[1] < *nodeList[2];
+            if( (_0lt1_ && _1lt2_) || (!_0lt1_ && !_1lt2_) ){
+                setEdges({nodeList[0],nodeList[1]});
+                setEdges({nodeList[1],nodeList[2]});
+            }
+            if( (!_0lt1_ && _0lt2_) || (_0lt1_ && !_0lt2_) ){
+                setEdges({nodeList[0],nodeList[1]});
+                setEdges({nodeList[0],nodeList[2]});
+            }
+            if( (_0lt2_ && !_1lt2_) || (!_0lt2_ && _1lt2_) ){
+                setEdges({nodeList[2],nodeList[0]});
+                setEdges({nodeList[2],nodeList[1]});
+            }
+        }
     }else{
         int halfInd = (int)nodeList.size()/2-1;
         std::vector<Node*> leftNodeList = range<Node>(nodeList,0,halfInd);
@@ -121,88 +146,66 @@ void Mesh::setSubmeshAdjacency(const Mesh* submesh){
 void Mesh::mergeMeshes(const Mesh* leftSubMesh, const Mesh* rightSubMesh){
     bool noCandidate = false, rightCand = false, leftCand = false;
     Node *leftCandidate = NULL, *rightCandidate = NULL;
-//    nodeList = cat(leftSubMesh.nodeList,rightSubMesh.nodeList);
-//    facetList = cat(leftSubMesh.facetList,rightSubMesh.facetList);
-    Mesh leftMesh(leftSubMesh->nodeList), rightMesh(rightSubMesh->nodeList);
-    // Find bottom-most nodes from left and right meshes to create base LR edge
-    // Find a right candidate:
-    //   Potential candidate = Find right base endpoint-adjacent node with smallest angle to base LR edge
-    //   Check two criteria:
-    //     1. Is the angle less than 180deg?
-    //     2. Does the next candidate (next smallest angle to base LR edge) lie outside the circumcirle
-    //        of the base LR edge endpoints and the potential candidate?
-    //   If yes to both, this is our left candidate and proceed
-    //   If no to 1., base right endpoint is candidate
-    //   If no to 2., delete edge from right base node to potential candidate,
-    //                potential candidate = next candidate, repeat checks
-    // Find a left candidate by same process
-    // With left/right candidates chosen,
-    //   1. Is right candidate outside base-left cand. circumcircle?
-    //   2. Is left candidate outside base-right cand. circumcircle?
-    //   If yes to 1., create left candidate-right base edge, and set this edge as new base edge
-    //   If yes to 2., create right candidate-left base edge, and set this edge as new base edge
-// TODO: Clean up code a bit
-    int leftBaseInd = leftMesh.findLeftBaseNode(), rightBaseInd = rightMesh.findRightBaseNode();
-    Node* leftBase = leftMesh.nodeList[leftBaseInd];
-    Node* rightBase = rightMesh.nodeList[rightBaseInd];
+    std::vector<int> baseNodeIndices = findBaseIndices(leftSubMesh,rightSubMesh);
+    int leftBaseInd = baseNodeIndices[0], rightBaseInd = baseNodeIndices[1];
+    Node* leftBase = leftSubMesh->nodeList[leftBaseInd];
+    Node* rightBase = rightSubMesh->nodeList[rightBaseInd];
     leftBaseInd = leftBase->findIndByID(nodeList); rightBaseInd = rightBase->findIndByID(nodeList);
     setEdges({nodeList[leftBaseInd],nodeList[rightBaseInd]});
-    leftBaseInd = leftMesh.findLeftBaseNode(); rightBaseInd = rightMesh.findRightBaseNode();
     while( noCandidate == false ){
-        int itr = 0;
         rightCand = false;
-        std::vector<int> potRtCandInds = rightBase->ordCandList(leftBase,"cw");
-        std::vector<int> potLtCandInds = leftBase->ordCandList(rightBase,"ccw");
-        while( rightCand == false && /*itr*/0 < potRtCandInds.size() ){
+        std::vector<int> potRtCandInds = {};
+        std::vector<int> potLtCandInds = {};
+        potRtCandInds = rightBase->ordCandList(leftBase,"cw");
+        potLtCandInds = leftBase->ordCandList(rightBase,"ccw");
+        while( rightCand == false && 0 < potRtCandInds.size() ){
             if( potRtCandInds.size() == 1 ){
-                rightCandidate = rightBase->adjacent[potRtCandInds[itr]];
+                rightCandidate = rightBase->adjacent[potRtCandInds[0]];
                 rightCand = true;
             }else if( potRtCandInds.size() >= 2 &&
-                     !rightBase->adjacent[potRtCandInds[itr+1]]->isInCirc(*leftBase,*rightBase,*rightBase->adjacent[potRtCandInds[itr]]) ){
-                rightCandidate = rightBase->adjacent[potRtCandInds[itr]];
+                     !rightBase->adjacent[potRtCandInds[1]]->isInCirc(*leftBase,*rightBase,*rightBase->adjacent[potRtCandInds[0]]) ){
+                rightCandidate = rightBase->adjacent[potRtCandInds[0]];
                 rightCand = true;
             }else{
-//                rmEdges({rightBase,rightBase->adjacent[potRtCandInds[itr]]});
-                rmEdges({nodeList[rightBase->findIndByID(nodeList)],nodeList[ rightBase->adjacent[potRtCandInds[itr]]->findIndByID(nodeList)]});
-                potRtCandInds.erase(potRtCandInds.begin() + itr);
-//                itr++;
+                rmEdges({nodeList[rightBase->findIndByID(nodeList)],nodeList[ rightBase->adjacent[potRtCandInds[0]]->findIndByID(nodeList)]});
+                potRtCandInds.erase(potRtCandInds.begin());
             }
         }
-        itr = 0;
         leftCand = false;
-        while( leftCand == false && /*itr*/0 < potLtCandInds.size() ){
+        while( leftCand == false && 0 < potLtCandInds.size() ){
             if( potLtCandInds.size() == 1 ){
-                leftCandidate = leftBase->adjacent[potLtCandInds[itr]];
+                leftCandidate = leftBase->adjacent[potLtCandInds[0]];
                 leftCand = true;
             }else if( potLtCandInds.size() >= 2 &&
-                     !leftBase->adjacent[potLtCandInds[itr+1]]->isInCirc(*rightBase,*leftBase,*leftBase->adjacent[potLtCandInds[itr]]) ){
-                leftCandidate = leftBase->adjacent[potLtCandInds[itr]];
+                     !leftBase->adjacent[potLtCandInds[1]]->isInCirc(*rightBase,*leftBase,*leftBase->adjacent[potLtCandInds[0]]) ){
+                leftCandidate = leftBase->adjacent[potLtCandInds[0]];
                 leftCand = true;
             }else{
-//                rmEdges({leftBase,leftBase->adjacent[potLtCandInds[itr]]});
-                rmEdges({nodeList[leftBase->findIndByID(nodeList)],nodeList[ leftBase->adjacent[potLtCandInds[itr]]->findIndByID(nodeList)]});
+                rmEdges({nodeList[leftBase->findIndByID(nodeList)],nodeList[ leftBase->adjacent[potLtCandInds[0]]->findIndByID(nodeList)]});
 // TODO: Figure out how to handle facet deletion when an edge is removed
-                potLtCandInds.erase(potLtCandInds.begin() + itr);
-//                itr++;
+                potLtCandInds.erase(potLtCandInds.begin());
             }
         }
         if( leftCand && rightCand ){
             bool isLtCandInRtCirc = leftCandidate->isInCirc(*leftBase,*rightBase,*rightCandidate);
             bool isRtCandInLtCirc = rightCandidate->isInCirc(*leftBase,*rightBase,*leftCandidate);
-            // TODO: check for co-circular points here if isLt/isRt are both true or both false
+            if( !isLtCandInRtCirc && !isRtCandInLtCirc  )
+                std::cout << "WARNING: Co-circular points found! (both cands outside)" << std::endl;
+            if( isLtCandInRtCirc && isRtCandInLtCirc )
+                std::cout << "WARNING: Co-circular points found! (both cands inside)" << std::endl;
             int ltBaseInd = leftBase->findIndByID(nodeList), rtBaseInd = rightBase->findIndByID(nodeList);
             if( isLtCandInRtCirc ){
                 int ltCandInd = leftCandidate->findIndByID(nodeList);
                 setEdges({nodeList[rtBaseInd],nodeList[ltCandInd]});
                 Facet *newFacet = new Facet({nodeList[ltBaseInd],nodeList[rtBaseInd],nodeList[ltCandInd]});
                 facetList.push_back(newFacet);
-                leftBase = leftMesh.nodeList[leftCandidate->findIndByID(leftMesh.nodeList)];
+                leftBase = leftSubMesh->nodeList[leftCandidate->findIndByID(leftSubMesh->nodeList)];
             }else if( isRtCandInLtCirc ){
                 int rtCandInd = rightCandidate->findIndByID(nodeList);
                 setEdges({nodeList[ltBaseInd],nodeList[rtCandInd]});
                 Facet *newFacet = new Facet({nodeList[ltBaseInd],nodeList[rtBaseInd],nodeList[rtCandInd]});
                 facetList.push_back(newFacet);
-                rightBase = rightMesh.nodeList[rightCandidate->findIndByID(rightMesh.nodeList)];
+                rightBase = rightSubMesh->nodeList[rightCandidate->findIndByID(rightSubMesh->nodeList)];
             }
         }else if( leftCand ){
             int ltBaseInd = leftBase->findIndByID(nodeList), rtBaseInd = rightBase->findIndByID(nodeList),
@@ -210,22 +213,40 @@ void Mesh::mergeMeshes(const Mesh* leftSubMesh, const Mesh* rightSubMesh){
             setEdges({nodeList[rtBaseInd],nodeList[ltCandInd]});
             Facet *newFacet = new Facet({nodeList[ltBaseInd],nodeList[rtBaseInd],nodeList[ltCandInd]});
             facetList.push_back(newFacet);
-            leftBase = leftMesh.nodeList[leftCandidate->findIndByID(leftMesh.nodeList)];
+            leftBase = leftSubMesh->nodeList[leftCandidate->findIndByID(leftSubMesh->nodeList)];
         }else if( rightCand ){
             int ltBaseInd = leftBase->findIndByID(nodeList), rtBaseInd = rightBase->findIndByID(nodeList),
                 rtCandInd = rightCandidate->findIndByID(nodeList);
             setEdges({nodeList[ltBaseInd],nodeList[rtCandInd]});
             Facet *newFacet = new Facet({nodeList[ltBaseInd],nodeList[rtBaseInd],nodeList[rtCandInd]});
             facetList.push_back(newFacet);
-            rightBase = rightMesh.nodeList[rightCandidate->findIndByID(rightMesh.nodeList)];
+            rightBase = rightSubMesh->nodeList[rightCandidate->findIndByID(rightSubMesh->nodeList)];
         }else{
             noCandidate = true;
         }
     }
 }//----------------------------------------------------------------------------------------------------
 
+// FINDS BASE NODES FOR LEFT AND RIGHT SUBMESHES  -----------------------------------------------------
+std::vector<int> Mesh::findBaseIndices(const Mesh* leftMesh, const Mesh* rightMesh){
+    int leftBaseInd = leftMesh->findLeftBaseNode(), rightBaseInd = rightMesh->findRightBaseNode();
+    int itr = 0;
+    if( leftMesh->nodeList[leftBaseInd]->loc[0] == rightMesh->nodeList[rightBaseInd]->loc[0] ){
+        while( itr < leftMesh->nodeList[leftBaseInd]->adjacent.size() ){
+            if( leftMesh->nodeList[leftBaseInd]->adjacent[itr]->loc[0] == rightMesh->nodeList[rightBaseInd]->loc[0]
+               && leftMesh->nodeList[leftBaseInd]->adjacent[itr]->loc[1] > leftMesh->nodeList[leftBaseInd]->loc[1] ){
+                leftBaseInd = leftMesh->nodeList[leftBaseInd]->adjacent[itr]->findIndByID(leftMesh->nodeList);
+                itr = 0;
+            }else{
+                itr++;
+            }
+        }
+
+    }
+    return {leftBaseInd,rightBaseInd};
+}
 // FINDS BASE NODE FOR LEFT SUBMESH  ------------------------------------------------------------------
-int Mesh::findLeftBaseNode(void){
+int Mesh::findLeftBaseNode(void) const{
     int baseInd = 0;
     for(int i = 0; i < nodeList.size(); i++){
         if( nodeList[i]->loc[1] < nodeList[baseInd]->loc[1] ){
@@ -240,7 +261,7 @@ int Mesh::findLeftBaseNode(void){
 }//----------------------------------------------------------------------------------------------------
 
 // FINDS BASE NODE FOR RIGHT SUBMESH  -----------------------------------------------------------------
-int Mesh::findRightBaseNode(void){
+int Mesh::findRightBaseNode(void) const{
     int baseInd = 0;
     for(int i = 0; i < nodeList.size(); i++){
         if( nodeList[i]->loc[1] < nodeList[baseInd]->loc[1] ){
@@ -261,6 +282,7 @@ void Mesh::setEdges(std::vector<Node*> nodes){
         for(int j = i+1; j < N; j++){
             nodes[i]->adjacent.push_back(nodes[j]);
             nodes[j]->adjacent.push_back(nodes[i]);
+            output << "Setting Edge: " << nodes[i]->nodeID << " <==> " << nodes[j]->nodeID << std::endl;
         }
     }
 }//----------------------------------------------------------------------------------------------------
@@ -273,6 +295,7 @@ void Mesh::rmEdges(std::vector<Node*> nodes){
             if( adj.size() > 0 ){
                 nodes[i]->adjacent.erase(nodes[i]->adjacent.begin() + nodes[j]->findIndByID(nodes[i]->adjacent));
                 nodes[j]->adjacent.erase(nodes[j]->adjacent.begin() + nodes[i]->findIndByID(nodes[j]->adjacent));
+                output << "Removing Edge: " << nodes[i]->nodeID << " <==> " << nodes[j]->nodeID << std::endl;
             }
         }
     }
@@ -308,6 +331,26 @@ std::vector<int> Mesh::isAdjacent(Node a, Node b){
     return inds;
 }//----------------------------------------------------------------------------------------------------
 
+// CHECKS IF THREE GIVEN NODES ARE CO-LINEAR  ---------------------------------------------------------
+bool Mesh::areColinear(Node a, Node b, Node c){
+    double tol = 1e-10;
+    if( a.loc[0] == b.loc[0] ){
+        if( a.loc[0] == c.loc[0] )
+            return true;
+        else{
+            double m = (c.loc[1]-a.loc[1])/(c.loc[0]-a.loc[0]);
+            if( fabs(b.loc[1] - (m*(b.loc[0]-a.loc[0])+a.loc[1])) < tol )
+                return true;
+        }
+    }else if( a.loc[1] == b.loc[1] && a.loc[1] == c.loc[1] ){
+        return true;
+    }else{
+        double m = (c.loc[1]-a.loc[1])/(c.loc[0]-a.loc[0]);
+        if( fabs(b.loc[1] - (m*(b.loc[0]-a.loc[0])+a.loc[1])) < tol )
+            return true;
+    }
+    return false;
+}
 // ========================  NODE CLASS MEMBERS  ======================================================
 // CONSTRUCTOR  ---------------------------------------------------------------------------------------
 Node::Node(int ID, double x, double y){
@@ -341,6 +384,7 @@ double Node::calcAngle(Node P, Node Q, std::string orientation){
 
 // DECIDES IF this IS INSIDE CIRCUMCIRCLE OF TRIANGLE ABC  --------------------------------------------
 bool Node::isInCirc(Node A, Node B, Node C){
+    double tol = 1e-20;
     double y0 = (pow(A.loc[0],2) - pow(C.loc[0],2) + pow(A.loc[1],2) - pow(C.loc[1],2) -
                 ((A.loc[0]-C.loc[0])*(pow(A.loc[0],2) - pow(B.loc[0],2) + pow(A.loc[1],2)
                 - pow(B.loc[1],2)))/(A.loc[0]-B.loc[0]) )/(2*(A.loc[1]-C.loc[1]
@@ -348,7 +392,7 @@ bool Node::isInCirc(Node A, Node B, Node C){
     double x0 = (pow(A.loc[0],2) - pow(B.loc[0],2) + pow(A.loc[1],2) - pow(B.loc[1],2))
                 /(2*(A.loc[0]-B.loc[0])) - ((A.loc[1]-B.loc[1])/(A.loc[0]-B.loc[0]))*y0;
     double r = pow(pow(A.loc[0]-x0,2)+pow(A.loc[1]-y0,2),0.5);
-    if( pow(pow(loc[0]-x0,2)+pow(loc[1]-y0,2),0.5) > r ){
+    if( pow(pow(loc[0]-x0,2)+pow(loc[1]-y0,2),0.5) > r-tol ){
         return false;
     }else{
         return true;
@@ -367,7 +411,6 @@ std::vector<int> Node::ordCandList(Node* node, std::string orientation){
         if( orientation == "ccw" )
             angles[i] = calcAngle(*node,*adjacent[i],orientation);
     }
-// TODO: play with tolerance to nail down the "best"
     double theta1 = acos(-1), theta2 = -1, tol = 1e-5;
     for(int i = 0; i < N; i++){
         for(int j = 0; j < N; j++){
@@ -422,7 +465,7 @@ bool Node::operator<(Node& rhs) const {
 }//----------------------------------------------------------------------------------------------------
 
 // =======================  FACET CLASS MEMBERS  ======================================================
-Facet::Facet(std::vector<Node*> nodeList) : nodes(nodeList){
+Facet::Facet(std::vector<Node*> nodeList) : ID(ciCounter+1), nodes(nodeList){
     if( nodeList.size() == 3 ){
         std::vector<double> node1Loc = nodes[0]->getLoc(), node2Loc = nodes[1]->getLoc(),
             node3Loc = nodes[2]->getLoc();

@@ -22,5 +22,6 @@ int main(int argc, const char * argv[]) {
         std::strcat(plotScript, " &");
         system(plotScript);
     }
+    delete myFirstMesh;
     return 1;
 }
