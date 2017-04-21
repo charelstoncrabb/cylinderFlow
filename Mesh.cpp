@@ -10,9 +10,24 @@
 
 // ========================  MESH CLASS MEMBERS  ======================================================
 // CONSTRUCTOR - USES NODE LOCATIONS FROM meshDataFilename  -------------------------------------------
-Mesh::Mesh(std::string meshDataFilename){
+Mesh::Mesh(std::string meshDataFilename, bool rotFlag) : rotateFlag(rotFlag){
+    double theta = 0.1;
+    Matrix rot(2,2,{cos(theta),-sin(theta),sin(theta),cos(theta)}), rotInv(2,2,{cos(theta),sin(theta),-sin(theta),cos(theta)});
+    rotation = rot;
     parseMeshData(meshDataFilename);
+    if( rotateFlag ){
+        for(int i = 0; i < nodeList.size(); i++){
+            nodeList[i]->loc = rotation*nodeList[i]->loc;
+        }
+    }
+    writeMesh("rotated.out");
     triangulate();
+    
+    if( rotateFlag ){
+        for(int i = 0; i < nodeList.size(); i++){
+            nodeList[i]->loc = rotInv*nodeList[i]->loc;
+        }
+    }
 }//----------------------------------------------------------------------------------------------------
 
 // WRITES MESH DATA TO OUTPUT FILE  -------------------------------------------------------------------
@@ -182,7 +197,6 @@ void Mesh::mergeMeshes(const Mesh* leftSubMesh, const Mesh* rightSubMesh){
                 leftCand = true;
             }else{
                 rmEdges({nodeList[leftBase->findIndByID(nodeList)],nodeList[ leftBase->adjacent[potLtCandInds[0]]->findIndByID(nodeList)]});
-// TODO: Figure out how to handle facet deletion when an edge is removed
                 potLtCandInds.erase(potLtCandInds.begin());
             }
         }

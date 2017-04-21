@@ -7,6 +7,7 @@
 //
 #include "Includes.hpp"
 #include "VectOps.hpp"
+#include "Matrix.hpp"
 
 #ifndef Mesh_h
 #define Mesh_h
@@ -26,7 +27,7 @@ class Facet;
 
 class Mesh{
 public:
-    Mesh(std::string meshDataFilename);
+    Mesh(std::string meshDataFilename, bool rotFlag = false);
     ~Mesh();
     void writeMesh(std::string meshOutFile = "Mesh.out");
     Mesh operator=(const Mesh& rhs);
@@ -51,6 +52,8 @@ private:
     std::vector<Node*> nodeList;
     std::vector<Facet*> facetList;
     std::stringstream output;
+    bool rotateFlag;
+    Matrix rotation;
 };
 
 class Node{

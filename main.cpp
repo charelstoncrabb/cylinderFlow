@@ -12,7 +12,7 @@
 
 
 int main(int argc, const char * argv[]) {
-// TODO: Add options module (e.g., --help, -i FirstMesh.dat, -o FirstMesh.out, etc...)
+// TODO: Add options module (e.g., --help, -i FirstMesh.dat, -o FirstMesh.out, -rotate=off, etc...)
     char plotScript[100];
     strcpy(plotScript, "./ProcScripts/MeshPlot.py ");
     Mesh *myFirstMesh = new Mesh(argv[1]);

@@ -1,10 +1,10 @@
 CPP = g++
 CFLAGS  = -g -O3 -Wall -std=c++11
 
-default: mat
+default: dtmesh
 
-mat: main.o Matrix.o Math.o Mesh.o VectOps.o
-	$(CPP) $(CFLAGS) -o mat main.o Matrix.o Math.o Mesh.o VectOps.o
+dtmesh: main.o Matrix.o Math.o Mesh.o VectOps.o
+	$(CPP) $(CFLAGS) -o dtmesh main.o Matrix.o Math.o Mesh.o VectOps.o
 
 main.o: main.cpp
 	$(CPP) $(CFLAGS) -c main.cpp Matrix.hpp
@@ -22,4 +22,4 @@ VectOps.o: VectOps.cpp VectOps.hpp
 	$(CPP) $(CFLAGS) -c VectOps.cpp
 
 clean:
-	$(RM) mat *.o *~ *.gch *.out
+	$(RM) dtmesh *.o *~ *.gch *.out

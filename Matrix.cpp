@@ -67,6 +67,12 @@ Matrix compMat(std::vector<double> coefficients){
 	}
 }//----------------------------------------------------------------------------------------------------
 
+// BUILDS A PLANAR ROTATION MATRIX WITH ANGLE theta  --------------------------------------------------
+Matrix rotMat(double theta){
+	Matrix rotation(2,2,{cos(theta),-sin(theta),sin(theta),cos(theta)});
+	return rotation;
+}
+
 // BUILDS AN INDEXING VECTOR IND = {1,2,...,n}  -------------------------------------------------------
 std::vector<int> indexVect(int n){
 	std::vector<int> iv(n);
@@ -545,9 +551,27 @@ Matrix Matrix::operator*(const Matrix& b){
         return prod;
     }else{
         Matrix err(0,0);
-        std::cout << "ERROR in *: dimension mismatch!" << std::endl;
+        std::cout << "ERROR in A*B: dimension mismatch!" << std::endl;
 		return err;
     }
+}//----------------------------------------------------------------------------------------------------
+
+// PERFORMS THE MATRIX-VECTOR MULTIPLICATION A*x  -----------------------------------------------------
+std::vector<double> Matrix::operator*(const std::vector<double> x){
+	std::vector<double> result(numRows);
+	if(x.size() != numCols){
+		std::cout << "ERROR in A*x: dimension mismatch!" << std::endl;
+		return {};
+	}else{
+		for(int i = 0; i < numRows; i++){
+			double rowDot = 0;
+			for(int j = 0; j < numCols; j++){
+				rowDot += entries[i*numCols+j]*x[j];
+			}
+			result[i] = rowDot;
+		}
+		return result;
+	}
 }//----------------------------------------------------------------------------------------------------
 
 // LOGICAL ==  ----------------------------------------------------------------------------------------
@@ -563,6 +587,8 @@ bool Matrix::operator==(const Matrix& b){
     }
     return true;
 }//----------------------------------------------------------------------------------------------------
+
+// TODO: write overloaded ^ for inverting matrix
 
 // ================================= MISCELLANEOUS FUNCTIONS ==========================================
 

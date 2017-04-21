@@ -57,18 +57,24 @@ if __name__ == "__main__":
 				n.adj.append(int(nodedata[i]))
 			nodes.append(n)
 			line = meshOut.readline()
+		minX = 99999
 		maxX = -1
+		minY = 99999
 		maxY = -1
 		for nd in nodes:
 			#print nd.id, nd.x, nd.y, nd.adj
+			if nd.x < minX:
+				minX = nd.x
 			if nd.x > maxX:
 				maxX = nd.x
+			if nd.y < minY:
+				minY = nd.y
 			if nd.y > maxY:
 				maxY = nd.y
 			plt.plot(nd.x,nd.y,'bs')
 			for adjnode in nd.adj:
 				plt.plot([nd.x, nodes[findIndByID(nodes,adjnode)].x],[nd.y, nodes[findIndByID(nodes,adjnode)].y], 'k')
-		plt.xlim([-1,maxX+1])
-		plt.ylim([-1,maxY+1])
+		plt.xlim([minX-1,maxX+1])
+		plt.ylim([minY-1,maxY+1])
 		plt.title(sys.argv[1] + ': ' + str(len(nodes)) + ' nodes')
 		plt.show()

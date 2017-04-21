@@ -36,6 +36,7 @@ public:
     Matrix operator+(const Matrix& b);
     Matrix operator-(const Matrix& b);
     Matrix operator*(const Matrix& b);
+    std::vector<double> operator*(const std::vector<double> x);
     bool operator==(const Matrix& b);
     double operator[](const int ij);
     
