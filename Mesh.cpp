@@ -22,7 +22,6 @@ Mesh::Mesh(std::string meshDataFilename, bool rotFlag) : rotateFlag(rotFlag){
     }
     writeMesh("rotated.out");
     triangulate();
-    
     if( rotateFlag ){
         for(int i = 0; i < nodeList.size(); i++){
             nodeList[i]->loc = rotInv*nodeList[i]->loc;
@@ -114,8 +113,6 @@ void Mesh::triangulate(void){
         if( !areColinear(*nodeList[0],*nodeList[1],*nodeList[2]) )
         {
             setEdges({nodeList[0],nodeList[1],nodeList[2]});
-            Facet* newFacet = new Facet(nodeList);
-            facetList.push_back(newFacet);
         }else{
             bool _0lt1_ = *nodeList[0] < *nodeList[1], _0lt2_ = *nodeList[0] < *nodeList[2], _1lt2_ = *nodeList[1] < *nodeList[2];
             if( (_0lt1_ && _1lt2_) || (!_0lt1_ && !_1lt2_) ){
@@ -132,6 +129,7 @@ void Mesh::triangulate(void){
             }
         }
     }else{
+// TODO: Choose more intelligent division for conquering. E.g., divide into thirds if a base 3 #nodes, etc...
         int halfInd = (int)nodeList.size()/2-1;
         std::vector<Node*> leftNodeList = range<Node>(nodeList,0,halfInd);
         std::vector<Node*> rightNodeList = range<Node>(nodeList,halfInd+1,(int)nodeList.size()-1);
@@ -204,36 +202,26 @@ void Mesh::mergeMeshes(const Mesh* leftSubMesh, const Mesh* rightSubMesh){
             bool isLtCandInRtCirc = leftCandidate->isInCirc(*leftBase,*rightBase,*rightCandidate);
             bool isRtCandInLtCirc = rightCandidate->isInCirc(*leftBase,*rightBase,*leftCandidate);
             if( !isLtCandInRtCirc && !isRtCandInLtCirc  )
-                std::cout << "WARNING: Co-circular points found! (both cands outside)" << std::endl;
+//                std::cout << "WARNING: Co-circular points found! (both cands outside)" << std::endl;
             if( isLtCandInRtCirc && isRtCandInLtCirc )
-                std::cout << "WARNING: Co-circular points found! (both cands inside)" << std::endl;
-            int ltBaseInd = leftBase->findIndByID(nodeList), rtBaseInd = rightBase->findIndByID(nodeList);
+//                std::cout << "WARNING: Co-circular points found! (both cands inside)" << std::endl;
             if( isLtCandInRtCirc ){
-                int ltCandInd = leftCandidate->findIndByID(nodeList);
+                int ltCandInd = leftCandidate->findIndByID(nodeList), rtBaseInd = rightBase->findIndByID(nodeList);
                 setEdges({nodeList[rtBaseInd],nodeList[ltCandInd]});
-                Facet *newFacet = new Facet({nodeList[ltBaseInd],nodeList[rtBaseInd],nodeList[ltCandInd]});
-                facetList.push_back(newFacet);
                 leftBase = leftSubMesh->nodeList[leftCandidate->findIndByID(leftSubMesh->nodeList)];
-            }else if( isRtCandInLtCirc ){
-                int rtCandInd = rightCandidate->findIndByID(nodeList);
+            }
+            if( isRtCandInLtCirc ){
+                int rtCandInd = rightCandidate->findIndByID(nodeList), ltBaseInd = leftBase->findIndByID(nodeList);
                 setEdges({nodeList[ltBaseInd],nodeList[rtCandInd]});
-                Facet *newFacet = new Facet({nodeList[ltBaseInd],nodeList[rtBaseInd],nodeList[rtCandInd]});
-                facetList.push_back(newFacet);
                 rightBase = rightSubMesh->nodeList[rightCandidate->findIndByID(rightSubMesh->nodeList)];
             }
         }else if( leftCand ){
-            int ltBaseInd = leftBase->findIndByID(nodeList), rtBaseInd = rightBase->findIndByID(nodeList),
-                ltCandInd = leftCandidate->findIndByID(nodeList);
+            int rtBaseInd = rightBase->findIndByID(nodeList), ltCandInd = leftCandidate->findIndByID(nodeList);
             setEdges({nodeList[rtBaseInd],nodeList[ltCandInd]});
-            Facet *newFacet = new Facet({nodeList[ltBaseInd],nodeList[rtBaseInd],nodeList[ltCandInd]});
-            facetList.push_back(newFacet);
             leftBase = leftSubMesh->nodeList[leftCandidate->findIndByID(leftSubMesh->nodeList)];
         }else if( rightCand ){
-            int ltBaseInd = leftBase->findIndByID(nodeList), rtBaseInd = rightBase->findIndByID(nodeList),
-                rtCandInd = rightCandidate->findIndByID(nodeList);
+            int ltBaseInd = leftBase->findIndByID(nodeList), rtCandInd = rightCandidate->findIndByID(nodeList);
             setEdges({nodeList[ltBaseInd],nodeList[rtCandInd]});
-            Facet *newFacet = new Facet({nodeList[ltBaseInd],nodeList[rtBaseInd],nodeList[rtCandInd]});
-            facetList.push_back(newFacet);
             rightBase = rightSubMesh->nodeList[rightCandidate->findIndByID(rightSubMesh->nodeList)];
         }else{
             noCandidate = true;
@@ -483,20 +471,13 @@ Facet::Facet(std::vector<Node*> nodeList) : ID(ciCounter+1), nodes(nodeList){
     if( nodeList.size() == 3 ){
         std::vector<double> node1Loc = nodes[0]->getLoc(), node2Loc = nodes[1]->getLoc(),
             node3Loc = nodes[2]->getLoc();
-        std::vector<double> matArray = { node2Loc[0]-node1Loc[0], node2Loc[1]-node1Loc[1],
-            node3Loc[0]-node1Loc[0], node3Loc[1]-node1Loc[1]};
-        area = fabs(matArray[0]*matArray[3]-matArray[1]*matArray[2])/2.0;
+        Matrix matArray(2,2,{ node2Loc[0]-node1Loc[0], node2Loc[1]-node1Loc[1],
+            node3Loc[0]-node1Loc[0], node3Loc[1]-node1Loc[1]});
+        area = fabs(matArray.det())/2.0;
     }else{
         area = 0;
         std::cout << "WARNING IN Facet(): degenerate facet constructed." << std::endl;
     }
 }//----------------------------------------------------------------------------------------------------
 
-// ASSIGNMENT OPERATOR  -------------------------------------------------------------------------------
-//Facet Facet::operator=(Facet& rhs){
-//    area = rhs.area;
-//    nodes = rhs.nodes;
-//    adjacent = rhs.adjacent;
-//    return *this;
-//}//----------------------------------------------------------------------------------------------------
 
