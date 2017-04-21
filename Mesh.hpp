@@ -14,7 +14,9 @@
 template<class T>
 class classInstanceCounter{
 public:
-    classInstanceCounter(){ciCounter++;};
+    classInstanceCounter(){
+        ciCounter++;
+    };
 protected:
     static int ciCounter;
 };
@@ -38,6 +40,7 @@ private:
     void cleanUp();
     void parseMeshData(std::string meshDataFilename);
     void triangulate(void);
+    void buildFacetList(void);
     void setSubmeshAdjacency(const Mesh* submesh);
     void mergeMeshes(const Mesh* leftSubMesh, const Mesh* rightSubMesh);
     std::vector<int> findBaseIndices(const Mesh* leftMesh, const Mesh* rightMesh);
@@ -48,6 +51,7 @@ private:
     void sortNodeList(void);
     std::vector<int> isAdjacent(Node a, Node b);
     bool areColinear(Node a, Node b, Node c);
+    
     // Data members
     std::vector<Node*> nodeList;
     std::vector<Facet*> facetList;
@@ -56,9 +60,9 @@ private:
     Matrix rotation;
 };
 
-class Node{
+class Node : public classInstanceCounter<Node>{
 public:
-    Node(){};
+//    Node(){};
     Node(int ID, double x, double y);
     std::vector<double> getLoc(void){return loc;};
     void setNode(int ID, double x, double y);
@@ -67,19 +71,20 @@ public:
     std::vector<int> ordCandList(Node* node, std::string orientation = "ccw");
     bool isAdjacent(Node node);
     int findIndByID(std::vector<Node*> nodes);
-//    void operator=(Node& rhs);
     bool operator<(Node& rhs) const;
 private:
     int nodeID;
     std::vector<double> loc;
     std::vector<Node*> adjacent;
+    std::vector<Facet*> isVertexOf;
+    bool traversed;
     
     friend class Mesh;
 };
 
 class Facet : public classInstanceCounter<Facet>{
 public:
-    Facet(double a): ID(ciCounter+1) ,area(a){};
+    Facet(double a): ID(ciCounter-1) ,area(a){};
     Facet(std::vector<Node*> nodeList);
     ~Facet(){ciCounter--;};
     double getArea(void){return area;};
@@ -93,5 +98,4 @@ private:
     friend class Mesh;
 };
 
-//TODO: Possibly make edge class to ease communication between nodes and facets?
 #endif /* Mesh_h */

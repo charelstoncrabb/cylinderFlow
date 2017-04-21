@@ -16,4 +16,6 @@
 #include <complex>
 #include <algorithm>
 #include <map>
+#include <list>
+#include <queue>
 #endif /* Includes_h */

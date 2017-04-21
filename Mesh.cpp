@@ -27,6 +27,7 @@ Mesh::Mesh(std::string meshDataFilename, bool rotFlag) : rotateFlag(rotFlag){
             nodeList[i]->loc = rotInv*nodeList[i]->loc;
         }
     }
+    buildFacetList();
 }//----------------------------------------------------------------------------------------------------
 
 // WRITES MESH DATA TO OUTPUT FILE  -------------------------------------------------------------------
@@ -42,7 +43,7 @@ void Mesh::writeMesh(std::string meshOutFile){
         }
         outfile << std::endl;
     }
-    outfile << std::endl << std::endl << "FACET DATA:" << std::endl;
+    outfile << std::endl << std::endl << "FACET DATA:" << std::endl << "ID AREA VERTICES" << std::endl;
     for(int i = 0; i < facetList.size(); i++){
         outfile << facetList[i]->ID << " " << facetList[i]->area << " " << facetList[i]->nodes[0]->nodeID << " " << facetList[i]->nodes[1]->nodeID << " "<< facetList[i]->nodes[2]->nodeID << std::endl;
     }
@@ -143,6 +144,37 @@ void Mesh::triangulate(void){
     }
 }//----------------------------------------------------------------------------------------------------
 
+// BUILDS FACET LIST BY GRAPH TRAVERSAL AFTER TRIANGULATION HAS OCCURRED  -----------------------------
+void Mesh::buildFacetList(void){
+    int rootInd = findRightBaseNode();
+    std::map< double, std::map<double, bool> > facetMap;
+    std::queue<Node*> nodeQ;
+    nodeQ.push(nodeList[rootInd]);
+    while( !nodeQ.empty() ){
+        Node* currNode = nodeQ.front(); nodeQ.pop();
+        for(int i = 0; i < currNode->adjacent.size(); i++){
+            if( !currNode->adjacent[i]->traversed ){
+                currNode->adjacent[i]->traversed = true;
+                nodeQ.push(currNode->adjacent[i]);
+                for(int j = 0; j < currNode->adjacent[i]->adjacent.size(); j++){
+                    if( currNode->isAdjacent(*currNode->adjacent[i]->adjacent[j]) ){
+                        double xbar = (currNode->loc[0]+currNode->adjacent[i]->loc[0]+currNode->adjacent[i] ->adjacent[j]->loc[0])/3,
+                               ybar = (currNode->loc[1]+currNode->adjacent[i]->loc[1]+currNode->adjacent[i]->adjacent[j]->loc[1])/3;
+                        if( !facetMap[xbar][ybar] ){
+                            facetMap[xbar][ybar] = true;
+                            Facet* newFacet = new Facet({currNode,currNode->adjacent[i],currNode->adjacent[i]->adjacent[j]});
+                            facetList.push_back(newFacet);
+                            currNode->isVertexOf.push_back(newFacet);
+                            currNode->adjacent[i]->isVertexOf.push_back(newFacet);
+                            currNode->adjacent[i]->adjacent[j]->isVertexOf.push_back(newFacet);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 // SETS SUBMESH ADJACENCY IN COMBINED MESH WHEN MERGING SUBMESHES  ------------------------------------
 void Mesh::setSubmeshAdjacency(const Mesh* submesh){
     for(int i = 0; i < submesh->nodeList.size(); i++){
@@ -201,9 +233,9 @@ void Mesh::mergeMeshes(const Mesh* leftSubMesh, const Mesh* rightSubMesh){
         if( leftCand && rightCand ){
             bool isLtCandInRtCirc = leftCandidate->isInCirc(*leftBase,*rightBase,*rightCandidate);
             bool isRtCandInLtCirc = rightCandidate->isInCirc(*leftBase,*rightBase,*leftCandidate);
-            if( !isLtCandInRtCirc && !isRtCandInLtCirc  )
+//            if( !isLtCandInRtCirc && !isRtCandInLtCirc  )
 //                std::cout << "WARNING: Co-circular points found! (both cands outside)" << std::endl;
-            if( isLtCandInRtCirc && isRtCandInLtCirc )
+//            if( isLtCandInRtCirc && isRtCandInLtCirc )
 //                std::cout << "WARNING: Co-circular points found! (both cands inside)" << std::endl;
             if( isLtCandInRtCirc ){
                 int ltCandInd = leftCandidate->findIndByID(nodeList), rtBaseInd = rightBase->findIndByID(nodeList);
@@ -355,8 +387,7 @@ bool Mesh::areColinear(Node a, Node b, Node c){
 }
 // ========================  NODE CLASS MEMBERS  ======================================================
 // CONSTRUCTOR  ---------------------------------------------------------------------------------------
-Node::Node(int ID, double x, double y){
-    nodeID = ID;
+Node::Node(int ID, double x, double y) : nodeID(ID), traversed(false) {
     loc.push_back(x);
     loc.push_back(y);
 }//----------------------------------------------------------------------------------------------------
@@ -467,7 +498,7 @@ bool Node::operator<(Node& rhs) const {
 }//----------------------------------------------------------------------------------------------------
 
 // =======================  FACET CLASS MEMBERS  ======================================================
-Facet::Facet(std::vector<Node*> nodeList) : ID(ciCounter+1), nodes(nodeList){
+Facet::Facet(std::vector<Node*> nodeList) : ID(ciCounter), nodes(nodeList){
     if( nodeList.size() == 3 ){
         std::vector<double> node1Loc = nodes[0]->getLoc(), node2Loc = nodes[1]->getLoc(),
             node3Loc = nodes[2]->getLoc();

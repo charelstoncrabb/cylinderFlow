@@ -13,6 +13,7 @@
 
 int main(int argc, const char * argv[]) {
 // TODO: Add options module (e.g., --help, -i FirstMesh.dat, -o FirstMesh.out, -rotate=off, etc...)
+// TODO: Start writing actual fluid solver
     char plotScript[100];
     strcpy(plotScript, "./ProcScripts/MeshPlot.py ");
     Mesh *myFirstMesh = new Mesh(argv[1]);
