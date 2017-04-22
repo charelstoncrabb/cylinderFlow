@@ -3,11 +3,11 @@ CFLAGS  = -g -O3 -Wall -std=c++11
 
 default: dtmesh
 
-dtmesh: main.o Matrix.o Math.o Mesh.o VectOps.o
-	$(CPP) $(CFLAGS) -o dtmesh main.o Matrix.o Math.o Mesh.o VectOps.o
+dtmesh: main.o Matrix.o Math.o Mesh.o VectOps.o Options.o
+	$(CPP) $(CFLAGS) -o dtmesh main.o Matrix.o Math.o Mesh.o VectOps.o Options.o
 
 main.o: main.cpp
-	$(CPP) $(CFLAGS) -c main.cpp Matrix.hpp
+	$(CPP) $(CFLAGS) -c main.cpp
 
 Matrix.o: Matrix.cpp Matrix.hpp
 	$(CPP) $(CFLAGS) -c Matrix.cpp
@@ -20,6 +20,9 @@ Mesh.o: Mesh.cpp Mesh.hpp
 
 VectOps.o: VectOps.cpp VectOps.hpp
 	$(CPP) $(CFLAGS) -c VectOps.cpp
+
+Options.o: Options.cpp Options.hpp
+	$(CPP) $(CFLAGS) -c Options.cpp
 
 clean:
 	$(RM) dtmesh *.o *~ *.gch *.out

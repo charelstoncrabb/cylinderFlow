@@ -10,7 +10,7 @@
 
 // ========================  MESH CLASS MEMBERS  ======================================================
 // CONSTRUCTOR - USES NODE LOCATIONS FROM meshDataFilename  -------------------------------------------
-Mesh::Mesh(std::string meshDataFilename, bool rotFlag) : rotateFlag(rotFlag){
+Mesh::Mesh(const char* meshDataFilename, bool rotFlag) : rotateFlag(rotFlag){
     double theta = 0.1;
     Matrix rot(2,2,{cos(theta),-sin(theta),sin(theta),cos(theta)}), rotInv(2,2,{cos(theta),sin(theta),-sin(theta),cos(theta)});
     rotation = rot;
@@ -20,7 +20,6 @@ Mesh::Mesh(std::string meshDataFilename, bool rotFlag) : rotateFlag(rotFlag){
             nodeList[i]->loc = rotation*nodeList[i]->loc;
         }
     }
-    writeMesh("rotated.out");
     triangulate();
     if( rotateFlag ){
         for(int i = 0; i < nodeList.size(); i++){
@@ -31,7 +30,7 @@ Mesh::Mesh(std::string meshDataFilename, bool rotFlag) : rotateFlag(rotFlag){
 }//----------------------------------------------------------------------------------------------------
 
 // WRITES MESH DATA TO OUTPUT FILE  -------------------------------------------------------------------
-void Mesh::writeMesh(std::string meshOutFile){
+void Mesh::writeMesh(const char* meshOutFile){
     std::fstream outfile(meshOutFile,std::fstream::out | std::fstream::trunc);
     std::fstream mainOut("Meshing.out",std::fstream::out | std::fstream::trunc);
     mainOut << output.str();
@@ -43,9 +42,9 @@ void Mesh::writeMesh(std::string meshOutFile){
         }
         outfile << std::endl;
     }
-    outfile << std::endl << std::endl << "FACET DATA:" << std::endl << "ID AREA VERTICES" << std::endl;
+    outfile << std::endl << std::endl << "FACET DATA:" << std::endl << "ID AREA CENTROID VERTICES" << std::endl;
     for(int i = 0; i < facetList.size(); i++){
-        outfile << facetList[i]->ID << " " << facetList[i]->area << " " << facetList[i]->nodes[0]->nodeID << " " << facetList[i]->nodes[1]->nodeID << " "<< facetList[i]->nodes[2]->nodeID << std::endl;
+        outfile << facetList[i]->ID << " " << facetList[i]->area << " (" << facetList[i]->centroid[0] << "," << facetList[i]->centroid[1] << ") " << facetList[i]->nodes[0]->nodeID << " " << facetList[i]->nodes[1]->nodeID << " "<< facetList[i]->nodes[2]->nodeID << std::endl;
     }
     outfile.close();
     mainOut.close();
@@ -505,6 +504,8 @@ Facet::Facet(std::vector<Node*> nodeList) : ID(ciCounter), nodes(nodeList){
         Matrix matArray(2,2,{ node2Loc[0]-node1Loc[0], node2Loc[1]-node1Loc[1],
             node3Loc[0]-node1Loc[0], node3Loc[1]-node1Loc[1]});
         area = fabs(matArray.det())/2.0;
+        centroid.push_back( (node1Loc[0]+node2Loc[0]+node3Loc[0])/3.0 );
+        centroid.push_back( (node1Loc[1]+node2Loc[1]+node3Loc[1])/3.0 );
     }else{
         area = 0;
         std::cout << "WARNING IN Facet(): degenerate facet constructed." << std::endl;

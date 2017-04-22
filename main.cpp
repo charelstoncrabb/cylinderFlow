@@ -9,20 +9,20 @@
 #include "Matrix.hpp"
 #include "Math.hpp"
 #include "Mesh.hpp"
-
+#include "Options.hpp"
 
 int main(int argc, const char * argv[]) {
-// TODO: Add options module (e.g., --help, -i FirstMesh.dat, -o FirstMesh.out, -rotate=off, etc...)
 // TODO: Start writing actual fluid solver
-    char plotScript[100];
-    strcpy(plotScript, "./ProcScripts/MeshPlot.py ");
-    Mesh *myFirstMesh = new Mesh(argv[1]);
-    if( argc > 1 ){
-        myFirstMesh->writeMesh(argv[2]);
-        std::strcat(plotScript, argv[2]);
-        std::strcat(plotScript, " &");
-        system(plotScript);
+    Options options(argc,argv);
+    if(options.run){
+        Mesh mesh(options.infile());
+        mesh.writeMesh(options.outfile());
+        if( options.plot() ){
+            char meshplot[27] = "./ProcScripts/MeshPlot.py ", amp[3] = " &";
+            system( std::strcat( std::strcat(meshplot,options.outfile()), amp) );
+        }
+//        delete mesh;
     }
-    delete myFirstMesh;
+//    delete options;
     return 1;
 }

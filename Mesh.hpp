@@ -29,9 +29,9 @@ class Facet;
 
 class Mesh{
 public:
-    Mesh(std::string meshDataFilename, bool rotFlag = false);
+    Mesh(const char* meshDataFilename, bool rotFlag = false);
     ~Mesh();
-    void writeMesh(std::string meshOutFile = "Mesh.out");
+    void writeMesh(const char* meshOutFile = "Mesh.out");
     Mesh operator=(const Mesh& rhs);
 private:
     Mesh(){};
@@ -92,6 +92,7 @@ public:
 private:
     const int ID;
     double area;
+    std::vector<double> centroid;
     std::vector<Node*> nodes;
     std::vector<Facet*> adjacent;
     
