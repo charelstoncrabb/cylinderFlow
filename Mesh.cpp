@@ -42,9 +42,17 @@ void Mesh::writeMesh(const char* meshOutFile){
         }
         outfile << std::endl;
     }
-    outfile << std::endl << std::endl << "FACET DATA:" << std::endl << "ID AREA CENTROID VERTICES" << std::endl;
+    outfile << std::endl << "FACET DATA:" << std::endl << "ID AREA CENTROID VERTICES" << std::endl;
     for(int i = 0; i < facetList.size(); i++){
         outfile << facetList[i]->ID << " " << facetList[i]->area << " (" << facetList[i]->centroid[0] << "," << facetList[i]->centroid[1] << ") " << facetList[i]->nodes[0]->nodeID << " " << facetList[i]->nodes[1]->nodeID << " "<< facetList[i]->nodes[2]->nodeID << std::endl;
+    }
+    outfile << std::endl << "NODE VERTEX DATA:" << std::endl << "NODE_ID FACET_IDS" << std::endl;
+    for(int i = 0; i < nodeList.size(); i++){
+        outfile << nodeList[i]->nodeID << " ";
+        for(int j = 0; j < nodeList[i]->isVertexOf.size(); j++){
+            outfile << nodeList[i]->isVertexOf[j]->ID << " ";
+        }
+        outfile << std::endl;
     }
     outfile.close();
     mainOut.close();

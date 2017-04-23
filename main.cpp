@@ -13,16 +13,15 @@
 
 int main(int argc, const char * argv[]) {
 // TODO: Start writing actual fluid solver
-    Options options(argc,argv);
-    if(options.run){
-        Mesh mesh(options.infile());
-        mesh.writeMesh(options.outfile());
-        if( options.plot() ){
-            char meshplot[27] = "./ProcScripts/MeshPlot.py ", amp[3] = " &";
-            system( std::strcat( std::strcat(meshplot,options.outfile()), amp) );
-        }
-//        delete mesh;
+    char meshplot[100] = "./ProcScripts/MeshPlot.py ", amp[3] = " &";
+    Options* options = new Options(argc,argv);
+    Mesh* mesh = new Mesh(options->infile());
+    mesh->writeMesh(options->outfile());
+    if( options->plot() ){
+        std::strcat( std::strcat(meshplot,options->outfile()), amp);
+        system( meshplot );
     }
-//    delete options;
+    delete mesh;
+    delete options;
     return 1;
 }

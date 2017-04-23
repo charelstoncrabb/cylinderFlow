@@ -52,6 +52,8 @@ Options::Options(int argc, const char* argv[]):plotFlag(false){
                 }
                 i += 2;
             }
+            if( !options["infile"] )
+                throw "no input file specified.";
             if( !options["outfile"] )
                 outFile = "default.out";
             if( !options["plotflag"] )
@@ -59,7 +61,12 @@ Options::Options(int argc, const char* argv[]):plotFlag(false){
         }
     }catch(const char* e){
         std::cout << "ERROR in Options(): " << e << '\n';
+        throw std::exception();
     }
+}
+
+Options::~Options(){
+    
 }
 
 void Options::printOptions(){

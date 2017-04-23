@@ -12,6 +12,7 @@
 class Options{
 public:
     Options(int argc, const char* argv[]);
+    ~Options();
     const char* infile(void){return inFile;};
     const char* outfile(void){return outFile;};
     bool plot(void){return plotFlag;};
