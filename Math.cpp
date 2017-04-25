@@ -8,6 +8,10 @@
 
 #include "Math.hpp"
 
+Math::Math() : PI(acos(-1)){
+
+}
+
 // N CHOOSE K RETURNS LIST OF ALL K-FOLD COMBINATIONS OF N INTEGERS IN VALUES (RECURSIVE ALGORITHM)
 // Note: If K is >= N, it behaves as though K == N
 // PSEUDOCODE:

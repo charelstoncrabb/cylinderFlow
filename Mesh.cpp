@@ -87,7 +87,7 @@ Mesh::~Mesh(){
     for(int i = 0; i < facetList.size(); i++)
         if( facetList[i] != NULL )
             delete facetList[i];
-}
+}//----------------------------------------------------------------------------------------------------
 
 // PARSES MESH .DAT FILE FOR MESH NODES  --------------------------------------------------------------
 void Mesh::parseMeshData(std::string meshDataFilename){
@@ -148,6 +148,10 @@ void Mesh::triangulate(void){
         mergeMeshes(leftSubmesh,rightSubmesh);
         delete leftSubmesh;
         delete rightSubmesh;
+//        writeMesh();
+//        system("./ProcScripts/MeshPlot.py Mesh.out &");
+//        int a;
+//        std::cin >> a;
     }
 }//----------------------------------------------------------------------------------------------------
 
@@ -272,6 +276,7 @@ void Mesh::mergeMeshes(const Mesh* leftSubMesh, const Mesh* rightSubMesh){
 std::vector<int> Mesh::findBaseIndices(const Mesh* leftMesh, const Mesh* rightMesh){
     int leftBaseInd = leftMesh->findLeftBaseNode(), rightBaseInd = rightMesh->findRightBaseNode();
     int itr = 0;
+    // Check for and deal with vertically-aligned base nodes:
     if( leftMesh->nodeList[leftBaseInd]->loc[0] == rightMesh->nodeList[rightBaseInd]->loc[0] ){
         while( itr < leftMesh->nodeList[leftBaseInd]->adjacent.size() ){
             if( leftMesh->nodeList[leftBaseInd]->adjacent[itr]->loc[0] == rightMesh->nodeList[rightBaseInd]->loc[0]
@@ -282,10 +287,45 @@ std::vector<int> Mesh::findBaseIndices(const Mesh* leftMesh, const Mesh* rightMe
                 itr++;
             }
         }
-
     }
+    else{ // Check that new base edge will not intersect existing edges
+        bool rightBaseOK = false, leftBaseOK = false;
+        while( !rightBaseOK && !leftBaseOK ){
+            itr = 0;
+            // if angle between base edge and any base node adjacents, reset base node to this adjacent node
+            // Continue until right base node has no adjacents with positive angle with base edge, and left base node has no adjacents with negative angle with base edge.
+            for(itr = 0; itr < leftMesh->nodeList[leftBaseInd]->adjacent.size(); itr++){
+                Node B = *leftMesh->nodeList[leftBaseInd], P = *rightMesh->nodeList[rightBaseInd], Q = *leftMesh->nodeList[leftBaseInd]->adjacent[itr];
+                std::vector<double> thisP = {P.loc[0]-B.loc[0],P.loc[1]-B.loc[1]},
+                                    thisQ = {Q.loc[0]-B.loc[0],Q.loc[1]-B.loc[1]};
+                double det = thisP[0]*thisQ[1]-thisP[1]*thisQ[0];
+                if( det < 0 ){
+                    leftBaseInd = leftMesh->nodeList[leftBaseInd]->adjacent[itr]->findIndByID(leftMesh->nodeList);
+                    itr = 0;
+                    rightBaseOK = false;
+                }
+            }
+            if( itr == leftMesh->nodeList[leftBaseInd]->adjacent.size() )
+                leftBaseOK = true;
+            for(itr = 0; itr < rightMesh->nodeList[rightBaseInd]->adjacent.size(); itr++){
+                Node B = *rightMesh->nodeList[rightBaseInd], P = *leftMesh->nodeList[leftBaseInd], Q = *rightMesh->nodeList[rightBaseInd]->adjacent[itr];
+                std::vector<double> thisP = {P.loc[0]-B.loc[0],P.loc[1]-B.loc[1]},
+                thisQ = {Q.loc[0]-B.loc[0],Q.loc[1]-B.loc[1]};
+                double det = thisP[0]*thisQ[1]-thisP[1]*thisQ[0];
+                if( det > 0 ){
+                    rightBaseInd = rightMesh->nodeList[rightBaseInd]->adjacent[itr]->findIndByID(rightMesh->nodeList);
+                    itr = 0;
+                    leftBaseOK = false;
+                }
+            }
+            if( itr == rightMesh->nodeList[leftBaseInd]->adjacent.size() )
+                rightBaseOK = true;
+        }
+    }
+    
     return {leftBaseInd,rightBaseInd};
 }
+
 // FINDS BASE NODE FOR LEFT SUBMESH  ------------------------------------------------------------------
 int Mesh::findLeftBaseNode(void) const{
     int baseInd = 0;
@@ -412,9 +452,9 @@ double Node::calcAngle(Node P, Node Q, std::string orientation){
     double angle = 0;
     std::vector<double> thisP = {P.loc[0]-loc[0],P.loc[1]-loc[1]},
                         thisQ = {Q.loc[0]-loc[0],Q.loc[1]-loc[1]};
-
+    
     double det = thisP[0]*thisQ[1]-thisP[1]*thisQ[0];
-
+    
     if( det > 0 )
         angle = acos(dot(thisP,thisQ)/(norm(thisP)*norm(thisQ)));
     else
@@ -446,7 +486,7 @@ std::vector<int> Node::ordCandList(Node* node, std::string orientation){
     std::vector<double> angles(N);
     std::vector<int> ordered;
     for(int i = 0; i < N; i++){
-        if( orientation == "cw")
+        if( orientation == "cw" )
             angles[i] = calcAngle(*adjacent[i],*node,orientation);
         if( orientation == "ccw" )
             angles[i] = calcAngle(*node,*adjacent[i],orientation);

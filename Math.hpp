@@ -9,7 +9,13 @@
 #define Math_h
 #include "Includes.hpp"
 
-class Combinatorics{
+class Math{
+public:
+    Math();
+    const double PI;
+};
+
+class Combinatorics : public Math{
 public:
     Combinatorics(){};
     std::vector<std::vector<int>> nChoosek(std::vector<int> values, int K);
@@ -17,8 +23,4 @@ public:
 private:
 };
 
-class Func2D{
-public:
-    Func2D();
-};
 #endif /* Math_h */
