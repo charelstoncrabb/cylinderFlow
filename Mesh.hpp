@@ -55,6 +55,7 @@ private:
     // Data members
     std::vector<Node*> nodeList;
     std::vector<Facet*> facetList;
+    std::vector<Node*> boundaryNodes;
     std::stringstream output;
     bool rotateFlag;
     Matrix rotation;
@@ -78,7 +79,7 @@ private:
     std::vector<Node*> adjacent;
     std::vector<Facet*> isVertexOf;
     bool traversed;
-    
+    bool isBoundaryNode;
     friend class Mesh;
 };
 

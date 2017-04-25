@@ -27,6 +27,7 @@ Mesh::Mesh(const char* meshDataFilename, bool rotFlag) : rotateFlag(rotFlag){
         }
     }
     buildFacetList();
+//TODO: Set boundary node list here
 }//----------------------------------------------------------------------------------------------------
 
 // WRITES MESH DATA TO OUTPUT FILE  -------------------------------------------------------------------
@@ -244,14 +245,15 @@ void Mesh::mergeMeshes(const Mesh* leftSubMesh, const Mesh* rightSubMesh){
         if( leftCand && rightCand ){
             bool isLtCandInRtCirc = leftCandidate->isInCirc(*leftBase,*rightBase,*rightCandidate);
             bool isRtCandInLtCirc = rightCandidate->isInCirc(*leftBase,*rightBase,*leftCandidate);
-//            if( !isLtCandInRtCirc && !isRtCandInLtCirc  )
-//                std::cout << "WARNING: Co-circular points found! (both cands outside)" << std::endl;
-//            if( isLtCandInRtCirc && isRtCandInLtCirc )
-//                std::cout << "WARNING: Co-circular points found! (both cands inside)" << std::endl;
+            if( !isLtCandInRtCirc && !isRtCandInLtCirc  )
+                output << "WARNING: Co-circular points found! (both cands outside)" << std::endl;
+            if( isLtCandInRtCirc && isRtCandInLtCirc )
+                output << "WARNING: Co-circular points found! (both cands inside)" << std::endl;
             if( isLtCandInRtCirc ){
                 int ltCandInd = leftCandidate->findIndByID(nodeList), rtBaseInd = rightBase->findIndByID(nodeList);
                 setEdges({nodeList[rtBaseInd],nodeList[ltCandInd]});
                 leftBase = leftSubMesh->nodeList[leftCandidate->findIndByID(leftSubMesh->nodeList)];
+                isRtCandInLtCirc = false;
             }
             if( isRtCandInLtCirc ){
                 int rtCandInd = rightCandidate->findIndByID(nodeList), ltBaseInd = leftBase->findIndByID(nodeList);
@@ -324,7 +326,7 @@ std::vector<int> Mesh::findBaseIndices(const Mesh* leftMesh, const Mesh* rightMe
     }
     
     return {leftBaseInd,rightBaseInd};
-}
+}//----------------------------------------------------------------------------------------------------
 
 // FINDS BASE NODE FOR LEFT SUBMESH  ------------------------------------------------------------------
 int Mesh::findLeftBaseNode(void) const{
