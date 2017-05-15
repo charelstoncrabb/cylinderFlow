@@ -1,10 +1,10 @@
 CPP = g++
 CFLAGS  = -g -O3 -Wall -std=c++11
 
-default: dtmesh
+default: cylinderFlow
 
-dtmesh: main.o Matrix.o Math.o Mesh.o VectOps.o Options.o
-	$(CPP) $(CFLAGS) -o dtmesh main.o Matrix.o Math.o Mesh.o VectOps.o Options.o
+cylinderFlow: main.o Matrix.o Math.o Mesh.o VectOps.o Options.o
+	$(CPP) $(CFLAGS) -o cylinderFlow main.o Matrix.o Math.o Mesh.o VectOps.o Options.o
 
 main.o: main.cpp
 	$(CPP) $(CFLAGS) -c main.cpp
@@ -25,4 +25,4 @@ Options.o: Options.cpp Options.hpp
 	$(CPP) $(CFLAGS) -c Options.cpp
 
 clean:
-	$(RM) dtmesh *.o *~ *.gch *.out
+	$(RM) cylinderFlow *.o *~ *.gch *.out Documentation/*.log Documentation/*.out Documentation/*.aux Documentation/*.toc Documentation/*.gz

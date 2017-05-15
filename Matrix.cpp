@@ -109,22 +109,24 @@ Matrix::Matrix(int numRows, int numCols, std::vector<double> initVals) : numRows
 }//----------------------------------------------------------------------------------------------------
 
 // SOLVE LINEAR SYSTEM Ax = b  ------------------------------------------------------------------------
+// TODO: Check for inconsistency/generalize the solver
 std::vector<double> Matrix::solveAxb(std::vector<double> b){
     std::vector<double> x(numRows);
-    Matrix system(numRows,numCols,entries);
-    std::cout << system << std::endl;
-    system.catCol(b);
-    std::cout << system << std::endl;
-    system.rref();
-    std::cout << system << std::endl;
-    // TODO: Check for inconsistency/generalize the solver
-    for(int i = 0; i < system.numRows; i++){
-        x[i] = system.entries[i*system.numCols+numRows];
+    if( isSquare() && numRows == 2 && det() ){
+        double k = 1.0/det();
+        Matrix thisinv(2,2,{k*entries[3],k*(-entries[1]),k*(-entries[2]),k*entries[0]});
+        x = thisinv*b;
+    }else{
+        Matrix system(numRows,numCols,entries);
+        system.catCol(b);
+        system.rref();
+        x = system.getCol(numCols);
     }
     return x;
 }//----------------------------------------------------------------------------------------------------
 
 // REDUCED ROW-ECHELON FORM OF MATRIX  ----------------------------------------------------------------
+// TODO: Do better or de-bug rref logic
 void Matrix::rref(void){
     std::vector<int> pivInd = {0,0};
     std::vector<std::vector<int>> pivotIndList;
@@ -146,6 +148,8 @@ void Matrix::rref(void){
             if( k < numRows ){
                 this->swapRows(k,pivInd[0]);
                 pivSet = true;
+                pivot = entries[ij];
+                pivotIndList.push_back(pivInd);
             }else{
                 pivInd[1]++;
             }

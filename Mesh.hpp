@@ -32,6 +32,7 @@ public:
     Mesh(const char* meshDataFilename, bool rotFlag = false);
     ~Mesh();
     void writeMesh(const char* meshOutFile = "Mesh.out");
+    unsigned size(void){return (unsigned int)nodeList.size();};
     Mesh operator=(const Mesh& rhs);
 private:
     Mesh(){};
@@ -39,11 +40,14 @@ private:
     Mesh(std::vector<Node*> nodes);
     void cleanUp();
     void parseMeshData(std::string meshDataFilename);
+    void preRotate(void);
+    void postRotate(void);
     void triangulate(void);
     void buildFacetList(void);
     void setSubmeshAdjacency(const Mesh* submesh);
     void mergeMeshes(const Mesh* leftSubMesh, const Mesh* rightSubMesh);
-    std::vector<int> findBaseIndices(const Mesh* leftMesh, const Mesh* rightMesh);
+    void setBoundaryNodes(void);
+    void findBaseIndices(std::vector<int>& baseInds, const Mesh* leftMesh, const Mesh* rightMesh);
     int findLeftBaseNode(void) const;
     int findRightBaseNode(void) const;
     void setEdges(std::vector<Node*> nodes);
@@ -58,7 +62,7 @@ private:
     std::vector<Node*> boundaryNodes;
     std::stringstream output;
     bool rotateFlag;
-    Matrix rotation;
+    double theta;
 };
 
 class Node : public classInstanceCounter<Node>{
@@ -67,9 +71,11 @@ public:
     Node(int ID, double x, double y);
     std::vector<double> getLoc(void){return loc;};
     void setNode(int ID, double x, double y);
-    double calcAngle(Node P, Node Q, std::string orientation = "ccw");
+    double calcAngle(Node P, Node Q);
     bool isInCirc(Node A, Node B, Node C);
+    bool isCoCirc(Node A, Node B, Node C);
     std::vector<int> ordCandList(Node* node, std::string orientation = "ccw");
+    std::vector<int> ordAdjByAng(void);
     bool isAdjacent(Node node);
     int findIndByID(std::vector<Node*> nodes);
     bool operator<(Node& rhs) const;
@@ -95,7 +101,8 @@ private:
     double area;
     std::vector<double> centroid;
     std::vector<Node*> nodes;
-    std::vector<Facet*> adjacent;
+    std::vector<double> angles;
+//    std::vector<Facet*> adjacent;
     
     friend class Mesh;
 };

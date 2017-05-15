@@ -10,12 +10,13 @@
 
 Options::Options(int argc, const char* argv[]):plotFlag(false){
     run = false;
-    int pf;
+    int pf, rf;
     std::vector<const char*> args(argv + 1, argv + argc);
     std::map<std::string,bool> options;
     options["infile"] = false;
     options["outfile"] = false;
     options["plotflag"] = false;
+    options["rotflag"] = false;
     try{
         if( argc == 2 && !strcmp(args[0],"-h") ){
             printOptions();
@@ -44,6 +45,15 @@ Options::Options(int argc, const char* argv[]):plotFlag(false){
                             else
                                 throw "bad plot flag -- use \'-h\' for options syntax.";
                             break;
+                        case 'r':
+                            rf = parsePlotFlag(args[i+1]);
+                            if( rf == 0 || rf == 1 ){
+                                rotFlag = (bool)rf;
+                                options["rotflag"] = true;
+                            }
+                            else
+                                throw "bad rotation flag -- use \'-h\' for options syntax.";
+                            break;
                         default: throw "bad option -- use \'-h\' for options syntax.";
                             break;
                     }
@@ -58,6 +68,8 @@ Options::Options(int argc, const char* argv[]):plotFlag(false){
                 outFile = "default.out";
             if( !options["plotflag"] )
                 plotFlag = true;
+            if( !options["rotflag"] )
+                rotFlag = false;
         }
     }catch(const char* e){
         std::cout << "ERROR in Options(): " << e << '\n';

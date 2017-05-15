@@ -10,24 +10,17 @@
 
 // ========================  MESH CLASS MEMBERS  ======================================================
 // CONSTRUCTOR - USES NODE LOCATIONS FROM meshDataFilename  -------------------------------------------
-Mesh::Mesh(const char* meshDataFilename, bool rotFlag) : rotateFlag(rotFlag){
-    double theta = 0.1;
-    Matrix rot(2,2,{cos(theta),-sin(theta),sin(theta),cos(theta)}), rotInv(2,2,{cos(theta),sin(theta),-sin(theta),cos(theta)});
-    rotation = rot;
+Mesh::Mesh(const char* meshDataFilename, bool rotFlag) : rotateFlag(rotFlag), theta(0.1) {
     parseMeshData(meshDataFilename);
-    if( rotateFlag ){
-        for(int i = 0; i < nodeList.size(); i++){
-            nodeList[i]->loc = rotation*nodeList[i]->loc;
-        }
-    }
+    std::cout << "Input data successfully parsed..." << std::endl;
+    preRotate();
     triangulate();
-    if( rotateFlag ){
-        for(int i = 0; i < nodeList.size(); i++){
-            nodeList[i]->loc = rotInv*nodeList[i]->loc;
-        }
-    }
+    std::cout << "Grid successfully triangulated..." << std::endl;
+    postRotate();
     buildFacetList();
-//TODO: Set boundary node list here
+    std::cout << "Facets successfully constructed..." << std::endl;
+    setBoundaryNodes();
+    std::cout << "Boundary nodes found..." << std::endl;
 }//----------------------------------------------------------------------------------------------------
 
 // WRITES MESH DATA TO OUTPUT FILE  -------------------------------------------------------------------
@@ -35,15 +28,22 @@ void Mesh::writeMesh(const char* meshOutFile){
     std::fstream outfile(meshOutFile,std::fstream::out | std::fstream::trunc);
     std::fstream mainOut("Meshing.out",std::fstream::out | std::fstream::trunc);
     mainOut << output.str();
-    outfile << "NODE DATA:" << std::endl << "ID X Y ADJ" << std::endl;
+    outfile << "NODE DATA:" << std::endl << "ID ISBORD X Y ADJ" << std::endl;
     for(int i = 0; i < nodeList.size(); i++){
-        outfile << nodeList[i]->nodeID << " " << nodeList[i]->loc[0] << " " << nodeList[i]->loc[1] << " ";
+        if( nodeList[i]->isBoundaryNode )
+            outfile << nodeList[i]->nodeID << " " << 1 << " " << nodeList[i]->loc[0] << " " << nodeList[i]->loc[1] << " ";
+        else
+            outfile << nodeList[i]->nodeID << " " << 0 << " " << nodeList[i]->loc[0] << " " << nodeList[i]->loc[1] << " ";
         for(int j = 0; j < nodeList[i]->adjacent.size(); j++){
             outfile << nodeList[i]->adjacent[j]->nodeID << " ";
         }
         outfile << std::endl;
     }
-    outfile << std::endl << "FACET DATA:" << std::endl << "ID AREA CENTROID VERTICES" << std::endl;
+    outfile << std::endl << "BOUNDARY NODES: " << std::endl;
+    for(int i = 0; i < boundaryNodes.size(); i++){
+        outfile << boundaryNodes[i]->nodeID << " ";
+    }
+    outfile << std::endl << std::endl << "FACET DATA:" << std::endl << "ID AREA CENTROID VERTICES" << std::endl;
     for(int i = 0; i < facetList.size(); i++){
         outfile << facetList[i]->ID << " " << facetList[i]->area << " (" << facetList[i]->centroid[0] << "," << facetList[i]->centroid[1] << ") " << facetList[i]->nodes[0]->nodeID << " " << facetList[i]->nodes[1]->nodeID << " "<< facetList[i]->nodes[2]->nodeID << std::endl;
     }
@@ -82,12 +82,14 @@ Mesh::Mesh(std::vector<Node*> nodes){
 
 // DESTRUCTOR - DELETES ALLOCATED NODES/FACETS  -------------------------------------------------------
 Mesh::~Mesh(){
-    for(int i = 0; i < nodeList.size(); i++)
+    for(int i = 0; i < nodeList.size(); i++){
         if( nodeList[i] != NULL )
             delete nodeList[i];
-    for(int i = 0; i < facetList.size(); i++)
+    }
+    for(int i = 0; i < facetList.size(); i++){
         if( facetList[i] != NULL )
             delete facetList[i];
+    }
 }//----------------------------------------------------------------------------------------------------
 
 // PARSES MESH .DAT FILE FOR MESH NODES  --------------------------------------------------------------
@@ -104,18 +106,41 @@ void Mesh::parseMeshData(std::string meshDataFilename){
         }
         meshData.close();
     }else{
-        std::cout << "ERROR IN parseMeshData(): cannot open file "
+        output << "ERROR IN parseMeshData(): cannot open file "
         << meshDataFilename << "!" << std::endl;
     }
     sortNodeList();
 }//----------------------------------------------------------------------------------------------------
 
+// ROTATES THE GRID POINTS PRIOR TO MESHING  ----------------------------------------------------------
+void Mesh::preRotate(void){
+    Matrix rot(2,2,{cos(theta),-sin(theta),sin(theta),cos(theta)});
+    if( this->rotateFlag ){
+        output << "Pre-rotating grid..." << std::endl;
+        for(int i = 0; i < nodeList.size(); i++){
+            nodeList[i]->loc = rot*nodeList[i]->loc;
+        }
+    }
+}//----------------------------------------------------------------------------------------------------
+
+// ROTATES THE GRID POINTS AFTER MESHING  ----------------------------------------------------------
+void Mesh::postRotate(void){
+    Matrix rotInv(2,2,{cos(theta),sin(theta),-sin(theta),cos(theta)});
+    if( this->rotateFlag ){
+        for(int i = 0; i < nodeList.size(); i++){
+            nodeList[i]->loc = rotInv*nodeList[i]->loc;
+        }
+    }
+}//----------------------------------------------------------------------------------------------------
+
 // BUILDS DELAUNAY TRIANGULATION OF NODES IN MESH USING D&C ALGORITHM  --------------------------------
 void Mesh::triangulate(void){
+    output << "Triangulating on " << nodeList.size() << " nodes..." << std::endl;
     if( nodeList.size() <= 1 ){
-        std::cout << "ERROR IN triangulate(): error subdividing mesh!" << std::endl;
+        output << "ERROR IN triangulate(): error subdividing mesh!" << std::endl;
         return;
     }else if( nodeList.size() == 2 ){
+        output << "Setting edge on two vertices..." << std::endl;
         setEdges({nodeList[0],nodeList[1]});
     }
     else if( nodeList.size() == 3 ){
@@ -146,10 +171,11 @@ void Mesh::triangulate(void){
         Mesh *rightSubmesh = new Mesh(rightNodeList);
         setSubmeshAdjacency(leftSubmesh);
         setSubmeshAdjacency(rightSubmesh);
+        output << "Merging meshes--leftSubmesh.size() = " << leftSubmesh->size() << ", rightSubmesh.size() = " << rightSubmesh->size() << std::endl;
         mergeMeshes(leftSubmesh,rightSubmesh);
         delete leftSubmesh;
         delete rightSubmesh;
-//        writeMesh();
+//        writeMesh("Mesh.out");
 //        system("./ProcScripts/MeshPlot.py Mesh.out &");
 //        int a;
 //        std::cin >> a;
@@ -157,32 +183,38 @@ void Mesh::triangulate(void){
 }//----------------------------------------------------------------------------------------------------
 
 // BUILDS FACET LIST BY GRAPH TRAVERSAL AFTER TRIANGULATION HAS OCCURRED  -----------------------------
+// TODO: Debug -- hangs for square grids over 14 X 14
 void Mesh::buildFacetList(void){
-    int rootInd = findRightBaseNode();
     std::map< double, std::map<double, bool> > facetMap;
     std::queue<Node*> nodeQ;
-    nodeQ.push(nodeList[rootInd]);
-    while( !nodeQ.empty() ){
-        Node* currNode = nodeQ.front(); nodeQ.pop();
-        for(int i = 0; i < currNode->adjacent.size(); i++){
-            if( !currNode->adjacent[i]->traversed ){
-                currNode->adjacent[i]->traversed = true;
-                nodeQ.push(currNode->adjacent[i]);
-                for(int j = 0; j < currNode->adjacent[i]->adjacent.size(); j++){
-                    if( currNode->isAdjacent(*currNode->adjacent[i]->adjacent[j]) ){
-                        double xbar = (currNode->loc[0]+currNode->adjacent[i]->loc[0]+currNode->adjacent[i] ->adjacent[j]->loc[0])/3,
-                               ybar = (currNode->loc[1]+currNode->adjacent[i]->loc[1]+currNode->adjacent[i]->adjacent[j]->loc[1])/3;
-                        if( !facetMap[xbar][ybar] ){
-                            facetMap[xbar][ybar] = true;
-                            Facet* newFacet = new Facet({currNode,currNode->adjacent[i],currNode->adjacent[i]->adjacent[j]});
-                            facetList.push_back(newFacet);
-                            currNode->isVertexOf.push_back(newFacet);
-                            currNode->adjacent[i]->isVertexOf.push_back(newFacet);
-                            currNode->adjacent[i]->adjacent[j]->isVertexOf.push_back(newFacet);
+    Node* currNode = NULL;
+    if( nodeList.size() > 0 ){
+        nodeQ.push(nodeList[0]);
+        while( !nodeQ.empty() ){
+            currNode = nodeQ.front();
+            nodeQ.pop();
+            for(int i = 0; i < currNode->adjacent.size(); i++){
+                if( !currNode->adjacent[i]->traversed ){
+//                    currNode->adjacent[i]->traversed = true;
+//                    Swapping this assignment to traversal for line 217 fixes for large square grid, but breaks other grids
+                    nodeQ.push(currNode->adjacent[i]);
+                    for(int j = 0; j < currNode->adjacent[i]->adjacent.size(); j++){
+                        if( currNode->isAdjacent(*currNode->adjacent[i]->adjacent[j]) ){
+                            double xbar = (currNode->loc[0]+currNode->adjacent[i]->loc[0]+currNode->adjacent[i] ->adjacent[j]->loc[0])/3,
+                                ybar = (currNode->loc[1]+currNode->adjacent[i]->loc[1]+currNode->adjacent[i]->adjacent[j]->loc[1])/3;
+                            if( !facetMap[xbar][ybar] ){
+                                facetMap[xbar][ybar] = true;
+                                Facet* newFacet = new Facet({currNode,currNode->adjacent[i],currNode->adjacent[i]->adjacent[j]});
+                                facetList.push_back(newFacet);
+                                currNode->isVertexOf.push_back(newFacet);
+                                currNode->adjacent[i]->isVertexOf.push_back(newFacet);
+                                currNode->adjacent[i]->adjacent[j]->isVertexOf.push_back(newFacet);
+                            }
                         }
                     }
                 }
             }
+            currNode->traversed = true;
         }
     }
 }
@@ -203,13 +235,16 @@ void Mesh::setSubmeshAdjacency(const Mesh* submesh){
 void Mesh::mergeMeshes(const Mesh* leftSubMesh, const Mesh* rightSubMesh){
     bool noCandidate = false, rightCand = false, leftCand = false;
     Node *leftCandidate = NULL, *rightCandidate = NULL;
-    std::vector<int> baseNodeIndices = findBaseIndices(leftSubMesh,rightSubMesh);
+    std::vector<int> baseNodeIndices = {};
+    findBaseIndices(baseNodeIndices,leftSubMesh,rightSubMesh);
     int leftBaseInd = baseNodeIndices[0], rightBaseInd = baseNodeIndices[1];
     Node* leftBase = leftSubMesh->nodeList[leftBaseInd];
     Node* rightBase = rightSubMesh->nodeList[rightBaseInd];
     leftBaseInd = leftBase->findIndByID(nodeList); rightBaseInd = rightBase->findIndByID(nodeList);
     setEdges({nodeList[leftBaseInd],nodeList[rightBaseInd]});
     while( noCandidate == false ){
+        if( leftBase->nodeID == 11 && rightBase->nodeID == 12 )
+            std::cout << "this is stupod." << std::endl;
         rightCand = false;
         std::vector<int> potRtCandInds = {};
         std::vector<int> potLtCandInds = {};
@@ -220,7 +255,8 @@ void Mesh::mergeMeshes(const Mesh* leftSubMesh, const Mesh* rightSubMesh){
                 rightCandidate = rightBase->adjacent[potRtCandInds[0]];
                 rightCand = true;
             }else if( potRtCandInds.size() >= 2 &&
-                     !rightBase->adjacent[potRtCandInds[1]]->isInCirc(*leftBase,*rightBase,*rightBase->adjacent[potRtCandInds[0]]) ){
+                     ( !rightBase->adjacent[potRtCandInds[1]]->isInCirc(*leftBase,*rightBase,*rightBase->adjacent[potRtCandInds[0]]) /*||
+                        rightBase->adjacent[potRtCandInds[1]]->isCoCirc(*leftBase,*rightBase,*rightBase->adjacent[potRtCandInds[0]]) */) ){
                 rightCandidate = rightBase->adjacent[potRtCandInds[0]];
                 rightCand = true;
             }else{
@@ -234,7 +270,8 @@ void Mesh::mergeMeshes(const Mesh* leftSubMesh, const Mesh* rightSubMesh){
                 leftCandidate = leftBase->adjacent[potLtCandInds[0]];
                 leftCand = true;
             }else if( potLtCandInds.size() >= 2 &&
-                     !leftBase->adjacent[potLtCandInds[1]]->isInCirc(*rightBase,*leftBase,*leftBase->adjacent[potLtCandInds[0]]) ){
+                     ( !leftBase->adjacent[potLtCandInds[1]]->isInCirc(*rightBase,*leftBase,*leftBase->adjacent[potLtCandInds[0]]) /*||
+                        leftBase->adjacent[potLtCandInds[1]]->isCoCirc(*rightBase,*leftBase,*leftBase->adjacent[potLtCandInds[0]]) */) ){
                 leftCandidate = leftBase->adjacent[potLtCandInds[0]];
                 leftCand = true;
             }else{
@@ -274,10 +311,27 @@ void Mesh::mergeMeshes(const Mesh* leftSubMesh, const Mesh* rightSubMesh){
     }
 }//----------------------------------------------------------------------------------------------------
 
+// SETS BOUNDARY NODE LIST AFTER TRIANGULATION  -------------------------------------------------------
+void Mesh::setBoundaryNodes(void){
+    double tol = 1e-4;
+    for(int i = 0; i < nodeList.size(); i++){
+        double totAng = 0.0;
+        for(int j = 0; j < nodeList[i]->isVertexOf.size(); j++){
+            totAng += nodeList[i]->isVertexOf[j]->angles[nodeList[i]->findIndByID(nodeList[i]->isVertexOf[j]->nodes)];
+        }
+        if( totAng < 2*acos(-1)-tol ){
+            boundaryNodes.push_back(nodeList[i]);
+            nodeList[i]->isBoundaryNode = true;
+        }
+    }
+}//----------------------------------------------------------------------------------------------------
+
 // FINDS BASE NODES FOR LEFT AND RIGHT SUBMESHES  -----------------------------------------------------
-std::vector<int> Mesh::findBaseIndices(const Mesh* leftMesh, const Mesh* rightMesh){
+void Mesh::findBaseIndices(std::vector<int>& baseInds, const Mesh* leftMesh, const Mesh* rightMesh){
+    baseInds.resize(2);
     int leftBaseInd = leftMesh->findLeftBaseNode(), rightBaseInd = rightMesh->findRightBaseNode();
     int itr = 0;
+    bool rightBaseOK = false, leftBaseOK = false;
     // Check for and deal with vertically-aligned base nodes:
     if( leftMesh->nodeList[leftBaseInd]->loc[0] == rightMesh->nodeList[rightBaseInd]->loc[0] ){
         while( itr < leftMesh->nodeList[leftBaseInd]->adjacent.size() ){
@@ -291,13 +345,11 @@ std::vector<int> Mesh::findBaseIndices(const Mesh* leftMesh, const Mesh* rightMe
         }
     }
     else{ // Check that new base edge will not intersect existing edges
-        bool rightBaseOK = false, leftBaseOK = false;
         while( !rightBaseOK && !leftBaseOK ){
-            itr = 0;
             // if angle between base edge and any base node adjacents, reset base node to this adjacent node
             // Continue until right base node has no adjacents with positive angle with base edge, and left base node has no adjacents with negative angle with base edge.
             for(itr = 0; itr < leftMesh->nodeList[leftBaseInd]->adjacent.size(); itr++){
-                Node B = *leftMesh->nodeList[leftBaseInd], P = *rightMesh->nodeList[rightBaseInd], Q = *leftMesh->nodeList[leftBaseInd]->adjacent[itr];
+                Node B = *(leftMesh->nodeList[leftBaseInd]), P = *(rightMesh->nodeList[rightBaseInd]), Q = *(leftMesh->nodeList[leftBaseInd]->adjacent[itr]);
                 std::vector<double> thisP = {P.loc[0]-B.loc[0],P.loc[1]-B.loc[1]},
                                     thisQ = {Q.loc[0]-B.loc[0],Q.loc[1]-B.loc[1]};
                 double det = thisP[0]*thisQ[1]-thisP[1]*thisQ[0];
@@ -310,9 +362,9 @@ std::vector<int> Mesh::findBaseIndices(const Mesh* leftMesh, const Mesh* rightMe
             if( itr == leftMesh->nodeList[leftBaseInd]->adjacent.size() )
                 leftBaseOK = true;
             for(itr = 0; itr < rightMesh->nodeList[rightBaseInd]->adjacent.size(); itr++){
-                Node B = *rightMesh->nodeList[rightBaseInd], P = *leftMesh->nodeList[leftBaseInd], Q = *rightMesh->nodeList[rightBaseInd]->adjacent[itr];
+                Node B = *(rightMesh->nodeList[rightBaseInd]), P = *(leftMesh->nodeList[leftBaseInd]), Q = *(rightMesh->nodeList[rightBaseInd]->adjacent[itr]);
                 std::vector<double> thisP = {P.loc[0]-B.loc[0],P.loc[1]-B.loc[1]},
-                thisQ = {Q.loc[0]-B.loc[0],Q.loc[1]-B.loc[1]};
+                                    thisQ = {Q.loc[0]-B.loc[0],Q.loc[1]-B.loc[1]};
                 double det = thisP[0]*thisQ[1]-thisP[1]*thisQ[0];
                 if( det > 0 ){
                     rightBaseInd = rightMesh->nodeList[rightBaseInd]->adjacent[itr]->findIndByID(rightMesh->nodeList);
@@ -324,8 +376,8 @@ std::vector<int> Mesh::findBaseIndices(const Mesh* leftMesh, const Mesh* rightMe
                 rightBaseOK = true;
         }
     }
-    
-    return {leftBaseInd,rightBaseInd};
+    baseInds[0] = leftBaseInd;
+    baseInds[1] = rightBaseInd;
 }//----------------------------------------------------------------------------------------------------
 
 // FINDS BASE NODE FOR LEFT SUBMESH  ------------------------------------------------------------------
@@ -434,9 +486,10 @@ bool Mesh::areColinear(Node a, Node b, Node c){
     }
     return false;
 }
+
 // ========================  NODE CLASS MEMBERS  ======================================================
 // CONSTRUCTOR  ---------------------------------------------------------------------------------------
-Node::Node(int ID, double x, double y) : nodeID(ID), traversed(false) {
+Node::Node(int ID, double x, double y) : nodeID(ID), traversed(false), isBoundaryNode(false) {
     loc.push_back(x);
     loc.push_back(y);
 }//----------------------------------------------------------------------------------------------------
@@ -450,34 +503,82 @@ void Node::setNode(int ID, double x, double y){
 }//----------------------------------------------------------------------------------------------------
 
 // RETURNS ANGLE BETWEEN LINE SEGMENTS this-P AND this-Q  ---------------------------------------------
-double Node::calcAngle(Node P, Node Q, std::string orientation){
-    double angle = 0;
+double Node::calcAngle(Node P, Node Q){
+    double angle = 0.0;
     std::vector<double> thisP = {P.loc[0]-loc[0],P.loc[1]-loc[1]},
                         thisQ = {Q.loc[0]-loc[0],Q.loc[1]-loc[1]};
     
     double det = thisP[0]*thisQ[1]-thisP[1]*thisQ[0];
     
-    if( det > 0 )
+    if( det >= 0.0 )
         angle = acos(dot(thisP,thisQ)/(norm(thisP)*norm(thisQ)));
     else
-        angle = 2*acos(-1) - acos(dot(thisP,thisQ)/(norm(thisP)*norm(thisQ)));
+        angle = 2.0*acos(-1.0) - acos(dot(thisP,thisQ)/(norm(thisP)*norm(thisQ)));
     return angle;
 }//----------------------------------------------------------------------------------------------------
 
 // DECIDES IF this IS INSIDE CIRCUMCIRCLE OF TRIANGLE ABC  --------------------------------------------
 bool Node::isInCirc(Node A, Node B, Node C){
-    double tol = 1e-20;
-    double y0 = (pow(A.loc[0],2) - pow(C.loc[0],2) + pow(A.loc[1],2) - pow(C.loc[1],2) -
-                ((A.loc[0]-C.loc[0])*(pow(A.loc[0],2) - pow(B.loc[0],2) + pow(A.loc[1],2)
-                - pow(B.loc[1],2)))/(A.loc[0]-B.loc[0]) )/(2*(A.loc[1]-C.loc[1]
-                - ((A.loc[1]-B.loc[1])*(A.loc[0]-C.loc[0]))/(A.loc[0]-B.loc[0])));
-    double x0 = (pow(A.loc[0],2) - pow(B.loc[0],2) + pow(A.loc[1],2) - pow(B.loc[1],2))
-                /(2*(A.loc[0]-B.loc[0])) - ((A.loc[1]-B.loc[1])/(A.loc[0]-B.loc[0]))*y0;
-    double r = pow(pow(A.loc[0]-x0,2)+pow(A.loc[1]-y0,2),0.5);
-    if( pow(pow(loc[0]-x0,2)+pow(loc[1]-y0,2),0.5) > r-tol ){
+    double tol = 0.0, r = 1e99;
+
+//    double y0 = (pow(A.loc[0],2) - pow(C.loc[0],2) + pow(A.loc[1],2) - pow(C.loc[1],2) - ((A.loc[0]-C.loc[0])*(pow(A.loc[0],2) - pow(B.loc[0],2) + pow(A.loc[1],2) - pow(B.loc[1],2)))/(A.loc[0]-B.loc[0]) )/(2*(A.loc[1]-C.loc[1] - ((A.loc[1]-B.loc[1])*(A.loc[0]-C.loc[0]))/(A.loc[0]-B.loc[0])));
+//    double x0 = (pow(A.loc[0],2) - pow(B.loc[0],2) + pow(A.loc[1],2) - pow(B.loc[1],2))
+//                /(2*(A.loc[0]-B.loc[0])) - ((A.loc[1]-B.loc[1])/(A.loc[0]-B.loc[0]))*y0;
+//    r = pow(pow(A.loc[0]-x0,2)+pow(A.loc[1]-y0,2),0.5);
+//    std::vector<double> center = {x0, y0};
+
+    Matrix A1(2,2,{B.loc[0]-A.loc[0], B.loc[1]-A.loc[1],  C.loc[0]-A.loc[0], C.loc[1]-A.loc[1]}),
+           A2(2,2,{B.loc[0]-A.loc[0], B.loc[1]-A.loc[1],  C.loc[0]-B.loc[0], C.loc[1]-B.loc[1]}),
+           A3(2,2,{C.loc[0]-A.loc[0], C.loc[1]-A.loc[1],  C.loc[0]-B.loc[0], C.loc[1]-B.loc[1]});
+    std::vector<double> center(2),
+                        b1 = {0.5*(pow(B.loc[0],2.0)+pow(B.loc[1],2.0)-pow(A.loc[0],2.0)-pow(A.loc[1],2.0)),0.5*(pow(C.loc[0],2.0)+pow(C.loc[1],2.0)-pow(A.loc[0],2.0)-pow(A.loc[1],2.0))},
+                        b2 = {0.5*(pow(B.loc[0],2.0)+pow(B.loc[1],2.0)-pow(A.loc[0],2.0)-pow(A.loc[1],2.0)),0.5*(pow(C.loc[0],2.0)+pow(C.loc[1],2.0)-pow(B.loc[0],2.0)-pow(B.loc[1],2.0))},
+                        b3 = {0.5*(pow(C.loc[0],2.0)+pow(C.loc[1],2.0)-pow(A.loc[0],2.0)-pow(A.loc[1],2.0)),0.5*(pow(C.loc[0],2.0)+pow(C.loc[1],2.0)-pow(B.loc[0],2.0)-pow(B.loc[1],2.0))};
+    if( A1.det() ){
+        center = A1.solveAxb(b1);
+        r = pow(pow(A.loc[0]-center[0],2)+pow(A.loc[1]-center[1],2),0.5);
+    }else if( A2.det() ){
+        center = A2.solveAxb(b2);
+        r = pow(pow(A.loc[0]-center[0],2)+pow(A.loc[1]-center[1],2),0.5);
+    }else if( A3.det() ){
+        center = A3.solveAxb(b3);
+        r = pow(pow(A.loc[0]-center[0],2)+pow(A.loc[1]-center[1],2),0.5);
+    }
+
+    if( pow(pow(loc[0]-center[0],2)+pow(loc[1]-center[1],2),0.5) > r+tol ){
         return false;
     }else{
         return true;
+    }
+}//----------------------------------------------------------------------------------------------------
+
+// DECIDES IF this IS INSIDE CIRCUMCIRCLE OF TRIANGLE ABC  --------------------------------------------
+bool Node::isCoCirc(Node A, Node B, Node C){
+    double tol = 1e-5, r = 1e99;
+    
+    Matrix A1(2,2,{B.loc[0]-A.loc[0], B.loc[1]-A.loc[1],  C.loc[0]-A.loc[0], C.loc[1]-A.loc[1]}),
+    A2(2,2,{B.loc[0]-A.loc[0], B.loc[1]-A.loc[1],  C.loc[0]-B.loc[0], C.loc[1]-B.loc[1]}),
+    A3(2,2,{C.loc[0]-A.loc[0], C.loc[1]-A.loc[1],  C.loc[0]-B.loc[0], C.loc[1]-B.loc[1]});
+    std::vector<double> center(2),
+    b1 = {0.5*(pow(B.loc[0],2.0)+pow(B.loc[1],2.0)-pow(A.loc[0],2.0)-pow(A.loc[1],2.0)),0.5*(pow(C.loc[0],2.0)+pow(C.loc[1],2.0)-pow(A.loc[0],2.0)-pow(A.loc[1],2.0))},
+    b2 = {0.5*(pow(B.loc[0],2.0)+pow(B.loc[1],2.0)-pow(A.loc[0],2.0)-pow(A.loc[1],2.0)),0.5*(pow(C.loc[0],2.0)+pow(C.loc[1],2.0)-pow(B.loc[0],2.0)-pow(B.loc[1],2.0))},
+    b3 = {0.5*(pow(C.loc[0],2.0)+pow(C.loc[1],2.0)-pow(A.loc[0],2.0)-pow(A.loc[1],2.0)),0.5*(pow(C.loc[0],2.0)+pow(C.loc[1],2.0)-pow(B.loc[0],2.0)-pow(B.loc[1],2.0))};
+    if( A1.det() ){
+        center = A1.solveAxb(b1);
+        r = pow(pow(A.loc[0]-center[0],2)+pow(A.loc[1]-center[1],2),0.5);
+    }else if( A2.det() ){
+        center = A2.solveAxb(b2);
+        r = pow(pow(A.loc[0]-center[0],2)+pow(A.loc[1]-center[1],2),0.5);
+    }else if( A3.det() ){
+        center = A3.solveAxb(b3);
+        r = pow(pow(A.loc[0]-center[0],2)+pow(A.loc[1]-center[1],2),0.5);
+    }
+    
+    if( pow(pow(loc[0]-center[0],2)+pow(loc[1]-center[1],2),0.5) > r-tol &&
+        pow(pow(loc[0]-center[0],2)+pow(loc[1]-center[1],2),0.5) < r+tol ){
+        return true;
+    }else{
+        return false;
     }
 }//----------------------------------------------------------------------------------------------------
 
@@ -489,9 +590,9 @@ std::vector<int> Node::ordCandList(Node* node, std::string orientation){
     std::vector<int> ordered;
     for(int i = 0; i < N; i++){
         if( orientation == "cw" )
-            angles[i] = calcAngle(*adjacent[i],*node,orientation);
+            angles[i] = calcAngle(*adjacent[i],*node);
         if( orientation == "ccw" )
-            angles[i] = calcAngle(*node,*adjacent[i],orientation);
+            angles[i] = calcAngle(*node,*adjacent[i]);
     }
     double theta1 = acos(-1), theta2 = -1, tol = 1e-5;
     for(int i = 0; i < N; i++){
@@ -508,6 +609,18 @@ std::vector<int> Node::ordCandList(Node* node, std::string orientation){
         theta1 = acos(-1);
         minIndSet = false;
     }
+    return ordered;
+}//----------------------------------------------------------------------------------------------------
+
+// ORDERS ADJACENCT NODES BY ANGLE WITH +X AXIS  ------------------------------------------------------
+std::vector<int> Node::ordAdjByAng(void){
+    double tol = 1e-4;
+    Node e1(-1,loc[0]+1,loc[1]-tol), me1(-2,loc[0]-1,loc[1]+tol);
+    std::vector<int> orderedUpper = ordCandList(&e1,"ccw"), orderedLower = ordCandList(&me1,"ccw"), ordered;
+    for(int i = 0; i < orderedUpper.size(); i++)
+        ordered.push_back(orderedUpper[i]);
+    for(int i = 0; i < orderedLower.size() && i < adjacent.size(); i++)
+        ordered.push_back(orderedLower[i]);
     return ordered;
 }//----------------------------------------------------------------------------------------------------
 
@@ -548,6 +661,7 @@ bool Node::operator<(Node& rhs) const {
 
 // =======================  FACET CLASS MEMBERS  ======================================================
 Facet::Facet(std::vector<Node*> nodeList) : ID(ciCounter), nodes(nodeList){
+    double tol = 1e-5;
     if( nodeList.size() == 3 ){
         std::vector<double> node1Loc = nodes[0]->getLoc(), node2Loc = nodes[1]->getLoc(),
             node3Loc = nodes[2]->getLoc();
@@ -556,6 +670,17 @@ Facet::Facet(std::vector<Node*> nodeList) : ID(ciCounter), nodes(nodeList){
         area = fabs(matArray.det())/2.0;
         centroid.push_back( (node1Loc[0]+node2Loc[0]+node3Loc[0])/3.0 );
         centroid.push_back( (node1Loc[1]+node2Loc[1]+node3Loc[1])/3.0 );
+        
+        double ang1 = fmin(nodes[0]->calcAngle(*nodes[1],*nodes[2]),nodes[0]->calcAngle(*nodes[2],*nodes[1])),
+               ang2 = fmin(nodes[1]->calcAngle(*nodes[0],*nodes[2]),nodes[1]->calcAngle(*nodes[2],*nodes[0])),
+               ang3 = fmin(nodes[2]->calcAngle(*nodes[0],*nodes[1]),nodes[2]->calcAngle(*nodes[1],*nodes[0]));
+        if( fabs(ang1+ang2+ang3 - acos(-1)) < tol ){
+            angles.push_back(ang1);
+            angles.push_back(ang2);
+            angles.push_back(ang3);
+        }
+        else
+            std::cout << "ERROR IN Facet(): inconsistent vertex angles." << std::endl;
     }else{
         area = 0;
         std::cout << "WARNING IN Facet(): degenerate facet constructed." << std::endl;

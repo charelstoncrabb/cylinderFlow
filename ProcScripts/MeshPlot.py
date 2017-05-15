@@ -11,6 +11,7 @@ class node:
 	id = -1
 	x = -1
 	y = -1
+	isbound = 0
 	adj = []
 
 def openOutfile():
@@ -51,9 +52,10 @@ if __name__ == "__main__":
 			n.adj = []
 			nodedata = line.split(' ')
 			n.id = int(nodedata[0])
-			n.x = float(nodedata[1])
-			n.y = float(nodedata[2])
-			for i in range(3,len(nodedata)-1):
+			n.isbound = bool(int(nodedata[1]))
+			n.x = float(nodedata[2])
+			n.y = float(nodedata[3])
+			for i in range(4,len(nodedata)-1):
 				n.adj.append(int(nodedata[i]))
 			nodes.append(n)
 			line = meshOut.readline()
@@ -71,7 +73,10 @@ if __name__ == "__main__":
 				minY = nd.y
 			if nd.y > maxY:
 				maxY = nd.y
-			plt.plot(nd.x,nd.y,'bs')
+			if nd.isbound:
+				plt.plot(nd.x,nd.y,'gs')
+			else:
+				plt.plot(nd.x,nd.y,'bs')
 			for adjnode in nd.adj:
 				plt.plot([nd.x, nodes[findIndByID(nodes,adjnode)].x],[nd.y, nodes[findIndByID(nodes,adjnode)].y], 'k')
 		plt.xlim([minX-1,maxX+1])

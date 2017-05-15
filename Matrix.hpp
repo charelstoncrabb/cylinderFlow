@@ -31,6 +31,7 @@ public:
     std::vector<double> eigAI(double tolerance, bool verbose = false);
     std::vector<Matrix> QRdecomp(void);
     std::vector<double> svd(double tolerance, bool verbose = false);
+    bool isSquare(void){return numRows == numCols;};
     
     Matrix operator=(const Matrix& rhs);
     Matrix operator+(const Matrix& b);
