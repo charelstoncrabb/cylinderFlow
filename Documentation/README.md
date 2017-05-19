@@ -1,6 +1,15 @@
 # cylinderFlow
 C++ Finite Element CFD for Planar Flow
 
+Installation:
+ - Download full repository into a working folder of choice
+ - Open terminal and cd to the folder
+ - type 'make' into command line to compile
+ - you will likely need to perform a chmod u+x on the python scripts in order to execute them
+ - type './guitest.py' to run meshing GUI
+
+Note: the python scripts assume the python interpreter lives in 'usr/bin/python'. If this is different on your machine, this will need to be changed. Just type 'which python' into the command line to view the interpreter path
+
 Architechture:
 > Classes:
  - Options: handles input/command line options for meshing
