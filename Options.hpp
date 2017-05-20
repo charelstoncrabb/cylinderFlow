@@ -16,6 +16,7 @@ public:
     const char* infile(void){return inFile;};
     const char* outfile(void){return outFile;};
     bool plot(void){return plotFlag;};
+    bool rotflag(void){return rotFlag;};
     bool run;
 private:
     void printOptions(void);
@@ -23,6 +24,7 @@ private:
     const char* inFile;
     const char* outFile;
     bool plotFlag;
+    bool rotFlag;
 };
 
 #endif /* Options_hpp */

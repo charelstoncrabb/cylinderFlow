@@ -1,5 +1,6 @@
 # cylinderFlow
 C++ Finite Element CFD for Planar Flow
+SEE manual.pdf FOR MORE DETAILED EXPLANATIONS:
 
 Installation:
  - Download full repository into a working folder of choice

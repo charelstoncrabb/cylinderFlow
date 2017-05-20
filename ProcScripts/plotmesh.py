@@ -1,4 +1,4 @@
-#!/usr/bin/python
+
 import os.path
 import sys
 import numpy as np
@@ -40,8 +40,8 @@ def findIndByID(nodes,ID):
 			return i
 
 # Main function:
-if __name__ == "__main__":
-	meshOut = openOutfile()
+def plotmesh(filename,p):
+	meshOut = open(filename)
 	if meshOut:
 		nodes = []
 		header = meshOut.readline()
@@ -74,12 +74,11 @@ if __name__ == "__main__":
 			if nd.y > maxY:
 				maxY = nd.y
 			if nd.isbound:
-				plt.plot(nd.x,nd.y,'gs')
+				p.plot(nd.x,nd.y,'gs')
 			else:
-				plt.plot(nd.x,nd.y,'bs')
+				p.plot(nd.x,nd.y,'bs')
 			for adjnode in nd.adj:
-				plt.plot([nd.x, nodes[findIndByID(nodes,adjnode)].x],[nd.y, nodes[findIndByID(nodes,adjnode)].y], 'k')
-		plt.xlim([minX-1,maxX+1])
-		plt.ylim([minY-1,maxY+1])
-		plt.title(sys.argv[1] + ': ' + str(len(nodes)) + ' nodes')
-		plt.show()
+				p.plot([nd.x, nodes[findIndByID(nodes,adjnode)].x],[nd.y, nodes[findIndByID(nodes,adjnode)].y], 'k')
+		p.set_xlim([minX-1,maxX+1])
+		p.set_ylim([minY-1,maxY+1])
+		p.set_title(str(len(nodes)) + ' nodes')
