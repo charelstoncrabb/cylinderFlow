@@ -12,11 +12,6 @@
 #include "Options.hpp"
 
 int main(int argc, const char * argv[]) {
-
-//    Matrix A(2,2,{0,-1,-1,3});
-//    std::vector<double> b = {-0.5,6},
-//                        x = A.solveAxb(b);
-//    std::cout << x[0] << "," << x[1] << std::endl;
     char meshplot[100] = "./ProcScripts/MeshPlot.py ", amp[3] = " &";
     Options* options = new Options(argc,argv);
     Mesh* mesh = new Mesh(options->infile(),options->rotflag());

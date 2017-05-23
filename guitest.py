@@ -6,7 +6,7 @@ matplotlib.use('TkAgg')
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
 # implement the default mpl key bindings
 from matplotlib.backend_bases import key_press_handler
-from matplotlib.figure import Figure
+from matplotlib.pyplot import Figure
 import sys
 import os
 
@@ -70,8 +70,14 @@ def on_key_event(event):
     if event.key == "super+m":
     	_mesh()
 
-canvas.mpl_connect('key_press_event', on_key_event)
+def clicked(event):
+	print 'wut'
+	print('button=%d, x=%d, y=%d, xdata=%f, ydata=%f' %(event.button, event.x, event.y, event.xdata, event.ydata))
 
+
+canvas.mpl_connect('key_press_event', on_key_event)
+mcid = f.canvas.mpl_connect('button_pressed_event', clicked)
+print mcid
 # App menu
 menu = Menu(root)
 root.config(menu=menu)

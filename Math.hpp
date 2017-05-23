@@ -18,7 +18,7 @@ public:
 class Combinatorics : public Math{
 public:
     Combinatorics(){};
-    std::vector<std::vector<int>> nChoosek(std::vector<int> values, int K);
+    std::vector<std::vector<int> > nChoosek(std::vector<int> values, int K);
     void testnChoosek(void);
 private:
 };

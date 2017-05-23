@@ -37,7 +37,7 @@ Options::Options(int argc, const char* argv[]):plotFlag(false){
                             options["outfile"] = true;
                             break;
                         case 'p':
-                            pf = parsePlotFlag(args[i+1]);
+                            pf = parseBoolFlag(args[i+1]);
                             if( pf == 0 || pf == 1 ){
                                 plotFlag = (bool)pf;
                                 options["plotflag"] = true;
@@ -46,7 +46,7 @@ Options::Options(int argc, const char* argv[]):plotFlag(false){
                                 throw "bad plot flag -- use \'-h\' for options syntax.";
                             break;
                         case 'r':
-                            rf = parsePlotFlag(args[i+1]);
+                            rf = parseBoolFlag(args[i+1]);
                             if( rf == 0 || rf == 1 ){
                                 rotFlag = (bool)rf;
                                 options["rotflag"] = true;
@@ -85,7 +85,7 @@ void Options::printOptions(){
     std::cout << "\t-i <file>\tspecify input node data with file (required to run program)\n\t-o <file>\tspecify mesh output data file\n\t-p <on/off>\tplot resulting triangulated graph\n";
 }
 
-int Options::parsePlotFlag(const char* flag){
+int Options::parseBoolFlag(const char* flag){
     if( !strcmp(flag,"on") )
         return 1;
     else if( !strcmp(flag,"off") )

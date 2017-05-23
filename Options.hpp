@@ -20,7 +20,7 @@ public:
     bool run;
 private:
     void printOptions(void);
-    int parsePlotFlag(const char* flag);
+    int parseBoolFlag(const char* flag);
     const char* inFile;
     const char* outFile;
     bool plotFlag;

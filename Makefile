@@ -3,8 +3,8 @@ CFLAGS  = -g -O3 -Wall -std=c++11
 
 default: cylinderFlow
 
-cylinderFlow: main.o Matrix.o Math.o Mesh.o VectOps.o Options.o
-	$(CPP) $(CFLAGS) -o cylinderFlow main.o Matrix.o Math.o Mesh.o VectOps.o Options.o
+cylinderFlow: main.o Matrix.o Math.o Mesh.o VectOps.o Options.o Solver.o
+	$(CPP) $(CFLAGS) -o cylinderFlow main.o Matrix.o Math.o Mesh.o VectOps.o Options.o Solver.o
 
 main.o: main.cpp
 	$(CPP) $(CFLAGS) -c main.cpp
@@ -23,6 +23,9 @@ VectOps.o: VectOps.cpp VectOps.hpp
 
 Options.o: Options.cpp Options.hpp
 	$(CPP) $(CFLAGS) -c Options.cpp
+
+Solver.o: Solver.cpp Solver.hpp
+	$(CPP) $(CFLAGS) -c Solver.cpp
 
 clean:
 	$(RM) cylinderFlow *.o *~ *.gch *.out Documentation/*.log Documentation/*.out Documentation/*.aux Documentation/*.toc Documentation/*.gz
