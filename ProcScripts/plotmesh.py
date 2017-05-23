@@ -4,15 +4,31 @@ import sys
 import numpy as np
 import matplotlib.pyplot as plt
 
-helpDict = {}
-helpDict['h'] = 'MeshPlot.py:\nPlots the mesh defined in the output file.\nsyntax: \"./MeshPlot.py <output file>\"'
+helpDict = {
+	'h': 'MeshPlot.py:\nPlots the mesh defined in the output file.\nsyntax: \"./MeshPlot.py <output file>\"'}
 
 class node:
-	id = -1
-	x = -1
-	y = -1
-	isbound = 0
-	adj = []
+	def __init__(self,id = -1,x = -1,y = -1,isbound = 0):
+		self.id = id
+		self.x = x
+		self.y = y
+		self.isbound = isbound
+		self.adj = []
+
+def findClosest(nodelist,event):
+	if len(nodelist) > 0:
+		minDist = 1e99
+		closestInd = -1
+		for i in range(0,len(nodelist)):
+			if np.argmin([minDist,np.abs(event.xdata-nodelist[i].x)+np.abs(event.ydata-nodelist[i].y)]) == 1:
+				minDist = np.abs(event.xdata-nodelist[i].x)+np.abs(event.ydata-nodelist[i].y)
+				closestInd = i
+	else:
+		return -1
+
+def writeListToDatFile(filehandle,nodelist):
+	for node in nodelist:
+		filehandle.write(str(node.id) + ' ' + str(node.x) + ' ' + str(node.y) + '\n')
 
 def openOutfile():
 	if len(sys.argv) > 1:
@@ -39,8 +55,8 @@ def findIndByID(nodes,ID):
 		if nodes[i].id == ID:
 			return i
 
-# Main function:
 def plotmesh(filename,p):
+	p.cla()
 	meshOut = open(filename)
 	if meshOut:
 		nodes = []
@@ -48,13 +64,8 @@ def plotmesh(filename,p):
 		header = meshOut.readline()
 		line = meshOut.readline()
 		while len(line) > 1:
-			n = node()
-			n.adj = []
 			nodedata = line.split(' ')
-			n.id = int(nodedata[0])
-			n.isbound = bool(int(nodedata[1]))
-			n.x = float(nodedata[2])
-			n.y = float(nodedata[3])
+			n = node(int(nodedata[0]),float(nodedata[2]),float(nodedata[3]),bool(int(nodedata[1])))
 			for i in range(4,len(nodedata)-1):
 				n.adj.append(int(nodedata[i]))
 			nodes.append(n)
@@ -79,6 +90,14 @@ def plotmesh(filename,p):
 				p.plot(nd.x,nd.y,'bs')
 			for adjnode in nd.adj:
 				p.plot([nd.x, nodes[findIndByID(nodes,adjnode)].x],[nd.y, nodes[findIndByID(nodes,adjnode)].y], 'k')
-		p.set_xlim([minX-1,maxX+1])
-		p.set_ylim([minY-1,maxY+1])
+		winrng = [maxX-minX,maxY-minY]
+		p.set_xlim([minX-0.05*winrng[0],maxX+0.05*winrng[0]])
+		p.set_ylim([minY-0.05*winrng[1],maxY+0.05*winrng[1]])
 		p.set_title(str(len(nodes)) + ' nodes')
+
+def scatter(nodelist,p):
+	p.cla()
+	for node in nodelist:
+		p.plot(node.x,node.y,'bs')
+	p.set_xlim([0,1])
+	p.set_ylim([0,1])
