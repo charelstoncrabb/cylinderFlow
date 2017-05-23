@@ -27,5 +27,8 @@ Options.o: Options.cpp Options.hpp
 Solver.o: Solver.cpp Solver.hpp
 	$(CPP) $(CFLAGS) -c Solver.cpp
 
+cleanall:
+	$(RM) cylinderFlow *.o *~ *.gch *.out Documentation/*.log Documentation/*.out Documentation/*.aux Documentation/*.toc Documentation/*.gz DataFiles/*.out
+
 clean:
-	$(RM) cylinderFlow *.o *~ *.gch *.out Documentation/*.log Documentation/*.out Documentation/*.aux Documentation/*.toc Documentation/*.gz
+	$(RM) cylinderFlow *.o *~ *.gch *.out

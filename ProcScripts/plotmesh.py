@@ -16,15 +16,14 @@ class node:
 		self.adj = []
 
 def findClosest(nodelist,event):
+	closestInd = -1
 	if len(nodelist) > 0:
 		minDist = 1e99
-		closestInd = -1
 		for i in range(0,len(nodelist)):
 			if np.argmin([minDist,np.abs(event.xdata-nodelist[i].x)+np.abs(event.ydata-nodelist[i].y)]) == 1:
 				minDist = np.abs(event.xdata-nodelist[i].x)+np.abs(event.ydata-nodelist[i].y)
 				closestInd = i
-	else:
-		return -1
+	return closestInd
 
 def writeListToDatFile(filehandle,nodelist):
 	for node in nodelist:
