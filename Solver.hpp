@@ -23,18 +23,20 @@ private:
     std::vector<double> basisWeights;
     
     double dt;
+    
+    class BasisFcn{
+        BasisFcn();
+        
+    private:
+        Node* vertex;
+        std::vector<Facet*> support;
+        std::vector< std::vector<double> > coeffs;
+        double norm;
+        
+        friend class Solver;
+    };
 };
 
 
-class BasisFcn{
-    BasisFcn();
-    
-private:
-    Node* vertex;
-    std::vector<Facet*> support;
-    std::vector< std::vector<double> > coeffs;
-    double norm;
-    
-    friend class Solver;
-};
+
 #endif /* Solver_hpp */

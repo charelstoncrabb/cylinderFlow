@@ -643,12 +643,6 @@ int Node::findIndByID(std::vector<Node*> nodes){
     return ind;
 }//----------------------------------------------------------------------------------------------------
 
-// ASSIGNMENT OPERATOR  -------------------------------------------------------------------------------
-//void Node::operator=(Node& rhs){
-//    nodeID = rhs.nodeID;
-//    loc = rhs.loc;
-//}//----------------------------------------------------------------------------------------------------
-
 // COMPARISON OPERATOR - USES STANDARD (X,Y) DICTIONARY ORDER  ----------------------------------------
 bool Node::operator<(Node& rhs) const {
     if(loc[0] < rhs.loc[0]){
@@ -661,7 +655,8 @@ bool Node::operator<(Node& rhs) const {
 
 // =======================  FACET CLASS MEMBERS  ======================================================
 Facet::Facet(std::vector<Node*> nodeList) : ID(ciCounter), nodes(nodeList){
-    double tol = 1e-5;
+    double tol = 1e-15;
+    sortVerticesByAngle();
     if( nodeList.size() == 3 ){
         std::vector<double> node1Loc = nodes[0]->getLoc(), node2Loc = nodes[1]->getLoc(),
             node3Loc = nodes[2]->getLoc();
@@ -687,4 +682,22 @@ Facet::Facet(std::vector<Node*> nodeList) : ID(ciCounter), nodes(nodeList){
     }
 }//----------------------------------------------------------------------------------------------------
 
-
+// SORTS THE FACET'S VERTICES BY CCW ORIENTATION  -----------------------------------------------------
+void Facet::sortVerticesByAngle(void){
+    std::vector<Node*> nlCopy = nodes;
+    std::map<double,int> theta;
+    int i = 0;
+    double vDotE;
+    for( i = 0; i < nodes.size(); i++ ){
+        vDotE = acos( nodes[i]->x() - centroid[0] );
+        if( nodes[i]->y() >= centroid[1] )
+            theta[vDotE] = i;
+        else
+            theta[2*acos(-1)-vDotE] = i;
+    }
+    i = 0;
+    for( std::map<double,int>::iterator itr = theta.begin(); itr != theta.end() && i < nodes.size(); ++itr){
+        nodes[i] = nlCopy[itr->second];
+        i++;
+    }
+}//----------------------------------------------------------------------------------------------------

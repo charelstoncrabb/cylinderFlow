@@ -78,6 +78,8 @@ public:
     std::vector<int> ordAdjByAng(void);
     bool isAdjacent(Node node);
     int findIndByID(std::vector<Node*> nodes);
+    double x(void){return loc[0];};
+    double y(void){return loc[1];};
     bool operator<(Node& rhs) const;
 private:
     int nodeID;
@@ -95,8 +97,11 @@ public:
     Facet(std::vector<Node*> nodeList);
     ~Facet(){ciCounter--;};
     double getArea(void){return area;};
+    
 //    Facet operator=(Facet& rhs);
 private:
+    void sortVerticesByAngle(void);
+    
     const int ID;
     double area;
     std::vector<double> centroid;
