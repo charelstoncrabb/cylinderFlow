@@ -8,6 +8,7 @@
 #include "Includes.hpp"
 #include "VectOps.hpp"
 #include "Matrix.hpp"
+#include "Solver.hpp"
 
 #ifndef Mesh_h
 #define Mesh_h
@@ -32,8 +33,9 @@ public:
     Mesh(const char* meshDataFilename, bool rotFlag = false);
     ~Mesh();
     void writeMesh(const char* meshOutFile = "Mesh.out");
-    unsigned size(void){return (unsigned int)nodeList.size();};
+    unsigned size(void) const {return (unsigned int)nodeList.size();};
     Mesh operator=(const Mesh& rhs);
+    const Node* nodelist(int i) const;
 private:
     Mesh(){};
     Mesh(std::vector<Node*> nodes, std::vector<Facet*> facets);
@@ -70,6 +72,8 @@ public:
 //    Node(){};
     Node(int ID, double x, double y);
     std::vector<double> getLoc(void){return loc;};
+    unsigned short getDegree(void){return (unsigned short)adjacent.size();};
+    std::vector<Facet> getAdjFacets(void);
     void setNode(int ID, double x, double y);
     double calcAngle(Node P, Node Q);
     bool isInCirc(Node A, Node B, Node C);
@@ -89,6 +93,7 @@ private:
     bool traversed;
     bool isBoundaryNode;
     friend class Mesh;
+    friend class Solver;
 };
 
 class Facet : public classInstanceCounter<Facet>{
@@ -110,6 +115,7 @@ private:
 //    std::vector<Facet*> adjacent;
     
     friend class Mesh;
+    friend class Solver;
 };
 
 #endif /* Mesh_h */

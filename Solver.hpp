@@ -11,32 +11,45 @@
 #include "Includes.hpp"
 #include "Mesh.hpp"
 
-class BasisFcn;
 
 class Solver{
-    Solver(Mesh* mesh);
+    Solver(const Mesh* mesh);
     
 private:
-    Mesh* feMesh;
-    std::vector<BasisFcn*> basis;
-    std::vector<BasisFcn*> dBdx;
-    std::vector<double> basisWeights;
     
-    double dt;
-    
-    class BasisFcn{
-        BasisFcn();
+    // Nested class handling all functions defined on the given mesh:
+    class Function{
+    public:
         
     private:
-        Node* vertex;
-        std::vector<Facet*> support;
-        std::vector< std::vector<double> > coeffs;
-        double norm;
-        
+        // (Basis) (El)ements functions class:
+        class BasisEl{
+            BasisEl(const Node* vtx);
+        private:
+            const Node* vertex;
+            std::vector<Facet*> support;
+            std::map<Facet*,std::vector<double> > coeffs;
+            double norm;
+            friend class Solver;
+            friend class Function;
+        };
+    
+        // BasisRep = (Basis) (Rep)resentation of a function = linear combination of basis functions class
+        class BasisRep{
+        private:
+            std::map<Solver::Function::BasisEl*,double> basisWeights;
+            friend class Solver;
+            friend class Function;
+        };
+        double integratePlane(std::vector<Node*> vertices, std::vector<double> vals);
         friend class Solver;
     };
+    
+    
+    const Mesh* feMesh;
+    std::vector<Function::BasisEl*> basis;
+    double dt;
 };
-
 
 
 #endif /* Solver_hpp */

@@ -92,6 +92,16 @@ Mesh::~Mesh(){
     }
 }//----------------------------------------------------------------------------------------------------
 
+// PUBLIC CONST NODELIST ACCESS  ----------------------------------------------------------------------
+const Node* Mesh::nodelist(int i) const{
+    if( i < nodeList.size() )
+        return nodeList[i];
+    else{
+        std::cout << "ERROR in Mesh::nodelist(int): attempting access outside of nodeList!" << std::endl;
+        return NULL;
+    }
+}//----------------------------------------------------------------------------------------------------
+
 // PARSES MESH .DAT FILE FOR MESH NODES  --------------------------------------------------------------
 void Mesh::parseMeshData(std::string meshDataFilename){
     std::ifstream meshData(meshDataFilename);
@@ -500,6 +510,14 @@ void Node::setNode(int ID, double x, double y){
 //    loc[0] = x;
 //    loc[1] = y;
     std::cout << "ERROR: setNode() method is deprecated!" << std::endl;
+}//----------------------------------------------------------------------------------------------------
+
+// PUBLIC ACCESS TO ISVERTEXOF  -----------------------------------------------------------------------
+std::vector<Facet> Node::getAdjFacets(void){
+    std::vector<Facet> pubFacets;
+    for( int i = 0; i < isVertexOf.size(); i++)
+        pubFacets.push_back(*isVertexOf[i]);
+    return pubFacets;
 }//----------------------------------------------------------------------------------------------------
 
 // RETURNS ANGLE BETWEEN LINE SEGMENTS this-P AND this-Q  ---------------------------------------------
