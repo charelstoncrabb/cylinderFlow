@@ -11,7 +11,7 @@
 
 class Math{
 public:
-    Math();
+    Math():PI(acos(-1)){};
     const double PI;
 };
 
@@ -23,4 +23,5 @@ public:
 private:
 };
 
+class 
 #endif /* Math_h */

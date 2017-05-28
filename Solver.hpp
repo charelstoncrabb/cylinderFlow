@@ -23,27 +23,27 @@ private:
         
     private:
         // (Basis) (El)ements functions class:
-        class BasisEl{
-            BasisEl(const Node* vtx);
-        private:
-            const Node* vertex;
-            std::vector<Facet*> support;
-            std::map<Facet*,std::vector<double> > coeffs;
-            double norm;
-            friend class Solver;
-            friend class Function;
-        };
-    
-        // BasisRep = (Basis) (Rep)resentation of a function = linear combination of basis functions class
-        class BasisRep{
-        private:
-            std::map<Solver::Function::BasisEl*,double> basisWeights;
-            friend class Solver;
-            friend class Function;
-        };
         double integratePlane(std::vector<Node*> vertices, std::vector<double> vals);
         friend class Solver;
     };
+    class BasisEl : Function{
+        BasisEl(const Node* vtx);
+    private:
+        const Node* vertex;
+        std::vector<Facet*> support;
+        std::map<Facet*,std::vector<double> > coeffs;
+        double norm;
+        friend class Solver;
+        friend class Function;
+    };
+        // BasisRep = (Basis) (Rep)resentation of a function = linear combination of basis functions class
+    class BasisRep : Function{
+    private:
+        std::map<Solver::Function::BasisEl*,double> basisWeights;
+        friend class Solver;
+        friend class Function;
+    };
+        
     
     
     const Mesh* feMesh;

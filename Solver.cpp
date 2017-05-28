@@ -16,7 +16,7 @@
 Solver::Solver(const Mesh* mesh) : feMesh(mesh) {
     // Set up basis functions and corresponding gradients on the given mesh
     for( int i = 0; i < feMesh->size(); i++ ){
-        Function::BasisEl* newBasisFcn = new Function::BasisEl(feMesh->nodelist(i));
+        BasisEl* newBasisFcn = new BasisEl(feMesh->nodelist(i));
         basis.push_back(newBasisFcn);
     }
     // Set initial and boundary conditions
@@ -33,12 +33,12 @@ double Solver::Function::integratePlane(std::vector<Node*> vertices, std::vector
 
 
 //----------------------------------------------------------------------------------------------------
-//-------------------------- SOLVER::FUNCTION::BASISEL METHODS ---------------------------------------
+//------------------------------ SOLVER::BASISEL METHODS ---------------------------------------------
 //----------------------------------------------------------------------------------------------------
 
 
 // BASIS ELEMENT CONSTRUCTOR  ------------------------------------------------------------------------
-Solver::Function::BasisEl::BasisEl(const Node* vtx) : vertex(vtx){
+Solver::BasisEl::BasisEl(const Node* vtx) : vertex(vtx){
     support = vertex->isVertexOf;
     double thisNorm = 0.0;
     for(int i = 0; i < support.size(); i++){
@@ -57,6 +57,6 @@ Solver::Function::BasisEl::BasisEl(const Node* vtx) : vertex(vtx){
         coeffs[cf] = currentCoeffs;
         
         // Calculate contribution on this facet to the function's norm
-//        thisNorm += Function::integratePlane(nodes,{1.0,0.0,0.0});
+        thisNorm += integratePlane(nodes,{1.0,0.0,0.0});
     }
 }//---------------------------------------------------------------------------------------------------
