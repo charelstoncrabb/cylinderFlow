@@ -39,7 +39,7 @@ private:
         // BasisRep = (Basis) (Rep)resentation of a function = linear combination of basis functions class
     class BasisRep : Function{
     private:
-        std::map<Solver::Function::BasisEl*,double> basisWeights;
+        std::map<BasisEl*,double> basisWeights;
         friend class Solver;
         friend class Function;
     };
@@ -47,8 +47,7 @@ private:
     
     
     const Mesh* feMesh;
-    std::vector<Function::BasisEl*> basis;
-    double dt;
+    std::vector<BasisEl*> basis;
 };
 
 

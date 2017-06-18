@@ -40,7 +40,6 @@ double Solver::Function::integratePlane(std::vector<Node*> vertices, std::vector
 // BASIS ELEMENT CONSTRUCTOR  ------------------------------------------------------------------------
 Solver::BasisEl::BasisEl(const Node* vtx) : vertex(vtx){
     support = vertex->isVertexOf;
-    double thisNorm = 0.0;
     for(int i = 0; i < support.size(); i++){
         Facet* cf = support[i];
         std::vector<Node*> nodes(3,NULL);
@@ -57,6 +56,6 @@ Solver::BasisEl::BasisEl(const Node* vtx) : vertex(vtx){
         coeffs[cf] = currentCoeffs;
         
         // Calculate contribution on this facet to the function's norm
-        thisNorm += integratePlane(nodes,{1.0,0.0,0.0});
+        norm += integratePlane(nodes,{1.0,0.0,0.0});
     }
 }//---------------------------------------------------------------------------------------------------

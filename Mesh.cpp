@@ -673,8 +673,8 @@ bool Node::operator<(Node& rhs) const {
 
 // =======================  FACET CLASS MEMBERS  ======================================================
 Facet::Facet(std::vector<Node*> nodeList) : ID(ciCounter), nodes(nodeList){
-    double tol = 1e-15;
-    sortVerticesByAngle();
+    double tol = 1e-10;
+    
     if( nodeList.size() == 3 ){
         std::vector<double> node1Loc = nodes[0]->getLoc(), node2Loc = nodes[1]->getLoc(),
             node3Loc = nodes[2]->getLoc();
@@ -683,7 +683,6 @@ Facet::Facet(std::vector<Node*> nodeList) : ID(ciCounter), nodes(nodeList){
         area = fabs(matArray.det())/2.0;
         centroid.push_back( (node1Loc[0]+node2Loc[0]+node3Loc[0])/3.0 );
         centroid.push_back( (node1Loc[1]+node2Loc[1]+node3Loc[1])/3.0 );
-        
         double ang1 = fmin(nodes[0]->calcAngle(*nodes[1],*nodes[2]),nodes[0]->calcAngle(*nodes[2],*nodes[1])),
                ang2 = fmin(nodes[1]->calcAngle(*nodes[0],*nodes[2]),nodes[1]->calcAngle(*nodes[2],*nodes[0])),
                ang3 = fmin(nodes[2]->calcAngle(*nodes[0],*nodes[1]),nodes[2]->calcAngle(*nodes[1],*nodes[0]));
@@ -698,6 +697,7 @@ Facet::Facet(std::vector<Node*> nodeList) : ID(ciCounter), nodes(nodeList){
         area = 0;
         std::cout << "WARNING IN Facet(): degenerate facet constructed." << std::endl;
     }
+    sortVerticesByAngle();
 }//----------------------------------------------------------------------------------------------------
 
 // SORTS THE FACET'S VERTICES BY CCW ORIENTATION  -----------------------------------------------------
