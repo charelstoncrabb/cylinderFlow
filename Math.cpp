@@ -8,10 +8,6 @@
 
 #include "Math.hpp"
 
-Math::Math() : PI(acos(-1)){
-
-}
-
 // N CHOOSE K RETURNS LIST OF ALL K-FOLD COMBINATIONS OF N INTEGERS IN VALUES (RECURSIVE ALGORITHM)
 // Note: If K is >= N, it behaves as though K == N
 // PSEUDOCODE:
@@ -25,7 +21,7 @@ Math::Math() : PI(acos(-1)){
 //   Endfor
 // Endfor
 // Return combinations
-std::vector<std::vector<int>> Combinatorics::nChoosek(std::vector<int> values, int K){
+std::vector<std::vector<int>> Math::Combinatorics::nChoosek(std::vector<int> values, int K){
     std::vector<std::vector<int>> combinations, tailCombinations;
     std::vector<int> tail;
     std::vector<int>::iterator tailCombBegin;
@@ -56,7 +52,7 @@ std::vector<std::vector<int>> Combinatorics::nChoosek(std::vector<int> values, i
 }
 
 // BASIC TEST FOR nChoosek() FUNCTION
-void Combinatorics::testnChoosek(void){
+void Math::Combinatorics::testnChoosek(void){
     int k = 4;
     std::vector<int> vals = {1,2,3,4,5};
     std::vector<std::vector<int>> combs = nChoosek(vals,k);
@@ -68,3 +64,11 @@ void Combinatorics::testnChoosek(void){
     }
 }
 
+// INTEGRATES A PLANAR FUNCTION OVER FACET facet WITH VALUES AT THE VERTICES vals  -------------------
+double Math::Function::integratePlane(std::vector<Node*> vertices, std::vector<double> vals){
+    return 0.0;
+}//---------------------------------------------------------------------------------------------------
+
+// BASIS ELEMENT CONSTRUCTOR  ------------------------------------------------------------------------
+Math::BasisEl::BasisEl(const Node* vtx) : vertex(vtx)
+{}//---------------------------------------------------------------------------------------------------

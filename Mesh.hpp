@@ -93,7 +93,7 @@ private:
     bool traversed;
     bool isBoundaryNode;
     friend class Mesh;
-    friend class Solver;
+    friend class SolverBase;
 };
 
 class Facet : public classInstanceCounter<Facet>{
@@ -115,7 +115,7 @@ private:
 //    std::vector<Facet*> adjacent;
     
     friend class Mesh;
-    friend class Solver;
+    friend class SolverBase;
 };
 
 #endif /* Mesh_h */
