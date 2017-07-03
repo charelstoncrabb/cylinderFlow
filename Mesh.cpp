@@ -195,7 +195,7 @@ void Mesh::triangulate(void){
 // BUILDS FACET LIST BY GRAPH TRAVERSAL AFTER TRIANGULATION HAS OCCURRED  -----------------------------
 // TODO: Debug -- hangs for square grids over 14 X 14
 void Mesh::buildFacetList(void){
-    std::map< double, std::map<double, bool> > facetMap;
+    std::map< int, std::map<int,bool> > facetMap;
     std::queue<Node*> nodeQ;
     Node* currNode = NULL;
     if( nodeList.size() > 0 ){
@@ -204,27 +204,26 @@ void Mesh::buildFacetList(void){
             currNode = nodeQ.front();
             nodeQ.pop();
             for(int i = 0; i < currNode->adjacent.size(); i++){
-                if( !currNode->adjacent[i]->traversed ){
-//                    currNode->adjacent[i]->traversed = true;
-//                    Swapping this assignment to traversal for line 217 fixes for large square grid, but breaks other grids
+                if( !currNode->adjacent[i]->traversed )
                     nodeQ.push(currNode->adjacent[i]);
-                    for(int j = 0; j < currNode->adjacent[i]->adjacent.size(); j++){
-                        if( currNode->isAdjacent(*currNode->adjacent[i]->adjacent[j]) ){
-                            double xbar = (currNode->loc[0]+currNode->adjacent[i]->loc[0]+currNode->adjacent[i] ->adjacent[j]->loc[0])/3,
-                                ybar = (currNode->loc[1]+currNode->adjacent[i]->loc[1]+currNode->adjacent[i]->adjacent[j]->loc[1])/3;
-                            if( !facetMap[xbar][ybar] ){
-                                facetMap[xbar][ybar] = true;
-                                Facet* newFacet = new Facet({currNode,currNode->adjacent[i],currNode->adjacent[i]->adjacent[j]});
-                                facetList.push_back(newFacet);
-                                currNode->isVertexOf.push_back(newFacet);
-                                currNode->adjacent[i]->isVertexOf.push_back(newFacet);
-                                currNode->adjacent[i]->adjacent[j]->isVertexOf.push_back(newFacet);
-                            }
+                for(int j = 0; j < currNode->adjacent[i]->adjacent.size(); j++){
+                    if( currNode->isAdjacent(*currNode->adjacent[i]->adjacent[j]) ){
+                        double xbardbl = (currNode->loc[0]+currNode->adjacent[i]->loc[0]+currNode->adjacent[i] ->adjacent[j]->loc[0])/3,
+                               ybardbl = (currNode->loc[1]+currNode->adjacent[i]->loc[1]+currNode->adjacent[i]->adjacent[j]->loc[1])/3;
+                        int xbar = 100000.0*xbardbl,
+                            ybar = 100000.0*ybardbl;
+                        if( !facetMap[xbar][ybar] ){
+                            facetMap[xbar][ybar] = true;
+                            Facet* newFacet = new Facet({currNode,currNode->adjacent[i],currNode->adjacent[i]->adjacent[j]});
+                            facetList.push_back(newFacet);
+                            currNode->isVertexOf.push_back(newFacet);
+                            currNode->adjacent[i]->isVertexOf.push_back(newFacet);
+                            currNode->adjacent[i]->adjacent[j]->isVertexOf.push_back(newFacet);
                         }
                     }
                 }
             }
-            currNode->traversed = true;
+        currNode->traversed = true;
         }
     }
 }
@@ -323,11 +322,12 @@ void Mesh::mergeMeshes(const Mesh* leftSubMesh, const Mesh* rightSubMesh){
 
 // SETS BOUNDARY NODE LIST AFTER TRIANGULATION  -------------------------------------------------------
 void Mesh::setBoundaryNodes(void){
-    double tol = 1e-4;
+    double tol = 1e-5;
     for(int i = 0; i < nodeList.size(); i++){
         double totAng = 0.0;
         for(int j = 0; j < nodeList[i]->isVertexOf.size(); j++){
-            totAng += nodeList[i]->isVertexOf[j]->angles[nodeList[i]->findIndByID(nodeList[i]->isVertexOf[j]->nodes)];
+            double vertAng = nodeList[i]->isVertexOf[j]->angles[nodeList[i]->findIndByID(nodeList[i]->isVertexOf[j]->nodes)];
+            totAng += vertAng;
         }
         if( totAng < 2*acos(-1)-tol ){
             boundaryNodes.push_back(nodeList[i]);
@@ -703,6 +703,7 @@ Facet::Facet(std::vector<Node*> nodeList) : ID(ciCounter), nodes(nodeList){
 // SORTS THE FACET'S VERTICES BY CCW ORIENTATION  -----------------------------------------------------
 void Facet::sortVerticesByAngle(void){
     std::vector<Node*> nlCopy = nodes;
+    std::vector<double> angCopy = angles;
     std::map<double,int> theta;
     int i = 0;
     double vDotE;
@@ -716,6 +717,7 @@ void Facet::sortVerticesByAngle(void){
     i = 0;
     for( std::map<double,int>::iterator itr = theta.begin(); itr != theta.end() && i < nodes.size(); ++itr){
         nodes[i] = nlCopy[itr->second];
+        angles[i] = angCopy[itr->second];
         i++;
     }
 }//----------------------------------------------------------------------------------------------------

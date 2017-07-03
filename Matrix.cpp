@@ -273,7 +273,7 @@ std::vector<double> Matrix::charPoly(void){
 		std::vector<double> coefficients(numRows);
 		std::vector<int> I = indexVect(numRows);
 		std::vector<std::vector<int>> subMatInds;
-		Combinatorics combinatorics;
+		Math::Combinatorics combinatorics;
 		Matrix currSubMat(0,0);
 		for(k = 0; k < numRows-1; k++){
 			coefficient = 0;
