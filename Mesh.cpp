@@ -11,16 +11,21 @@
 // ========================  MESH CLASS MEMBERS  ======================================================
 // CONSTRUCTOR - USES NODE LOCATIONS FROM meshDataFilename  -------------------------------------------
 Mesh::Mesh(const char* meshDataFilename, bool rotFlag) : rotateFlag(rotFlag), theta(0.1) {
+    std::cout << "Parsing input data...";
     parseMeshData(meshDataFilename);
-    std::cout << "Input data successfully parsed..." << std::endl;
+    std::cout << " ... Done!" << std::endl;
+    std::cout << "Triangulating nodes...";
     preRotate();
     triangulate();
-    std::cout << "Grid successfully triangulated..." << std::endl;
+    std::cout << " ... Done!" << std::endl;
+    std::cout << "Building facets from triangulation...";
     postRotate();
     buildFacetList();
-    std::cout << "Facets successfully constructed..." << std::endl;
+    std::cout << " ... Done!" << std::endl;
+    std::cout << "Identifying boundary nodes...";
     setBoundaryNodes();
-    std::cout << "Boundary nodes found..." << std::endl;
+    std::cout << " ... Done!" << std::endl;
+    std::cout << "Mesh successfully constructed!" << std::endl;
 }//----------------------------------------------------------------------------------------------------
 
 // WRITES MESH DATA TO OUTPUT FILE  -------------------------------------------------------------------
@@ -185,10 +190,6 @@ void Mesh::triangulate(void){
         mergeMeshes(leftSubmesh,rightSubmesh);
         delete leftSubmesh;
         delete rightSubmesh;
-//        writeMesh("Mesh.out");
-//        system("./ProcScripts/MeshPlot.py Mesh.out &");
-//        int a;
-//        std::cin >> a;
     }
 }//----------------------------------------------------------------------------------------------------
 
@@ -264,8 +265,7 @@ void Mesh::mergeMeshes(const Mesh* leftSubMesh, const Mesh* rightSubMesh){
                 rightCandidate = rightBase->adjacent[potRtCandInds[0]];
                 rightCand = true;
             }else if( potRtCandInds.size() >= 2 &&
-                     ( !rightBase->adjacent[potRtCandInds[1]]->isInCirc(*leftBase,*rightBase,*rightBase->adjacent[potRtCandInds[0]]) /*||
-                        rightBase->adjacent[potRtCandInds[1]]->isCoCirc(*leftBase,*rightBase,*rightBase->adjacent[potRtCandInds[0]]) */) ){
+                     ( !rightBase->adjacent[potRtCandInds[1]]->isInCirc(*leftBase,*rightBase,*rightBase->adjacent[potRtCandInds[0]]) ) ){
                 rightCandidate = rightBase->adjacent[potRtCandInds[0]];
                 rightCand = true;
             }else{
@@ -279,8 +279,7 @@ void Mesh::mergeMeshes(const Mesh* leftSubMesh, const Mesh* rightSubMesh){
                 leftCandidate = leftBase->adjacent[potLtCandInds[0]];
                 leftCand = true;
             }else if( potLtCandInds.size() >= 2 &&
-                     ( !leftBase->adjacent[potLtCandInds[1]]->isInCirc(*rightBase,*leftBase,*leftBase->adjacent[potLtCandInds[0]]) /*||
-                        leftBase->adjacent[potLtCandInds[1]]->isCoCirc(*rightBase,*leftBase,*leftBase->adjacent[potLtCandInds[0]]) */) ){
+                     ( !leftBase->adjacent[potLtCandInds[1]]->isInCirc(*rightBase,*leftBase,*leftBase->adjacent[potLtCandInds[0]]) ) ){
                 leftCandidate = leftBase->adjacent[potLtCandInds[0]];
                 leftCand = true;
             }else{
@@ -538,12 +537,6 @@ double Node::calcAngle(Node P, Node Q){
 // DECIDES IF this IS INSIDE CIRCUMCIRCLE OF TRIANGLE ABC  --------------------------------------------
 bool Node::isInCirc(Node A, Node B, Node C){
     double tol = 0.0, r = 1e99;
-
-//    double y0 = (pow(A.loc[0],2) - pow(C.loc[0],2) + pow(A.loc[1],2) - pow(C.loc[1],2) - ((A.loc[0]-C.loc[0])*(pow(A.loc[0],2) - pow(B.loc[0],2) + pow(A.loc[1],2) - pow(B.loc[1],2)))/(A.loc[0]-B.loc[0]) )/(2*(A.loc[1]-C.loc[1] - ((A.loc[1]-B.loc[1])*(A.loc[0]-C.loc[0]))/(A.loc[0]-B.loc[0])));
-//    double x0 = (pow(A.loc[0],2) - pow(B.loc[0],2) + pow(A.loc[1],2) - pow(B.loc[1],2))
-//                /(2*(A.loc[0]-B.loc[0])) - ((A.loc[1]-B.loc[1])/(A.loc[0]-B.loc[0]))*y0;
-//    r = pow(pow(A.loc[0]-x0,2)+pow(A.loc[1]-y0,2),0.5);
-//    std::vector<double> center = {x0, y0};
 
     Matrix A1(2,2,{B.loc[0]-A.loc[0], B.loc[1]-A.loc[1],  C.loc[0]-A.loc[0], C.loc[1]-A.loc[1]}),
            A2(2,2,{B.loc[0]-A.loc[0], B.loc[1]-A.loc[1],  C.loc[0]-B.loc[0], C.loc[1]-B.loc[1]}),

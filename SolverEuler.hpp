@@ -15,6 +15,7 @@
 class SolverEuler : public SolverBase{
 public:
     SolverEuler(const Mesh* mesh);
+    
     // Mandatory virtual methods:
     virtual void integrateInTime(double currentTime, double dt);
 };

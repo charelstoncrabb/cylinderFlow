@@ -21,7 +21,4 @@ private:
     const Mesh* feMesh;
 };
 
-
-
-
 #endif /* Solver_hpp */

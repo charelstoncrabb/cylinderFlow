@@ -103,7 +103,6 @@ public:
     ~Facet(){ciCounter--;};
     double getArea(void){return area;};
     
-//    Facet operator=(Facet& rhs);
 private:
     void sortVerticesByAngle(void);
     
@@ -112,7 +111,6 @@ private:
     std::vector<double> centroid;
     std::vector<Node*> nodes;
     std::vector<double> angles;
-//    std::vector<Facet*> adjacent;
     
     friend class Mesh;
     friend class SolverBase;
