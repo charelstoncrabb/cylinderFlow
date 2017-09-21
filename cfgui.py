@@ -20,32 +20,32 @@ def _openFile():
 	_plot()
 
 def _newFile():
-	global newfilename, filehandle, newNodeList, a, canvas
+	global newfilename, filehandle, activeNodeList, a, canvas
 	newfilename = asksaveasfilename(parent=root, initialfile='NewMesh.dat')
 	if len(newfilename):
 		filehandle = open(newfilename,'w+')
 		filehandle.write('ID X Y\n')
-		del newNodeList
-		newNodeList = []
+		del activeNodeList
+		activeNodeList = []
 		a.cla()
 		canvas.draw()
 	else:
 		print 'Please select a valid file.'
 
 def _save():
-	global filehandle, newNodeList, unmeshed
+	global filehandle, activeNodeList, unmeshed
 	if filehandle is not 0:
-		pm.writeListToDatFile(filehandle,newNodeList)
+		pm.writeListToDatFile(filehandle,activeNodeList)
 		filehandle.close()
 		filehandle = 0
 
 def _saveAs():
-	global filehandle, newNodeList, unmeshed
+	global filehandle, activeNodeList, unmeshed
 	filestring = asksaveasfilename(parent=root, initialfile='NewMesh.dat')
 	if len(filestring):
 		filehandle = open(filestring,'w+')
 		filehandle.write('ID X Y\n')
-		pm.writeListToDatFile(filehandle,newNodeList)
+		pm.writeListToDatFile(filehandle,activeNodeList)
 		filehandle.close()
 		filehandle = 0
 
@@ -56,7 +56,8 @@ def _about():
     print "cylinderFlow version 0.1 - 2017 NCC"
 
 def _mesh():
-	global filename, filehandle, newfilename, unmeshed, newNodeList
+	global filename, filehandle, newfilename, unmeshed, activeNodeList
+	print unmeshed
 	if unmeshed:
 		_save()
 		datfile = newfilename
@@ -75,7 +76,7 @@ def _mesh():
 def _plot():
 	global canvas, filename, a, unmeshed
 	if len(filename):
-		pm.plotmesh(filename,a)
+		activeNodeList = pm.plotmesh(filename,a)
 	if unmeshed:
 		a.set_xlim([0,1])
 		a.set_ylim([0,1])
@@ -87,10 +88,12 @@ def _quit():
 	root.destroy()
 
 def _editCurrent():
-	global filehandle, unmeshed, newNodeList
+	global filehandle, unmeshed, activeNodeList
+	print filehandle
+	print unmeshed
 	if filehandle is not 0 and not unmeshed:
 		print 'TODO'
-		# Make sure newNodeList has all the currently meshed nodes, and newNodeID is OK
+		# Make sure activeNodeList has all the currently meshed nodes, and newNodeID is OK
 		# Then proceed with same interface as when creating a new mesh
 	else:
 		print 'Open or create mesh for editing.'
@@ -109,17 +112,17 @@ def _on_key_event(event):
     	_editCurrent()
 
 def _clicked(event):
-	global newNodeList, newNodeID, filehandle, a, canvas, unmeshed
+	global activeNodeList, newNodeID, filehandle, a, canvas, unmeshed
 	if event.inaxes and filehandle is not 0:
 		if event.button == 1:
 			newNodeID += 1
 			newNode = pm.node(newNodeID,event.xdata,event.ydata)
-			newNodeList.append(newNode)
+			activeNodeList.append(newNode)
 		if event.button == 3:
-			closestInd = pm.findClosest(newNodeList,event)
-			if closestInd in range(0,len(newNodeList)):
-				del newNodeList[closestInd]
-		pm.scatter(newNodeList,a)
+			closestInd = pm.findClosest(activeNodeList,event)
+			if closestInd in range(0,len(activeNodeList)):
+				del activeNodeList[closestInd]
+		pm.scatter(activeNodeList,a)
 		unmeshed = 1
 	canvas.draw()
 
@@ -130,10 +133,10 @@ root.wm_title("cylinderFlow - v0.1")
 f = Figure(figsize=(6,5), dpi=150)
 a = f.add_subplot(111)
 
-filename = ""
-newfilename = ""
-filehandle = 0
-newNodeList = []
+filename = ""		# Name of .out file being meshed
+newfilename = ""	# Name of new .dat file to be meshed
+filehandle = 0		# Pointer to filename
+activeNodeList = []	# List of nodes active in axes
 newNodeID = 0
 unmeshed = 0
 editing = 0
@@ -172,7 +175,11 @@ menu.add_cascade(label="Help", menu=helpmenu)
 helpmenu.add_command(label="About...", command=_about, accelerator="Cmd-A")
 
 # Meshing button
-button = tk.Button(master=root, text="Mesh (%s%s)" % (u"\u2318","M"), command=_mesh)
-button.pack(side=tk.BOTTOM)
+meshButton = tk.Button(master=root, text="Mesh (%s%s)" % (u"\u2318","M"), command=_mesh)
+meshButton.pack(side=tk.BOTTOM)
+
+#remeshButton = tk.Button(master=root, text="Re-Mesh (%s%s)" % (u"\u2318","R"), command=_mesh)
+#remeshButton.pack(side=tk.BOTTOM)
+
 
 root.mainloop()

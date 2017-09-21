@@ -93,6 +93,7 @@ def plotmesh(filename,p):
 		p.set_xlim([minX-0.05*winrng[0],maxX+0.05*winrng[0]])
 		p.set_ylim([minY-0.05*winrng[1],maxY+0.05*winrng[1]])
 		p.set_title(str(len(nodes)) + ' nodes')
+	return nodes
 
 def scatter(nodelist,p):
 	p.cla()
