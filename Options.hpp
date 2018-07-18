@@ -13,16 +13,16 @@ class Options{
 public:
     Options(int argc, const char* argv[]);
     ~Options();
-    const char* infile(void){return inFile;};
-    const char* outfile(void){return outFile;};
+    std::string infile(void) const{return inFile;};
+    std::string outfile(void) const{return outFile;};
     bool plot(void){return plotFlag;};
     bool rotflag(void){return rotFlag;};
     bool run;
 private:
     void printOptions(void);
     int parseBoolFlag(const char* flag);
-    const char* inFile;
-    const char* outFile;
+    std::string inFile;
+    std::string outFile;
     bool plotFlag;
     bool rotFlag;
 };

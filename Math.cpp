@@ -42,7 +42,7 @@ std::vector<std::vector<int>> Math::Combinatorics::nChoosek(std::vector<int> val
                 tail.push_back(values[j]);
             }
             tailCombinations = nChoosek(tail,K-1);
-            for( int l = 0; l < tailCombinations.size(); l++){
+            for(size_t l = 0; l < tailCombinations.size(); l++){
                 tailCombinations[l].insert(tailCombinations[l].begin(),currentHead);
                 combinations.push_back( tailCombinations[l] );
             }
@@ -56,8 +56,8 @@ void Math::Combinatorics::testnChoosek(void){
     int k = 4;
     std::vector<int> vals = {1,2,3,4,5};
     std::vector<std::vector<int>> combs = nChoosek(vals,k);
-    for(int i = 0; i < combs.size(); i++){
-        for(int j = 0; j < combs[i].size(); j++){
+    for(size_t i = 0; i < combs.size(); i++){
+        for(size_t j = 0; j < combs[i].size(); j++){
             std::cout << combs[i][j] << " ";
         }
         std::cout << std::endl;

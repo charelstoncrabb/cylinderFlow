@@ -30,12 +30,12 @@ class Facet;
 
 class Mesh{
 public:
-    Mesh(const char* meshDataFilename, bool rotFlag = false);
+    Mesh(std::string meshDataFilename, bool rotFlag = false);
     ~Mesh();
-    void writeMesh(const char* meshOutFile = "Mesh.out");
+    void writeMesh(std::string meshOutFile = "Mesh.out");
     unsigned size(void) const {return (unsigned int)nodeList.size();};
     Mesh operator=(const Mesh& rhs);
-    const Node* nodelist(int i) const;
+    const Node* nodelist(size_t i) const;
 private:
     Mesh(){};
     Mesh(std::vector<Node*> nodes, std::vector<Facet*> facets);

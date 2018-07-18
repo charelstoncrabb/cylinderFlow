@@ -171,7 +171,7 @@ void Matrix::rref(void){
             pivSet = false;
         }
     }
-    for(int k = 0; k < pivotIndList.size(); k++){
+    for(size_t k = 0; k < pivotIndList.size(); k++){
         int i = pivotIndList[k][0];
         int ij = pivotIndList[k][0]*numCols+pivotIndList[k][1];
         scaleRow(i,1.0/entries[ij]);
@@ -198,9 +198,9 @@ std::vector<double> Matrix::getCol(int colNum){
 
 // RETURNS THE DIAGONAL OF MATRIX  --------------------------------------------------------------------
 std::vector<double> Matrix::getDiag(void){
-	int N = fmin(numRows,numCols);
+	size_t N = numRows < numCols ? numRows : numCols;
 	std::vector<double> diag(N);
-	for(int i = 0; i < N; i++){
+	for(size_t i = 0; i < N; i++){
 		diag[i] = entries[i*numCols+i];
 	}
 	return diag;
@@ -278,7 +278,7 @@ std::vector<double> Matrix::charPoly(void){
 		for(k = 0; k < numRows-1; k++){
 			coefficient = 0;
 			subMatInds = combinatorics.nChoosek(I,numRows-k-1);
-			for(int j = 0; j < subMatInds.size(); j++){
+			for(size_t j = 0; j < subMatInds.size(); j++){
 				currSubMat = principalSubmatrix(subMatInds[j]);
 				coefficient = coefficient + currSubMat.det();
 			}
@@ -322,7 +322,7 @@ double Matrix::det(void){
 // RETURNS PRINCIPAL SUBMATRIX GIVEN BY DELETING ROWS/COLUMNS INDEXED BY INPUT LIST
 Matrix Matrix::principalSubmatrix(std::vector<int> exInds){
 	Matrix prnplSubMat(numRows,numCols,entries);
-	for(int k = 0; k < exInds.size(); k++ ){
+	for(size_t k = 0; k < exInds.size(); k++ ){
 		prnplSubMat.rmRow(exInds[k]-1-k);
 		prnplSubMat.rmCol(exInds[k]-1-k);
 	}
@@ -432,7 +432,7 @@ void Matrix::catRow(std::vector<double> newRow){
         }else{
             int k = 0;
             entries.resize((numRows+1)*numCols);
-            for( int ij = numRows*numCols; ij < entries.size(); ij++ ){
+            for(size_t ij = numRows*numCols; ij < entries.size(); ij++ ){
                 entries[ij] = newRow[k];
                 k++;
             }
@@ -517,7 +517,7 @@ Matrix Matrix::operator=(const Matrix& rhs){
 Matrix Matrix::operator+(const Matrix& b){
     Matrix sum(this->numRows,this->numCols);
     if( ( b.numRows == this->numRows ) && ( b.numCols == this->numRows ) ){
-        for( int i = 0; i < this->entries.size(); i++ ){
+        for(size_t i = 0; i < this->entries.size(); i++ ){
             sum.entries[i] = b.entries[i] + this->entries[i];
         }
     }
@@ -528,7 +528,7 @@ Matrix Matrix::operator+(const Matrix& b){
 Matrix Matrix::operator-(const Matrix& b){
     Matrix difference(this->numRows,this->numCols);
     if( ( b.numRows == this->numRows ) && ( b.numCols == this->numRows ) ){
-        for( int i = 0; i < this->entries.size(); i++ ){
+        for(size_t i = 0; i < this->entries.size(); i++ ){
             difference.entries[i] = b.entries[i] - this->entries[i];
         }
     }
@@ -609,7 +609,7 @@ std::ostream & operator<<(std::ostream& os, const Matrix A){
 
 // FORMATTED VECTOR OUTPUT <<  ------------------------------------------------------------------------
 std::ostream& operator<<(std::ostream& os,std::vector<double> vect){
-    for(int i = 0; i < vect.size(); i++){
+    for(size_t i = 0; i < vect.size(); i++){
         std::cout << vect[i] << std::endl;
     }
     return os;
@@ -623,6 +623,7 @@ double Matrix::operator[](const int ij){
 
 // TODO: Move all testing to separate classes, possibly derived class
 // RUN VARIOUS ACCEPTANCE TESTS FOR MATRIX CLASS  -----------------------------------------------------
+/*
 void Matrix::RunMatrixTests(void) {
 	int n = 5;
     // Arithmetic Tests
@@ -766,7 +767,7 @@ void Matrix::RunMatrixTests(void) {
     Matrix testMat23 = triDiag(n,2,1);
     std::cout << testMat23 << std::endl << std::endl << testMat23.svd(0.1,true) << std::endl;
 }//----------------------------------------------------------------------------------------------------
-
+*/
 
 
 

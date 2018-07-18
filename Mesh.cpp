@@ -10,7 +10,7 @@
 
 // ========================  MESH CLASS MEMBERS  ======================================================
 // CONSTRUCTOR - USES NODE LOCATIONS FROM meshDataFilename  -------------------------------------------
-Mesh::Mesh(const char* meshDataFilename, bool rotFlag) : rotateFlag(rotFlag), theta(0.1) {
+Mesh::Mesh(std::string meshDataFilename, bool rotFlag) : rotateFlag(rotFlag), theta(0.1) {
     std::cout << "Parsing input data...";
     parseMeshData(meshDataFilename);
     std::cout << " ... Done!" << std::endl;
@@ -29,33 +29,33 @@ Mesh::Mesh(const char* meshDataFilename, bool rotFlag) : rotateFlag(rotFlag), th
 }//----------------------------------------------------------------------------------------------------
 
 // WRITES MESH DATA TO OUTPUT FILE  -------------------------------------------------------------------
-void Mesh::writeMesh(const char* meshOutFile){
+void Mesh::writeMesh(std::string meshOutFile){
     std::fstream outfile(meshOutFile,std::fstream::out | std::fstream::trunc);
     std::fstream mainOut("Meshing.out",std::fstream::out | std::fstream::trunc);
     mainOut << output.str();
     outfile << "NODE DATA:" << std::endl << "ID ISBORD X Y ADJ" << std::endl;
-    for(int i = 0; i < nodeList.size(); i++){
+    for(size_t i = 0; i < nodeList.size(); i++){
         if( nodeList[i]->isBoundaryNode )
             outfile << nodeList[i]->nodeID << " " << 1 << " " << nodeList[i]->loc[0] << " " << nodeList[i]->loc[1] << " ";
         else
             outfile << nodeList[i]->nodeID << " " << 0 << " " << nodeList[i]->loc[0] << " " << nodeList[i]->loc[1] << " ";
-        for(int j = 0; j < nodeList[i]->adjacent.size(); j++){
+        for(size_t j = 0; j < nodeList[i]->adjacent.size(); j++){
             outfile << nodeList[i]->adjacent[j]->nodeID << " ";
         }
         outfile << std::endl;
     }
     outfile << std::endl << "BOUNDARY NODES: " << std::endl;
-    for(int i = 0; i < boundaryNodes.size(); i++){
+    for(size_t i = 0; i < boundaryNodes.size(); i++){
         outfile << boundaryNodes[i]->nodeID << " ";
     }
     outfile << std::endl << std::endl << "FACET DATA:" << std::endl << "ID AREA CENTROID VERTICES" << std::endl;
-    for(int i = 0; i < facetList.size(); i++){
+    for(size_t i = 0; i < facetList.size(); i++){
         outfile << facetList[i]->ID << " " << facetList[i]->area << " (" << facetList[i]->centroid[0] << "," << facetList[i]->centroid[1] << ") " << facetList[i]->nodes[0]->nodeID << " " << facetList[i]->nodes[1]->nodeID << " "<< facetList[i]->nodes[2]->nodeID << std::endl;
     }
     outfile << std::endl << "NODE VERTEX DATA:" << std::endl << "NODE_ID FACET_IDS" << std::endl;
-    for(int i = 0; i < nodeList.size(); i++){
+    for(size_t i = 0; i < nodeList.size(); i++){
         outfile << nodeList[i]->nodeID << " ";
-        for(int j = 0; j < nodeList[i]->isVertexOf.size(); j++){
+        for(size_t j = 0; j < nodeList[i]->isVertexOf.size(); j++){
             outfile << nodeList[i]->isVertexOf[j]->ID << " ";
         }
         outfile << std::endl;
@@ -66,11 +66,11 @@ void Mesh::writeMesh(const char* meshOutFile){
 
 // PRIVATE CONSTRUCTOR CONSTRUCTS MESH GIVEN NODE/FACET LISTS (ALREADY TRIANGULATED) ------------------
 Mesh::Mesh(std::vector<Node*> nodes, std::vector<Facet*> facets){
-    for(int i = 0; i < nodes.size(); i++){
+    for(size_t i = 0; i < nodes.size(); i++){
         Node *newNode = new Node(nodes[i]->nodeID,nodes[i]->loc[0],nodes[i]->loc[1]);
         nodeList.push_back(newNode);
     }
-    for(int i = 0; i < nodes.size(); i++){
+    for(size_t i = 0; i < nodes.size(); i++){
         Facet *newFacet = new Facet(facets[i]->area);
         facetList.push_back(newFacet);
     }
@@ -78,7 +78,7 @@ Mesh::Mesh(std::vector<Node*> nodes, std::vector<Facet*> facets){
 
 // PRIVATE CONSTRUCTOR CONSTRUCTS MESH GIVEN NODE LIST (CREATES TRIANGULATION)  -----------------------
 Mesh::Mesh(std::vector<Node*> nodes){
-    for(int i = 0; i < nodes.size(); i++){
+    for(size_t i = 0; i < nodes.size(); i++){
         Node *newNode = new Node(nodes[i]->nodeID,nodes[i]->loc[0],nodes[i]->loc[1]);
         nodeList.push_back(newNode);
     }
@@ -87,18 +87,18 @@ Mesh::Mesh(std::vector<Node*> nodes){
 
 // DESTRUCTOR - DELETES ALLOCATED NODES/FACETS  -------------------------------------------------------
 Mesh::~Mesh(){
-    for(int i = 0; i < nodeList.size(); i++){
+    for(size_t i = 0; i < nodeList.size(); i++){
         if( nodeList[i] != NULL )
             delete nodeList[i];
     }
-    for(int i = 0; i < facetList.size(); i++){
+    for(size_t i = 0; i < facetList.size(); i++){
         if( facetList[i] != NULL )
             delete facetList[i];
     }
 }//----------------------------------------------------------------------------------------------------
 
 // PUBLIC CONST NODELIST ACCESS  ----------------------------------------------------------------------
-const Node* Mesh::nodelist(int i) const{
+const Node* Mesh::nodelist(size_t i) const{
     if( i < nodeList.size() )
         return nodeList[i];
     else{
@@ -132,7 +132,7 @@ void Mesh::preRotate(void){
     Matrix rot(2,2,{cos(theta),-sin(theta),sin(theta),cos(theta)});
     if( this->rotateFlag ){
         output << "Pre-rotating grid..." << std::endl;
-        for(int i = 0; i < nodeList.size(); i++){
+        for(size_t i = 0; i < nodeList.size(); i++){
             nodeList[i]->loc = rot*nodeList[i]->loc;
         }
     }
@@ -142,7 +142,7 @@ void Mesh::preRotate(void){
 void Mesh::postRotate(void){
     Matrix rotInv(2,2,{cos(theta),sin(theta),-sin(theta),cos(theta)});
     if( this->rotateFlag ){
-        for(int i = 0; i < nodeList.size(); i++){
+        for(size_t i = 0; i < nodeList.size(); i++){
             nodeList[i]->loc = rotInv*nodeList[i]->loc;
         }
     }
@@ -156,32 +156,35 @@ void Mesh::triangulate(void){
         return;
     }else if( nodeList.size() == 2 ){
         output << "Setting edge on two vertices..." << std::endl;
-        setEdges({nodeList[0],nodeList[1]});
+        setEdges(nodeList);
     }
     else if( nodeList.size() == 3 ){
-        if( !areColinear(*nodeList[0],*nodeList[1],*nodeList[2]) )
+        if( !areColinear(*(nodeList[0]),*(nodeList[1]),*(nodeList[2]) ) )
         {
-            setEdges({nodeList[0],nodeList[1],nodeList[2]});
+            setEdges(nodeList);
         }else{
             bool _0lt1_ = *nodeList[0] < *nodeList[1], _0lt2_ = *nodeList[0] < *nodeList[2], _1lt2_ = *nodeList[1] < *nodeList[2];
+			std::vector<Node*> subList1(2,NULL), subList2(2,NULL);
             if( (_0lt1_ && _1lt2_) || (!_0lt1_ && !_1lt2_) ){
-                setEdges({nodeList[0],nodeList[1]});
-                setEdges({nodeList[1],nodeList[2]});
+				subList1[0] = nodeList[0]; subList1[1] = nodeList[1];
+				subList2[0] = nodeList[1]; subList2[1] = nodeList[2];
             }
             if( (!_0lt1_ && _0lt2_) || (_0lt1_ && !_0lt2_) ){
-                setEdges({nodeList[0],nodeList[1]});
-                setEdges({nodeList[0],nodeList[2]});
+				subList1[0] = nodeList[0]; subList1[1] = nodeList[1];
+				subList2[0] = nodeList[0]; subList2[1] = nodeList[2];
             }
             if( (_0lt2_ && !_1lt2_) || (!_0lt2_ && _1lt2_) ){
-                setEdges({nodeList[2],nodeList[0]});
-                setEdges({nodeList[2],nodeList[1]});
+				subList1[0] = nodeList[2]; subList1[1] = nodeList[0];
+				subList2[0] = nodeList[2]; subList2[1] = nodeList[1];
             }
+			setEdges(subList1);
+			setEdges(subList2);
         }
     }else{
 // TODO: Choose more intelligent division for conquering. E.g., divide into thirds if a base 3 #nodes, etc...
-        int halfInd = (int)nodeList.size()/2-1;
+        size_t halfInd = nodeList.size()/2-1;
         std::vector<Node*> leftNodeList = range<Node>(nodeList,0,halfInd);
-        std::vector<Node*> rightNodeList = range<Node>(nodeList,halfInd+1,(int)nodeList.size()-1);
+        std::vector<Node*> rightNodeList = range<Node>(nodeList,halfInd+1,nodeList.size()-1);
         Mesh *leftSubmesh = new Mesh(leftNodeList);
         Mesh *rightSubmesh = new Mesh(rightNodeList);
         setSubmeshAdjacency(leftSubmesh);
@@ -204,15 +207,15 @@ void Mesh::buildFacetList(void){
         while( !nodeQ.empty() ){
             currNode = nodeQ.front();
             nodeQ.pop();
-            for(int i = 0; i < currNode->adjacent.size(); i++){
+            for(size_t i = 0; i < currNode->adjacent.size(); i++){
                 if( !currNode->adjacent[i]->traversed )
                     nodeQ.push(currNode->adjacent[i]);
-                for(int j = 0; j < currNode->adjacent[i]->adjacent.size(); j++){
+                for(size_t j = 0; j < currNode->adjacent[i]->adjacent.size(); j++){
                     if( currNode->isAdjacent(*currNode->adjacent[i]->adjacent[j]) ){
                         double xbardbl = (currNode->loc[0]+currNode->adjacent[i]->loc[0]+currNode->adjacent[i] ->adjacent[j]->loc[0])/3,
                                ybardbl = (currNode->loc[1]+currNode->adjacent[i]->loc[1]+currNode->adjacent[i]->adjacent[j]->loc[1])/3;
-                        int xbar = 100000.0*xbardbl,
-                            ybar = 100000.0*ybardbl;
+                        int xbar = 100000*(int)xbardbl,
+                            ybar = 100000*(int)ybardbl;
                         if( !facetMap[xbar][ybar] ){
                             facetMap[xbar][ybar] = true;
                             Facet* newFacet = new Facet({currNode,currNode->adjacent[i],currNode->adjacent[i]->adjacent[j]});
@@ -231,8 +234,8 @@ void Mesh::buildFacetList(void){
 
 // SETS SUBMESH ADJACENCY IN COMBINED MESH WHEN MERGING SUBMESHES  ------------------------------------
 void Mesh::setSubmeshAdjacency(const Mesh* submesh){
-    for(int i = 0; i < submesh->nodeList.size(); i++){
-        for(int j = 0; j < submesh->nodeList[i]->adjacent.size(); j++){
+    for(size_t i = 0; i < submesh->nodeList.size(); i++){
+        for(size_t j = 0; j < submesh->nodeList[i]->adjacent.size(); j++){
             int currNodeInd = submesh->nodeList[i]->findIndByID(nodeList);
             int currAdjInd = submesh->nodeList[i]->adjacent[j]->findIndByID(nodeList);
             if( !nodeList[currNodeInd]->isAdjacent(*nodeList[currAdjInd]) )
@@ -322,9 +325,9 @@ void Mesh::mergeMeshes(const Mesh* leftSubMesh, const Mesh* rightSubMesh){
 // SETS BOUNDARY NODE LIST AFTER TRIANGULATION  -------------------------------------------------------
 void Mesh::setBoundaryNodes(void){
     double tol = 1e-5;
-    for(int i = 0; i < nodeList.size(); i++){
+    for(size_t i = 0; i < nodeList.size(); i++){
         double totAng = 0.0;
-        for(int j = 0; j < nodeList[i]->isVertexOf.size(); j++){
+        for(size_t j = 0; j < nodeList[i]->isVertexOf.size(); j++){
             double vertAng = nodeList[i]->isVertexOf[j]->angles[nodeList[i]->findIndByID(nodeList[i]->isVertexOf[j]->nodes)];
             totAng += vertAng;
         }
@@ -339,7 +342,7 @@ void Mesh::setBoundaryNodes(void){
 void Mesh::findBaseIndices(std::vector<int>& baseInds, const Mesh* leftMesh, const Mesh* rightMesh){
     baseInds.resize(2);
     int leftBaseInd = leftMesh->findLeftBaseNode(), rightBaseInd = rightMesh->findRightBaseNode();
-    int itr = 0;
+	size_t itr = 0;
     bool rightBaseOK = false, leftBaseOK = false;
     // Check for and deal with vertically-aligned base nodes:
     if( leftMesh->nodeList[leftBaseInd]->loc[0] == rightMesh->nodeList[rightBaseInd]->loc[0] ){
@@ -392,7 +395,7 @@ void Mesh::findBaseIndices(std::vector<int>& baseInds, const Mesh* leftMesh, con
 // FINDS BASE NODE FOR LEFT SUBMESH  ------------------------------------------------------------------
 int Mesh::findLeftBaseNode(void) const{
     int baseInd = 0;
-    for(int i = 0; i < nodeList.size(); i++){
+    for(size_t i = 0; i < nodeList.size(); i++){
         if( nodeList[i]->loc[1] < nodeList[baseInd]->loc[1] ){
             baseInd = i;
         }else if( nodeList[i]->loc[1] == nodeList[baseInd]->loc[1] ){
@@ -407,7 +410,7 @@ int Mesh::findLeftBaseNode(void) const{
 // FINDS BASE NODE FOR RIGHT SUBMESH  -----------------------------------------------------------------
 int Mesh::findRightBaseNode(void) const{
     int baseInd = 0;
-    for(int i = 0; i < nodeList.size(); i++){
+    for(size_t i = 0; i < nodeList.size(); i++){
         if( nodeList[i]->loc[1] < nodeList[baseInd]->loc[1] ){
             baseInd = i;
         }else if( nodeList[i]->loc[1] == nodeList[baseInd]->loc[1] ){
@@ -421,9 +424,9 @@ int Mesh::findRightBaseNode(void) const{
 
 // SETS ADJACENCY BETWEEN ALL NODES IN LIST GIVEN  ----------------------------------------------------
 void Mesh::setEdges(std::vector<Node*> nodes){
-    int N = (int)nodes.size();
-    for(int i = 0; i < N-1; i++){
-        for(int j = i+1; j < N; j++){
+	size_t N = nodes.size();
+    for(size_t i = 0; i < N-1; i++){
+        for(size_t j = i+1; j < N; j++){
             nodes[i]->adjacent.push_back(nodes[j]);
             nodes[j]->adjacent.push_back(nodes[i]);
             output << "Setting Edge: " << nodes[i]->nodeID << " <==> " << nodes[j]->nodeID << std::endl;
@@ -433,8 +436,9 @@ void Mesh::setEdges(std::vector<Node*> nodes){
 
 // REMOVES ALL EDGES BETWEEN GIVEN NODES  -------------------------------------------------------------
 void Mesh::rmEdges(std::vector<Node*> nodes){
-    for(int i = 0; i < nodes.size(); i++){
-        for(int j = i+1; j < nodes.size(); j++){
+	size_t N = nodes.size();
+    for(size_t i = 0; i < N; i++){
+        for(size_t j = i+1; j < N; j++){
             std::vector<int> adj = isAdjacent(*nodes[i],*nodes[j]);
             if( adj.size() > 0 ){
                 nodes[i]->adjacent.erase(nodes[i]->adjacent.begin() + nodes[j]->findIndByID(nodes[i]->adjacent));
@@ -447,10 +451,10 @@ void Mesh::rmEdges(std::vector<Node*> nodes){
 
 // parseMeshData HELPER - SORTS PARSED MESH DATA  -----------------------------------------------------
 void Mesh::sortNodeList(void){
-    int N = (int)nodeList.size();
+	size_t N = nodeList.size();
     Node* temp;
-    for(int i = N; i > 0; i--){
-        for(int j = 0; j < i-1; j++){
+    for(size_t i = N; i > 0; i--){
+        for(size_t j = 0; j < i-1; j++){
             if( *nodeList[j+1] < *nodeList[j] ){
                 temp = nodeList[j+1];
                 nodeList[j+1] = nodeList[j];
@@ -463,9 +467,9 @@ void Mesh::sortNodeList(void){
 // RETURNS INDICES OF NODES a,b IF THEY ARE ADJACENT IN this MESH  ------------------------------------
 std::vector<int> Mesh::isAdjacent(Node a, Node b){
     std::vector<int> inds;
-    int aN = (int)a.adjacent.size(), bN = (int)b.adjacent.size();
-    for(int i = 0; i < aN; i++){
-        for(int j = 0; j < bN; j++){
+	size_t aN = a.adjacent.size(), bN = b.adjacent.size();
+    for(size_t i = 0; i < aN; i++){
+        for(size_t j = 0; j < bN; j++){
             if( a.adjacent[i]->nodeID == b.nodeID && b.adjacent[j]->nodeID == a.nodeID ){
                 inds.push_back(j);
                 inds.push_back(i);
@@ -514,7 +518,7 @@ void Node::setNode(int ID, double x, double y){
 // PUBLIC ACCESS TO ISVERTEXOF  -----------------------------------------------------------------------
 std::vector<Facet> Node::getAdjFacets(void){
     std::vector<Facet> pubFacets;
-    for( int i = 0; i < isVertexOf.size(); i++)
+    for(size_t i = 0; i < isVertexOf.size(); i++)
         pubFacets.push_back(*isVertexOf[i]);
     return pubFacets;
 }//----------------------------------------------------------------------------------------------------
@@ -595,19 +599,19 @@ bool Node::isCoCirc(Node A, Node B, Node C){
 
 // SORTS ADJACENT NODES BY ANGLE WITH GIVEN NODE  -----------------------------------------------------
 std::vector<int> Node::ordCandList(Node* node, std::string orientation){
-    int N = (int)adjacent.size(), minInd;
+	size_t N = adjacent.size(), minInd;
     bool minIndSet = false;
     std::vector<double> angles(N);
     std::vector<int> ordered;
-    for(int i = 0; i < N; i++){
+    for(size_t i = 0; i < N; i++){
         if( orientation == "cw" )
             angles[i] = calcAngle(*adjacent[i],*node);
         if( orientation == "ccw" )
             angles[i] = calcAngle(*node,*adjacent[i]);
     }
     double theta1 = acos(-1), theta2 = -1, tol = 1e-5;
-    for(int i = 0; i < N; i++){
-        for(int j = 0; j < N; j++){
+    for(size_t i = 0; i < N; i++){
+        for(size_t j = 0; j < N; j++){
             if( angles[j] < theta1 - tol && angles[j] > theta2 ){
                 minInd = j;
                 theta1 = angles[j];
@@ -628,16 +632,16 @@ std::vector<int> Node::ordAdjByAng(void){
     double tol = 1e-4;
     Node e1(-1,loc[0]+1,loc[1]-tol), me1(-2,loc[0]-1,loc[1]+tol);
     std::vector<int> orderedUpper = ordCandList(&e1,"ccw"), orderedLower = ordCandList(&me1,"ccw"), ordered;
-    for(int i = 0; i < orderedUpper.size(); i++)
+    for(size_t i = 0; i < orderedUpper.size(); i++)
         ordered.push_back(orderedUpper[i]);
-    for(int i = 0; i < orderedLower.size() && i < adjacent.size(); i++)
+    for(size_t i = 0; i < orderedLower.size() && i < adjacent.size(); i++)
         ordered.push_back(orderedLower[i]);
     return ordered;
 }//----------------------------------------------------------------------------------------------------
 
 // DECIDES IF GIVEN NODE IS ADJACENT TO this
 bool Node::isAdjacent(Node node){
-    for(int i = 0; i < adjacent.size(); i++)
+    for(size_t i = 0; i < adjacent.size(); i++)
         if( node.nodeID == adjacent[i]->nodeID )
             return true;
     return false;
@@ -646,7 +650,7 @@ bool Node::isAdjacent(Node node){
 // RETURNS INDEX OF this IN LIST nodes - RETURNS -1 IF this IS NOT IN LIST  ---------------------------
 int Node::findIndByID(std::vector<Node*> nodes){
     int ind = -1;
-    for(int i = 0; i < nodes.size(); i++){
+    for(size_t i = 0; i < nodes.size(); i++){
         if( nodes[i]->nodeID == nodeID ){
             return i;
         }
@@ -698,7 +702,7 @@ void Facet::sortVerticesByAngle(void){
     std::vector<Node*> nlCopy = nodes;
     std::vector<double> angCopy = angles;
     std::map<double,int> theta;
-    int i = 0;
+	size_t i = 0;
     double vDotE;
     for( i = 0; i < nodes.size(); i++ ){
         vDotE = acos( nodes[i]->x() - centroid[0] );
