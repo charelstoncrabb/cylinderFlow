@@ -4,12 +4,7 @@ C++ Finite Element CFD for Planar Flow
 See Documentation\manual.pdf for more detailed explanations, or browse the source code documentation 
 <A HREF="https://charelstoncrabb.github.io/cylinderFlow/html/index.html">here</A>.
 
-Installation:
- - Download full repository into a working folder of choice
- - Open terminal and cd to the folder
- - type 'make' into command line to compile
- - you will likely need to perform a chmod u+x on the python scripts in order to execute them
- - type './guitest.py' to run meshing GUI
+The HEAD revision should build on both Mac and Windows machines, and a basic makefile is included for convenience; please feel free to contact me with questions, comments, issues, suggestions, etc.
 
 Note: the python scripts assume the python interpreter lives in 'usr/bin/python'. If this is different on your machine, this will need to be changed. Just type 'which python' into the command line to view the interpreter path
 
@@ -26,7 +21,8 @@ Architechture:
  - MeshPlot.py: creates 2D plot of output graph written by Mesh() class
  - squareGrid.py: creates a square grid input file of specified size
  - randGrid.py: creates a randomized grid of specified size
-
+ - cfgui.py: provides a GUI to produce small meshes (more detailed and robust graphical user interface is planned)
+ 
 > Using:
  - Example input files are included for format demonstration
  - Both code and processors support '-h' flag for syntax help
