@@ -1,0 +1,158 @@
+\hypertarget{class_node}{}\section{Node Class Reference}
+\label{class_node}\index{Node@{Node}}
+
+
+\mbox{\hyperlink{class_node}{Node}} class provides A\+PI for a vertex object in a \mbox{\hyperlink{class_mesh}{Mesh}}.  
+
+
+Inheritance diagram for Node\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_node}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_node_a75560296eb48863988f31c8adf370dcf}{Node}} (int ID, double \mbox{\hyperlink{class_node_a05d427a6fef833a49306b2adb52ef722}{x}}, double \mbox{\hyperlink{class_node_a5a06c0e486aa39a994b6a2fa674aa493}{y}})
+\begin{DoxyCompactList}\small\item\em Public Constructor. \end{DoxyCompactList}\item 
+virtual \mbox{\hyperlink{class_node_af5e3fa79300bf5f3f2f3ecae6e795a94}{$\sim$\+Node}} ()
+\begin{DoxyCompactList}\small\item\em Public destructor. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_node_aeda47a1decedb8fc3835579d75b7d65f}{operator$<$}} (\mbox{\hyperlink{class_node}{Node}} \&rhs) const
+\begin{DoxyCompactList}\small\item\em Less than operator. \end{DoxyCompactList}\item 
+std\+::vector$<$ double $>$ \mbox{\hyperlink{class_node_ae59cc8d62b6cfa623252b98341c3084c}{get\+Loc}} (void) const
+\begin{DoxyCompactList}\small\item\em Query 2D location of \mbox{\hyperlink{class_node}{Node}} object. \end{DoxyCompactList}\item 
+double \mbox{\hyperlink{class_node_a05d427a6fef833a49306b2adb52ef722}{x}} (void) const
+\begin{DoxyCompactList}\small\item\em Query abscissa value location of \mbox{\hyperlink{class_node}{Node}} object. \end{DoxyCompactList}\item 
+double \mbox{\hyperlink{class_node_a5a06c0e486aa39a994b6a2fa674aa493}{y}} (void) const
+\begin{DoxyCompactList}\small\item\em Query ordinate value location of \mbox{\hyperlink{class_node}{Node}} object. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+\mbox{\hyperlink{class_node}{Node}} class provides A\+PI for a vertex object in a \mbox{\hyperlink{class_mesh}{Mesh}}. 
+
+This class stores the (2D) location and adjacency information for each point (i.\+e., \mbox{\hyperlink{class_node}{Node}}) in the \mbox{\hyperlink{class_mesh}{Mesh}} object. It also provides (through a private A\+PI to it\textquotesingle{}s friend class \mbox{\hyperlink{class_mesh}{Mesh}}) the necessary computations (relative to {\bfseries this}) for computing the Delaunay triangulation performed in the \mbox{\hyperlink{class_mesh}{Mesh}} constructor. 
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{class_node_a75560296eb48863988f31c8adf370dcf}\label{class_node_a75560296eb48863988f31c8adf370dcf}} 
+\index{Node@{Node}!Node@{Node}}
+\index{Node@{Node}!Node@{Node}}
+\subsubsection{\texorpdfstring{Node()}{Node()}}
+{\footnotesize\ttfamily Node\+::\+Node (\begin{DoxyParamCaption}\item[{int}]{ID,  }\item[{double}]{x,  }\item[{double}]{y }\end{DoxyParamCaption})}
+
+
+
+Public Constructor. 
+
+This public constructor initialized the \mbox{\hyperlink{class_node}{Node}} object\textquotesingle{}s location and ID (used for bookkeeping) 
+\begin{DoxyParams}{Parameters}
+{\em ID} & {\bfseries (int)} identification number used for bookkeeping in \mbox{\hyperlink{class_mesh}{Mesh}} class \\
+\hline
+{\em x} & {\bfseries (double)} abscissa value of \mbox{\hyperlink{class_node}{Node}} object in 2D coordinate system \\
+\hline
+{\em y} & {\bfseries (double)} ordinate value of \mbox{\hyperlink{class_node}{Node}} object in 2D coordinate system \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Constructed \mbox{\hyperlink{class_node}{Node}} object 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_node_af5e3fa79300bf5f3f2f3ecae6e795a94}\label{class_node_af5e3fa79300bf5f3f2f3ecae6e795a94}} 
+\index{Node@{Node}!````~Node@{$\sim$\+Node}}
+\index{````~Node@{$\sim$\+Node}!Node@{Node}}
+\subsubsection{\texorpdfstring{$\sim$\+Node()}{~Node()}}
+{\footnotesize\ttfamily virtual Node\+::$\sim$\+Node (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+Public destructor. 
+
+Note\+: the destructor is virtual to ensure proper decrementing of the inherited \mbox{\hyperlink{classclass_instance_counter}{class\+Instance\+Counter}} member ci\+Counter 
+\begin{DoxyParams}{Parameters}
+{\em None} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+None 
+\end{DoxyReturn}
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{class_node_ae59cc8d62b6cfa623252b98341c3084c}\label{class_node_ae59cc8d62b6cfa623252b98341c3084c}} 
+\index{Node@{Node}!get\+Loc@{get\+Loc}}
+\index{get\+Loc@{get\+Loc}!Node@{Node}}
+\subsubsection{\texorpdfstring{get\+Loc()}{getLoc()}}
+{\footnotesize\ttfamily std\+::vector$<$double$>$ Node\+::get\+Loc (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Query 2D location of \mbox{\hyperlink{class_node}{Node}} object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em None} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+{\bfseries (std\+::vector$<$int$>$)} 2D coordinate system location of \mbox{\hyperlink{class_node}{Node}} object 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_node_aeda47a1decedb8fc3835579d75b7d65f}\label{class_node_aeda47a1decedb8fc3835579d75b7d65f}} 
+\index{Node@{Node}!operator$<$@{operator$<$}}
+\index{operator$<$@{operator$<$}!Node@{Node}}
+\subsubsection{\texorpdfstring{operator$<$()}{operator<()}}
+{\footnotesize\ttfamily bool Node\+::operator$<$ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_node}{Node}} \&}]{rhs }\end{DoxyParamCaption}) const}
+
+
+
+Less than operator. 
+
+This less than operator implements a dictionary order on the 2D coordinate location of {\bfseries this} relative to rhs 
+\begin{DoxyParams}{Parameters}
+{\em rhs} & {\bfseries (\mbox{\hyperlink{class_node}{Node}})} right-\/hand side of less-\/than operator (\mbox{\hyperlink{class_node}{Node}} to be compared with {\bfseries this}) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+{\bfseries (bool)} The dictionary order of ({\bfseries this}-\/$>$x,{\bfseries this}-\/$>$y) with (rhs-\/$>$x,rhs-\/$>$y) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_node_a05d427a6fef833a49306b2adb52ef722}\label{class_node_a05d427a6fef833a49306b2adb52ef722}} 
+\index{Node@{Node}!x@{x}}
+\index{x@{x}!Node@{Node}}
+\subsubsection{\texorpdfstring{x()}{x()}}
+{\footnotesize\ttfamily double Node\+::x (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Query abscissa value location of \mbox{\hyperlink{class_node}{Node}} object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em None} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+{\bfseries (double)} {\bfseries this} abscissa value 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_node_a5a06c0e486aa39a994b6a2fa674aa493}\label{class_node_a5a06c0e486aa39a994b6a2fa674aa493}} 
+\index{Node@{Node}!y@{y}}
+\index{y@{y}!Node@{Node}}
+\subsubsection{\texorpdfstring{y()}{y()}}
+{\footnotesize\ttfamily double Node\+::y (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Query ordinate value location of \mbox{\hyperlink{class_node}{Node}} object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em None} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+{\bfseries (double)} {\bfseries this} ordinate value 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{_mesh_8hpp}{Mesh.\+hpp}}\item 
+\mbox{\hyperlink{_mesh_8cpp}{Mesh.\+cpp}}\end{DoxyCompactItemize}

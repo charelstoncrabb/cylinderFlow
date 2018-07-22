@@ -1,0 +1,118 @@
+\hypertarget{class_facet}{}\section{Facet Class Reference}
+\label{class_facet}\index{Facet@{Facet}}
+
+
+\mbox{\hyperlink{class_facet}{Facet}} object is a triangle defined by three \mbox{\hyperlink{class_node}{Node}} objects.  
+
+
+Inheritance diagram for Facet\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_facet}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_facet_acfcdcc63ac32fc2a1d0378a899441bbc}{Facet}} (double a)
+\begin{DoxyCompactList}\small\item\em Public Constructor. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_facet_aaecf4566bbdbfb3904d9c3ce6f7c41cf}{Facet}} (std\+::vector$<$ \mbox{\hyperlink{class_node}{Node}} $\ast$$>$ node\+List)
+\begin{DoxyCompactList}\small\item\em Public Constructor. \end{DoxyCompactList}\item 
+virtual \mbox{\hyperlink{class_facet_af40042b9ad6c5a03127034f9d1c1e786}{$\sim$\+Facet}} ()
+\begin{DoxyCompactList}\small\item\em Public destructor. \end{DoxyCompactList}\item 
+double \mbox{\hyperlink{class_facet_a90036d7bb3e52b57ac0d48f6bc1e019c}{get\+Area}} (void) const
+\begin{DoxyCompactList}\small\item\em Query \mbox{\hyperlink{class_facet}{Facet}} object\textquotesingle{}s area. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+\mbox{\hyperlink{class_facet}{Facet}} object is a triangle defined by three \mbox{\hyperlink{class_node}{Node}} objects. 
+
+This class stores the position, defining nodes, centroid, area, other essential information, etc. for a facet element of the \mbox{\hyperlink{class_mesh}{Mesh}} object. 
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{class_facet_acfcdcc63ac32fc2a1d0378a899441bbc}\label{class_facet_acfcdcc63ac32fc2a1d0378a899441bbc}} 
+\index{Facet@{Facet}!Facet@{Facet}}
+\index{Facet@{Facet}!Facet@{Facet}}
+\subsubsection{\texorpdfstring{Facet()}{Facet()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Facet\+::\+Facet (\begin{DoxyParamCaption}\item[{double}]{a }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Public Constructor. 
+
+This constructs a \mbox{\hyperlink{class_facet}{Facet}} object with area a, under the assumption that the defining Nodes will be subsequently added. \begin{DoxyRefDesc}{Todo}
+\item[\mbox{\hyperlink{todo__todo000006}{Todo}}]Need to restructure some \mbox{\hyperlink{class_mesh}{Mesh}} architecture to prevent the need for this constructor. \end{DoxyRefDesc}
+
+\begin{DoxyParams}{Parameters}
+{\em a} & {\bfseries (double)} prescribed area of the \mbox{\hyperlink{class_facet}{Facet}} to be constructed \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Constructed \mbox{\hyperlink{class_facet}{Facet}} object 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_facet_aaecf4566bbdbfb3904d9c3ce6f7c41cf}\label{class_facet_aaecf4566bbdbfb3904d9c3ce6f7c41cf}} 
+\index{Facet@{Facet}!Facet@{Facet}}
+\index{Facet@{Facet}!Facet@{Facet}}
+\subsubsection{\texorpdfstring{Facet()}{Facet()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Facet\+::\+Facet (\begin{DoxyParamCaption}\item[{std\+::vector$<$ \mbox{\hyperlink{class_node}{Node}} $\ast$$>$}]{node\+List }\end{DoxyParamCaption})}
+
+
+
+Public Constructor. 
+
+This constructs a \mbox{\hyperlink{class_facet}{Facet}} object with defining vertices given by argument node\+List \begin{DoxyRefDesc}{Todo}
+\item[\mbox{\hyperlink{todo__todo000007}{Todo}}]provide checks within this constructor to either block node\+List.\+size() != 3 or generalize the \mbox{\hyperlink{class_facet}{Facet}} code to allow for arbitrary polygons as \mbox{\hyperlink{class_facet}{Facet}} objects. \end{DoxyRefDesc}
+
+\begin{DoxyParams}{Parameters}
+{\em node\+List} & {\bfseries (std\+::vector$<$\+Node$\ast$$>$)} List of \mbox{\hyperlink{class_node}{Node}} objects to use as the defining vertices for the \mbox{\hyperlink{class_facet}{Facet}} object. It is implicitly assumed here that node\+List.\+size() == 3 \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Constructed \mbox{\hyperlink{class_facet}{Facet}} object 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_facet_af40042b9ad6c5a03127034f9d1c1e786}\label{class_facet_af40042b9ad6c5a03127034f9d1c1e786}} 
+\index{Facet@{Facet}!````~Facet@{$\sim$\+Facet}}
+\index{````~Facet@{$\sim$\+Facet}!Facet@{Facet}}
+\subsubsection{\texorpdfstring{$\sim$\+Facet()}{~Facet()}}
+{\footnotesize\ttfamily virtual Facet\+::$\sim$\+Facet (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+Public destructor. 
+
+Note\+: the destructor is virtual to ensure proper decrementing of the inherited \mbox{\hyperlink{classclass_instance_counter}{class\+Instance\+Counter}} member ci\+Counter 
+\begin{DoxyParams}{Parameters}
+{\em None} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+None 
+\end{DoxyReturn}
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{class_facet_a90036d7bb3e52b57ac0d48f6bc1e019c}\label{class_facet_a90036d7bb3e52b57ac0d48f6bc1e019c}} 
+\index{Facet@{Facet}!get\+Area@{get\+Area}}
+\index{get\+Area@{get\+Area}!Facet@{Facet}}
+\subsubsection{\texorpdfstring{get\+Area()}{getArea()}}
+{\footnotesize\ttfamily double Facet\+::get\+Area (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Query \mbox{\hyperlink{class_facet}{Facet}} object\textquotesingle{}s area. 
+
+This function allows for public access to the \mbox{\hyperlink{class_facet}{Facet}} object\textquotesingle{}s area 
+\begin{DoxyParams}{Parameters}
+{\em None} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+{\bfseries (double)} {\bfseries this} area property. 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{_mesh_8hpp}{Mesh.\+hpp}}\item 
+\mbox{\hyperlink{_mesh_8cpp}{Mesh.\+cpp}}\end{DoxyCompactItemize}

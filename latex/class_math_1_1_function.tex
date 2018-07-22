@@ -1,0 +1,79 @@
+\hypertarget{class_math_1_1_function}{}\section{Math\+:\+:Function Class Reference}
+\label{class_math_1_1_function}\index{Math\+::\+Function@{Math\+::\+Function}}
+
+
+This class associates a list of.  
+
+
+Inheritance diagram for Math\+:\+:Function\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_math_1_1_function}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_math_1_1_function_a97e51108b0374f8adc7982f92af4d0de}{Function}} ()
+\begin{DoxyCompactList}\small\item\em Public Constructor. \end{DoxyCompactList}\item 
+double \mbox{\hyperlink{class_math_1_1_function_ad85e716accc64c1ea4962c828c4e216c}{integrate\+On\+Domain}} (void)
+\begin{DoxyCompactList}\small\item\em Perform integration of the function over its entire domain. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+This class associates a list of. 
+
+This class implements a 2D, scalar-\/valued, piece-\/wise linear function as values associated with each \mbox{\hyperlink{class_node}{Node}} object in a given grid. The A\+PI also provides some helpful operations to be performed on the function object. 
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{class_math_1_1_function_a97e51108b0374f8adc7982f92af4d0de}\label{class_math_1_1_function_a97e51108b0374f8adc7982f92af4d0de}} 
+\index{Math\+::\+Function@{Math\+::\+Function}!Function@{Function}}
+\index{Function@{Function}!Math\+::\+Function@{Math\+::\+Function}}
+\subsubsection{\texorpdfstring{Function()}{Function()}}
+{\footnotesize\ttfamily Math\+::\+Function\+::\+Function (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Public Constructor. 
+
+\begin{DoxyRefDesc}{Todo}
+\item[\mbox{\hyperlink{todo__todo000003}{Todo}}]Implement a constructor with the specified parameters \end{DoxyRefDesc}
+
+\begin{DoxyParams}{Parameters}
+{\em node\+List} & {\bfseries (std\+::vector$<$\+Node$\ast$$>$)} List of 2D grid points (as \mbox{\hyperlink{class_node}{Node}} objects) on which the function object takes values \\
+\hline
+{\em values} & {\bfseries (std\+::vector$<$double$>$)} List of values function initially takes on each grid point. It is assumed that this list is the same size as the \mbox{\hyperlink{class_node}{Node}} list provided in first argument; optionally, if no values list is provided, all values will be initialized to zero. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Initialized \mbox{\hyperlink{class_math_1_1_function}{Function}} object 
+\end{DoxyReturn}
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{class_math_1_1_function_ad85e716accc64c1ea4962c828c4e216c}\label{class_math_1_1_function_ad85e716accc64c1ea4962c828c4e216c}} 
+\index{Math\+::\+Function@{Math\+::\+Function}!integrate\+On\+Domain@{integrate\+On\+Domain}}
+\index{integrate\+On\+Domain@{integrate\+On\+Domain}!Math\+::\+Function@{Math\+::\+Function}}
+\subsubsection{\texorpdfstring{integrate\+On\+Domain()}{integrateOnDomain()}}
+{\footnotesize\ttfamily double Math\+::\+Function\+::integrate\+On\+Domain (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Perform integration of the function over its entire domain. 
+
+This method will return the definite integral of the function over the entirety of its domain. \begin{DoxyRefDesc}{Todo}
+\item[\mbox{\hyperlink{todo__todo000004}{Todo}}]Method is currently not implemented \end{DoxyRefDesc}
+
+\begin{DoxyParams}{Parameters}
+{\em None} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+{\bfseries (double)} value of the definite integral of the function 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{_math_8hpp}{Math.\+hpp}}\item 
+\mbox{\hyperlink{_math_8cpp}{Math.\+cpp}}\end{DoxyCompactItemize}

@@ -1,0 +1,83 @@
+\hypertarget{class_math_1_1_combinatorics}{}\section{Math\+:\+:Combinatorics Class Reference}
+\label{class_math_1_1_combinatorics}\index{Math\+::\+Combinatorics@{Math\+::\+Combinatorics}}
+
+
+\mbox{\hyperlink{class_math_1_1_combinatorics}{Combinatorics}} class performs basic combinatorial operations.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_math_1_1_combinatorics_a1ffcb284d73e71e575b71a09a23fa3de}{Combinatorics}} ()
+\begin{DoxyCompactList}\small\item\em Public Constructor. \end{DoxyCompactList}\item 
+std\+::vector$<$ std\+::vector$<$ int $>$ $>$ \mbox{\hyperlink{class_math_1_1_combinatorics_af5de2305b6a51f21bc920a1bc07a9163}{n\+Choosek}} (std\+::vector$<$ int $>$ values, int K)
+\begin{DoxyCompactList}\small\item\em Solves N choose K problem. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_math_1_1_combinatorics_a174253b11651917aab46bc879449e59b}{testn\+Choosek}} (void)
+\begin{DoxyCompactList}\small\item\em Performs basic unit tests on the n\+Choosek method. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\mbox{\hyperlink{class_math_1_1_combinatorics}{Combinatorics}} class performs basic combinatorial operations. 
+
+This class is used for solving basic combinatorial problems. Currently only \char`\"{}n choose k\char`\"{} is implemented. 
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{class_math_1_1_combinatorics_a1ffcb284d73e71e575b71a09a23fa3de}\label{class_math_1_1_combinatorics_a1ffcb284d73e71e575b71a09a23fa3de}} 
+\index{Math\+::\+Combinatorics@{Math\+::\+Combinatorics}!Combinatorics@{Combinatorics}}
+\index{Combinatorics@{Combinatorics}!Math\+::\+Combinatorics@{Math\+::\+Combinatorics}}
+\subsubsection{\texorpdfstring{Combinatorics()}{Combinatorics()}}
+{\footnotesize\ttfamily Math\+::\+Combinatorics\+::\+Combinatorics (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Public Constructor. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em None} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Initialized \mbox{\hyperlink{class_math_1_1_combinatorics}{Combinatorics}} object 
+\end{DoxyReturn}
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{class_math_1_1_combinatorics_af5de2305b6a51f21bc920a1bc07a9163}\label{class_math_1_1_combinatorics_af5de2305b6a51f21bc920a1bc07a9163}} 
+\index{Math\+::\+Combinatorics@{Math\+::\+Combinatorics}!n\+Choosek@{n\+Choosek}}
+\index{n\+Choosek@{n\+Choosek}!Math\+::\+Combinatorics@{Math\+::\+Combinatorics}}
+\subsubsection{\texorpdfstring{n\+Choosek()}{nChoosek()}}
+{\footnotesize\ttfamily std\+::vector$<$ std\+::vector$<$ int $>$ $>$ Math\+::\+Combinatorics\+::n\+Choosek (\begin{DoxyParamCaption}\item[{std\+::vector$<$ int $>$}]{values,  }\item[{int}]{K }\end{DoxyParamCaption})}
+
+
+
+Solves N choose K problem. 
+
+This operation takes a vector of integers and a value K, between 0 and N = values.\+size(), and returns all K-\/combinations of entries in values 
+\begin{DoxyParams}{Parameters}
+{\em values} & {\bfseries (std\+::vector$<$int$>$)} vector of integer values to be sampled from \\
+\hline
+{\em K} & {\bfseries (int)} number of samples to select from values \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+{\bfseries (std\+::vector$<$std\+::vector$<$int$>$$>$)} All unique length K selections from argument values. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_math_1_1_combinatorics_a174253b11651917aab46bc879449e59b}\label{class_math_1_1_combinatorics_a174253b11651917aab46bc879449e59b}} 
+\index{Math\+::\+Combinatorics@{Math\+::\+Combinatorics}!testn\+Choosek@{testn\+Choosek}}
+\index{testn\+Choosek@{testn\+Choosek}!Math\+::\+Combinatorics@{Math\+::\+Combinatorics}}
+\subsubsection{\texorpdfstring{testn\+Choosek()}{testnChoosek()}}
+{\footnotesize\ttfamily void Math\+::\+Combinatorics\+::testn\+Choosek (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Performs basic unit tests on the n\+Choosek method. 
+
+This helper method performs a basic n\+Choosek operation and prints the results to stdout for visual verification. \begin{DoxyRefDesc}{Todo}
+\item[\mbox{\hyperlink{todo__todo000002}{Todo}}]Implement automatic testing of the n\+Choosek operation \end{DoxyRefDesc}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{_math_8hpp}{Math.\+hpp}}\item 
+\mbox{\hyperlink{_math_8cpp}{Math.\+cpp}}\end{DoxyCompactItemize}

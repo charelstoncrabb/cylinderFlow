@@ -1,0 +1,72 @@
+\hypertarget{_matrix_8cpp}{}\section{Matrix.\+cpp File Reference}
+\label{_matrix_8cpp}\index{Matrix.\+cpp@{Matrix.\+cpp}}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_matrix}{Matrix}} \mbox{\hyperlink{_matrix_8cpp_ada4b4a55c64a37ec639de92e3bc61993}{eye}} (int n)
+\item 
+\mbox{\hyperlink{class_matrix}{Matrix}} \mbox{\hyperlink{_matrix_8cpp_a691ee4cd354731c3b0915799e04793fb}{ones}} (int num\+Rows, int num\+Cols=-\/1)
+\item 
+\mbox{\hyperlink{class_matrix}{Matrix}} \mbox{\hyperlink{_matrix_8cpp_a122abe6d89ed35706ff27abd384f96bc}{tri\+Diag}} (int n, double diag, double off\+Diag)
+\item 
+\mbox{\hyperlink{class_matrix}{Matrix}} \mbox{\hyperlink{_matrix_8cpp_a69677ca39fcad9f3d2ed1c013df19a2d}{comp\+Mat}} (std\+::vector$<$ double $>$ coefficients)
+\item 
+\mbox{\hyperlink{class_matrix}{Matrix}} \mbox{\hyperlink{_matrix_8cpp_aa2c60dc47762586cc2d67deac5aacb01}{rot\+Mat}} (double theta)
+\item 
+std\+::vector$<$ int $>$ \mbox{\hyperlink{_matrix_8cpp_af6d3c5d3d22c5f3f4a5fd47e3a7d3243}{index\+Vect}} (int n)
+\item 
+std\+::ostream \& \mbox{\hyperlink{_matrix_8cpp_ac7214274c9ef83ebef022af7225ac068}{operator$<$$<$}} (std\+::ostream \&os, const \mbox{\hyperlink{class_matrix}{Matrix}} A)
+\item 
+std\+::ostream \& \mbox{\hyperlink{_matrix_8cpp_a8bdcf56994dd828afb6662c681140623}{operator$<$$<$}} (std\+::ostream \&os, std\+::vector$<$ double $>$ vect)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{_matrix_8cpp_a69677ca39fcad9f3d2ed1c013df19a2d}\label{_matrix_8cpp_a69677ca39fcad9f3d2ed1c013df19a2d}} 
+\index{Matrix.\+cpp@{Matrix.\+cpp}!comp\+Mat@{comp\+Mat}}
+\index{comp\+Mat@{comp\+Mat}!Matrix.\+cpp@{Matrix.\+cpp}}
+\subsubsection{\texorpdfstring{comp\+Mat()}{compMat()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_matrix}{Matrix}} comp\+Mat (\begin{DoxyParamCaption}\item[{std\+::vector$<$ double $>$}]{coefficients }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{_matrix_8cpp_ada4b4a55c64a37ec639de92e3bc61993}\label{_matrix_8cpp_ada4b4a55c64a37ec639de92e3bc61993}} 
+\index{Matrix.\+cpp@{Matrix.\+cpp}!eye@{eye}}
+\index{eye@{eye}!Matrix.\+cpp@{Matrix.\+cpp}}
+\subsubsection{\texorpdfstring{eye()}{eye()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_matrix}{Matrix}} eye (\begin{DoxyParamCaption}\item[{int}]{n }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{_matrix_8cpp_af6d3c5d3d22c5f3f4a5fd47e3a7d3243}\label{_matrix_8cpp_af6d3c5d3d22c5f3f4a5fd47e3a7d3243}} 
+\index{Matrix.\+cpp@{Matrix.\+cpp}!index\+Vect@{index\+Vect}}
+\index{index\+Vect@{index\+Vect}!Matrix.\+cpp@{Matrix.\+cpp}}
+\subsubsection{\texorpdfstring{index\+Vect()}{indexVect()}}
+{\footnotesize\ttfamily std\+::vector$<$int$>$ index\+Vect (\begin{DoxyParamCaption}\item[{int}]{n }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{_matrix_8cpp_a691ee4cd354731c3b0915799e04793fb}\label{_matrix_8cpp_a691ee4cd354731c3b0915799e04793fb}} 
+\index{Matrix.\+cpp@{Matrix.\+cpp}!ones@{ones}}
+\index{ones@{ones}!Matrix.\+cpp@{Matrix.\+cpp}}
+\subsubsection{\texorpdfstring{ones()}{ones()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_matrix}{Matrix}} ones (\begin{DoxyParamCaption}\item[{int}]{num\+Rows,  }\item[{int}]{num\+Cols = {\ttfamily -\/1} }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{_matrix_8cpp_ac7214274c9ef83ebef022af7225ac068}\label{_matrix_8cpp_ac7214274c9ef83ebef022af7225ac068}} 
+\index{Matrix.\+cpp@{Matrix.\+cpp}!operator$<$$<$@{operator$<$$<$}}
+\index{operator$<$$<$@{operator$<$$<$}!Matrix.\+cpp@{Matrix.\+cpp}}
+\subsubsection{\texorpdfstring{operator$<$$<$()}{operator<<()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily std\+::ostream\& operator$<$$<$ (\begin{DoxyParamCaption}\item[{std\+::ostream \&}]{os,  }\item[{const \mbox{\hyperlink{class_matrix}{Matrix}}}]{A }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{_matrix_8cpp_a8bdcf56994dd828afb6662c681140623}\label{_matrix_8cpp_a8bdcf56994dd828afb6662c681140623}} 
+\index{Matrix.\+cpp@{Matrix.\+cpp}!operator$<$$<$@{operator$<$$<$}}
+\index{operator$<$$<$@{operator$<$$<$}!Matrix.\+cpp@{Matrix.\+cpp}}
+\subsubsection{\texorpdfstring{operator$<$$<$()}{operator<<()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily std\+::ostream\& operator$<$$<$ (\begin{DoxyParamCaption}\item[{std\+::ostream \&}]{os,  }\item[{std\+::vector$<$ double $>$}]{vect }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{_matrix_8cpp_aa2c60dc47762586cc2d67deac5aacb01}\label{_matrix_8cpp_aa2c60dc47762586cc2d67deac5aacb01}} 
+\index{Matrix.\+cpp@{Matrix.\+cpp}!rot\+Mat@{rot\+Mat}}
+\index{rot\+Mat@{rot\+Mat}!Matrix.\+cpp@{Matrix.\+cpp}}
+\subsubsection{\texorpdfstring{rot\+Mat()}{rotMat()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_matrix}{Matrix}} rot\+Mat (\begin{DoxyParamCaption}\item[{double}]{theta }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{_matrix_8cpp_a122abe6d89ed35706ff27abd384f96bc}\label{_matrix_8cpp_a122abe6d89ed35706ff27abd384f96bc}} 
+\index{Matrix.\+cpp@{Matrix.\+cpp}!tri\+Diag@{tri\+Diag}}
+\index{tri\+Diag@{tri\+Diag}!Matrix.\+cpp@{Matrix.\+cpp}}
+\subsubsection{\texorpdfstring{tri\+Diag()}{triDiag()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_matrix}{Matrix}} tri\+Diag (\begin{DoxyParamCaption}\item[{int}]{n,  }\item[{double}]{diag,  }\item[{double}]{off\+Diag }\end{DoxyParamCaption})}
+

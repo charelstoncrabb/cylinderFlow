@@ -1,0 +1,141 @@
+\hypertarget{_vect_ops_8cpp}{}\section{Vect\+Ops.\+cpp File Reference}
+\label{_vect_ops_8cpp}\index{Vect\+Ops.\+cpp@{Vect\+Ops.\+cpp}}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+std\+::vector$<$ double $>$ \mbox{\hyperlink{_vect_ops_8cpp_ae81724e95cc778eba1c19eef67db16ca}{operator+}} (std\+::vector$<$ double $>$ lhs, std\+::vector$<$ double $>$ rhs)
+\item 
+std\+::vector$<$ double $>$ \mbox{\hyperlink{_vect_ops_8cpp_a28d00bc4ffde1f4718027efd3d2062fa}{operator-\/}} (std\+::vector$<$ double $>$ lhs, std\+::vector$<$ double $>$ rhs)
+\item 
+double \mbox{\hyperlink{_vect_ops_8cpp_a3a5143035ddf186131893c5e07485860}{dot}} (std\+::vector$<$ double $>$ u, std\+::vector$<$ double $>$ v)
+\item 
+double \mbox{\hyperlink{_vect_ops_8cpp_a5e3a2af5c7902cdfb1228f10647032e2}{norm}} (std\+::vector$<$ double $>$ u, double p)
+\item 
+std\+::vector$<$ double $>$ \mbox{\hyperlink{_vect_ops_8cpp_a13a02049d4b44c2605f77caf368b94a0}{scale}} (std\+::vector$<$ double $>$ u, double c)
+\item 
+std\+::vector$<$ double $>$ \mbox{\hyperlink{_vect_ops_8cpp_a189d9161377fa8de27f48140da0378c0}{vect\+Pow}} (std\+::vector$<$ double $>$ u, double p)
+\item 
+{\footnotesize template$<$class T $>$ }\\std\+::vector$<$ T $\ast$ $>$ \mbox{\hyperlink{_vect_ops_8cpp_aad801f3d8698e1bb15e7b5a8a94ed7af}{range}} (std\+::vector$<$ T $\ast$$>$ u, size\+\_\+t min, size\+\_\+t max)
+\item 
+{\footnotesize template$<$class T $>$ }\\std\+::vector$<$ T $\ast$ $>$ \mbox{\hyperlink{_vect_ops_8cpp_aece55178fa72cf8cd94677b977b2cf01}{subind}} (std\+::vector$<$ T $\ast$$>$ u, std\+::vector$<$ int $>$ inds)
+\item 
+{\footnotesize template$<$class T $>$ }\\std\+::vector$<$ T $\ast$ $>$ \mbox{\hyperlink{_vect_ops_8cpp_a5b91beaeed874fe6912782b5db372dcb}{cat}} (std\+::vector$<$ T $\ast$$>$ u, std\+::vector$<$ T $\ast$$>$ v)
+\item 
+{\footnotesize template$<$class T $>$ }\\std\+::vector$<$ T $\ast$ $>$ \mbox{\hyperlink{_vect_ops_8cpp_a0194dbced2a549ceb0f4a4efe1afc08d}{rm\+El}} (std\+::vector$<$ T $\ast$$>$ u, size\+\_\+t ind2rm)
+\item 
+{\footnotesize template$<$class T $>$ }\\void \mbox{\hyperlink{_vect_ops_8cpp_a6a269e1da45ae7e47221131a52b3fe88}{rev\+Sort}} (std\+::vector$<$ T $\ast$$>$ u)
+\item 
+template std\+::vector$<$ \mbox{\hyperlink{class_node}{Node}} $\ast$ $>$ \mbox{\hyperlink{_vect_ops_8cpp_abfb48e7a363f600ab75965d902c5638a}{range}} (std\+::vector$<$ \mbox{\hyperlink{class_node}{Node}} $\ast$$>$, size\+\_\+t, size\+\_\+t)
+\item 
+template std\+::vector$<$ \mbox{\hyperlink{class_node}{Node}} $\ast$ $>$ \mbox{\hyperlink{_vect_ops_8cpp_a2c7cf4eeb17ae6b95361226420bbf5d8}{cat}} (std\+::vector$<$ \mbox{\hyperlink{class_node}{Node}} $\ast$$>$, std\+::vector$<$ \mbox{\hyperlink{class_node}{Node}} $\ast$$>$)
+\item 
+template std\+::vector$<$ \mbox{\hyperlink{class_facet}{Facet}} $\ast$ $>$ \mbox{\hyperlink{_vect_ops_8cpp_aca9814cfa5f4e1e0eb5c6be77dc3d2f2}{cat}} (std\+::vector$<$ \mbox{\hyperlink{class_facet}{Facet}} $\ast$$>$, std\+::vector$<$ \mbox{\hyperlink{class_facet}{Facet}} $\ast$$>$)
+\item 
+template std\+::vector$<$ \mbox{\hyperlink{class_node}{Node}} $\ast$ $>$ \mbox{\hyperlink{_vect_ops_8cpp_a29e4f478fd231dfb88a98becc559e98c}{rm\+El}} (std\+::vector$<$ \mbox{\hyperlink{class_node}{Node}} $\ast$$>$, size\+\_\+t)
+\item 
+template void \mbox{\hyperlink{_vect_ops_8cpp_a8b8f13b2cb412e6d09ee216c08285816}{rev\+Sort}} (std\+::vector$<$ \mbox{\hyperlink{class_node}{Node}} $\ast$$>$)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{_vect_ops_8cpp_a5b91beaeed874fe6912782b5db372dcb}\label{_vect_ops_8cpp_a5b91beaeed874fe6912782b5db372dcb}} 
+\index{Vect\+Ops.\+cpp@{Vect\+Ops.\+cpp}!cat@{cat}}
+\index{cat@{cat}!Vect\+Ops.\+cpp@{Vect\+Ops.\+cpp}}
+\subsubsection{\texorpdfstring{cat()}{cat()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily template$<$class T $>$ \\
+std\+::vector$<$T$\ast$$>$ cat (\begin{DoxyParamCaption}\item[{std\+::vector$<$ T $\ast$$>$}]{u,  }\item[{std\+::vector$<$ T $\ast$$>$}]{v }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{_vect_ops_8cpp_a2c7cf4eeb17ae6b95361226420bbf5d8}\label{_vect_ops_8cpp_a2c7cf4eeb17ae6b95361226420bbf5d8}} 
+\index{Vect\+Ops.\+cpp@{Vect\+Ops.\+cpp}!cat@{cat}}
+\index{cat@{cat}!Vect\+Ops.\+cpp@{Vect\+Ops.\+cpp}}
+\subsubsection{\texorpdfstring{cat()}{cat()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily template std\+::vector$<$\mbox{\hyperlink{class_node}{Node}}$\ast$$>$ cat (\begin{DoxyParamCaption}\item[{std\+::vector$<$ \mbox{\hyperlink{class_node}{Node}} $\ast$$>$}]{,  }\item[{std\+::vector$<$ \mbox{\hyperlink{class_node}{Node}} $\ast$$>$}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{_vect_ops_8cpp_aca9814cfa5f4e1e0eb5c6be77dc3d2f2}\label{_vect_ops_8cpp_aca9814cfa5f4e1e0eb5c6be77dc3d2f2}} 
+\index{Vect\+Ops.\+cpp@{Vect\+Ops.\+cpp}!cat@{cat}}
+\index{cat@{cat}!Vect\+Ops.\+cpp@{Vect\+Ops.\+cpp}}
+\subsubsection{\texorpdfstring{cat()}{cat()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily template std\+::vector$<$\mbox{\hyperlink{class_facet}{Facet}}$\ast$$>$ cat (\begin{DoxyParamCaption}\item[{std\+::vector$<$ \mbox{\hyperlink{class_facet}{Facet}} $\ast$$>$}]{,  }\item[{std\+::vector$<$ \mbox{\hyperlink{class_facet}{Facet}} $\ast$$>$}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{_vect_ops_8cpp_a3a5143035ddf186131893c5e07485860}\label{_vect_ops_8cpp_a3a5143035ddf186131893c5e07485860}} 
+\index{Vect\+Ops.\+cpp@{Vect\+Ops.\+cpp}!dot@{dot}}
+\index{dot@{dot}!Vect\+Ops.\+cpp@{Vect\+Ops.\+cpp}}
+\subsubsection{\texorpdfstring{dot()}{dot()}}
+{\footnotesize\ttfamily double dot (\begin{DoxyParamCaption}\item[{std\+::vector$<$ double $>$}]{u,  }\item[{std\+::vector$<$ double $>$}]{v }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{_vect_ops_8cpp_a5e3a2af5c7902cdfb1228f10647032e2}\label{_vect_ops_8cpp_a5e3a2af5c7902cdfb1228f10647032e2}} 
+\index{Vect\+Ops.\+cpp@{Vect\+Ops.\+cpp}!norm@{norm}}
+\index{norm@{norm}!Vect\+Ops.\+cpp@{Vect\+Ops.\+cpp}}
+\subsubsection{\texorpdfstring{norm()}{norm()}}
+{\footnotesize\ttfamily double norm (\begin{DoxyParamCaption}\item[{std\+::vector$<$ double $>$}]{u,  }\item[{double}]{p }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{_vect_ops_8cpp_ae81724e95cc778eba1c19eef67db16ca}\label{_vect_ops_8cpp_ae81724e95cc778eba1c19eef67db16ca}} 
+\index{Vect\+Ops.\+cpp@{Vect\+Ops.\+cpp}!operator+@{operator+}}
+\index{operator+@{operator+}!Vect\+Ops.\+cpp@{Vect\+Ops.\+cpp}}
+\subsubsection{\texorpdfstring{operator+()}{operator+()}}
+{\footnotesize\ttfamily std\+::vector$<$double$>$ operator+ (\begin{DoxyParamCaption}\item[{std\+::vector$<$ double $>$}]{lhs,  }\item[{std\+::vector$<$ double $>$}]{rhs }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{_vect_ops_8cpp_a28d00bc4ffde1f4718027efd3d2062fa}\label{_vect_ops_8cpp_a28d00bc4ffde1f4718027efd3d2062fa}} 
+\index{Vect\+Ops.\+cpp@{Vect\+Ops.\+cpp}!operator-\/@{operator-\/}}
+\index{operator-\/@{operator-\/}!Vect\+Ops.\+cpp@{Vect\+Ops.\+cpp}}
+\subsubsection{\texorpdfstring{operator-\/()}{operator-()}}
+{\footnotesize\ttfamily std\+::vector$<$double$>$ operator-\/ (\begin{DoxyParamCaption}\item[{std\+::vector$<$ double $>$}]{lhs,  }\item[{std\+::vector$<$ double $>$}]{rhs }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{_vect_ops_8cpp_aad801f3d8698e1bb15e7b5a8a94ed7af}\label{_vect_ops_8cpp_aad801f3d8698e1bb15e7b5a8a94ed7af}} 
+\index{Vect\+Ops.\+cpp@{Vect\+Ops.\+cpp}!range@{range}}
+\index{range@{range}!Vect\+Ops.\+cpp@{Vect\+Ops.\+cpp}}
+\subsubsection{\texorpdfstring{range()}{range()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily template$<$class T $>$ \\
+std\+::vector$<$T$\ast$$>$ range (\begin{DoxyParamCaption}\item[{std\+::vector$<$ T $\ast$$>$}]{u,  }\item[{size\+\_\+t}]{min,  }\item[{size\+\_\+t}]{max }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{_vect_ops_8cpp_abfb48e7a363f600ab75965d902c5638a}\label{_vect_ops_8cpp_abfb48e7a363f600ab75965d902c5638a}} 
+\index{Vect\+Ops.\+cpp@{Vect\+Ops.\+cpp}!range@{range}}
+\index{range@{range}!Vect\+Ops.\+cpp@{Vect\+Ops.\+cpp}}
+\subsubsection{\texorpdfstring{range()}{range()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily template std\+::vector$<$\mbox{\hyperlink{class_node}{Node}}$\ast$$>$ range (\begin{DoxyParamCaption}\item[{std\+::vector$<$ \mbox{\hyperlink{class_node}{Node}} $\ast$$>$}]{,  }\item[{size\+\_\+t}]{,  }\item[{size\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{_vect_ops_8cpp_a6a269e1da45ae7e47221131a52b3fe88}\label{_vect_ops_8cpp_a6a269e1da45ae7e47221131a52b3fe88}} 
+\index{Vect\+Ops.\+cpp@{Vect\+Ops.\+cpp}!rev\+Sort@{rev\+Sort}}
+\index{rev\+Sort@{rev\+Sort}!Vect\+Ops.\+cpp@{Vect\+Ops.\+cpp}}
+\subsubsection{\texorpdfstring{rev\+Sort()}{revSort()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily template$<$class T $>$ \\
+void rev\+Sort (\begin{DoxyParamCaption}\item[{std\+::vector$<$ T $\ast$$>$}]{u }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{_vect_ops_8cpp_a8b8f13b2cb412e6d09ee216c08285816}\label{_vect_ops_8cpp_a8b8f13b2cb412e6d09ee216c08285816}} 
+\index{Vect\+Ops.\+cpp@{Vect\+Ops.\+cpp}!rev\+Sort@{rev\+Sort}}
+\index{rev\+Sort@{rev\+Sort}!Vect\+Ops.\+cpp@{Vect\+Ops.\+cpp}}
+\subsubsection{\texorpdfstring{rev\+Sort()}{revSort()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily template void rev\+Sort (\begin{DoxyParamCaption}\item[{std\+::vector$<$ \mbox{\hyperlink{class_node}{Node}} $\ast$$>$}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{_vect_ops_8cpp_a0194dbced2a549ceb0f4a4efe1afc08d}\label{_vect_ops_8cpp_a0194dbced2a549ceb0f4a4efe1afc08d}} 
+\index{Vect\+Ops.\+cpp@{Vect\+Ops.\+cpp}!rm\+El@{rm\+El}}
+\index{rm\+El@{rm\+El}!Vect\+Ops.\+cpp@{Vect\+Ops.\+cpp}}
+\subsubsection{\texorpdfstring{rm\+El()}{rmEl()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily template$<$class T $>$ \\
+std\+::vector$<$T$\ast$$>$ rm\+El (\begin{DoxyParamCaption}\item[{std\+::vector$<$ T $\ast$$>$}]{u,  }\item[{size\+\_\+t}]{ind2rm }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{_vect_ops_8cpp_a29e4f478fd231dfb88a98becc559e98c}\label{_vect_ops_8cpp_a29e4f478fd231dfb88a98becc559e98c}} 
+\index{Vect\+Ops.\+cpp@{Vect\+Ops.\+cpp}!rm\+El@{rm\+El}}
+\index{rm\+El@{rm\+El}!Vect\+Ops.\+cpp@{Vect\+Ops.\+cpp}}
+\subsubsection{\texorpdfstring{rm\+El()}{rmEl()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily template std\+::vector$<$\mbox{\hyperlink{class_node}{Node}}$\ast$$>$ rm\+El (\begin{DoxyParamCaption}\item[{std\+::vector$<$ \mbox{\hyperlink{class_node}{Node}} $\ast$$>$}]{,  }\item[{size\+\_\+t}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{_vect_ops_8cpp_a13a02049d4b44c2605f77caf368b94a0}\label{_vect_ops_8cpp_a13a02049d4b44c2605f77caf368b94a0}} 
+\index{Vect\+Ops.\+cpp@{Vect\+Ops.\+cpp}!scale@{scale}}
+\index{scale@{scale}!Vect\+Ops.\+cpp@{Vect\+Ops.\+cpp}}
+\subsubsection{\texorpdfstring{scale()}{scale()}}
+{\footnotesize\ttfamily std\+::vector$<$double$>$ scale (\begin{DoxyParamCaption}\item[{std\+::vector$<$ double $>$}]{u,  }\item[{double}]{c }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{_vect_ops_8cpp_aece55178fa72cf8cd94677b977b2cf01}\label{_vect_ops_8cpp_aece55178fa72cf8cd94677b977b2cf01}} 
+\index{Vect\+Ops.\+cpp@{Vect\+Ops.\+cpp}!subind@{subind}}
+\index{subind@{subind}!Vect\+Ops.\+cpp@{Vect\+Ops.\+cpp}}
+\subsubsection{\texorpdfstring{subind()}{subind()}}
+{\footnotesize\ttfamily template$<$class T $>$ \\
+std\+::vector$<$T$\ast$$>$ subind (\begin{DoxyParamCaption}\item[{std\+::vector$<$ T $\ast$$>$}]{u,  }\item[{std\+::vector$<$ int $>$}]{inds }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{_vect_ops_8cpp_a189d9161377fa8de27f48140da0378c0}\label{_vect_ops_8cpp_a189d9161377fa8de27f48140da0378c0}} 
+\index{Vect\+Ops.\+cpp@{Vect\+Ops.\+cpp}!vect\+Pow@{vect\+Pow}}
+\index{vect\+Pow@{vect\+Pow}!Vect\+Ops.\+cpp@{Vect\+Ops.\+cpp}}
+\subsubsection{\texorpdfstring{vect\+Pow()}{vectPow()}}
+{\footnotesize\ttfamily std\+::vector$<$double$>$ vect\+Pow (\begin{DoxyParamCaption}\item[{std\+::vector$<$ double $>$}]{u,  }\item[{double}]{p }\end{DoxyParamCaption})}
+

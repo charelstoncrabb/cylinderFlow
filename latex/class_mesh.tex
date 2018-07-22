@@ -1,0 +1,157 @@
+\hypertarget{class_mesh}{}\section{Mesh Class Reference}
+\label{class_mesh}\index{Mesh@{Mesh}}
+
+
+\mbox{\hyperlink{class_mesh}{Mesh}} class generates and stores a 2D mesh from an input grid points file.  
+
+
+Inheritance diagram for Mesh\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_mesh}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_mesh_ade26657ad48e8e84af8a2614a8ac6b0c}{Mesh}} (std\+::string mesh\+Data\+Filename, bool rot\+Flag=false)
+\begin{DoxyCompactList}\small\item\em Public Constructor. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_mesh_a5efe4da1a4c0971cfb037bd70304c303}{$\sim$\+Mesh}} ()
+\begin{DoxyCompactList}\small\item\em Destructor. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_mesh_a4d194fe4ce2b4fa4c11274c893c6ae29}{write\+Mesh}} (std\+::string mesh\+Out\+File=\char`\"{}Mesh.\+out\char`\"{})
+\begin{DoxyCompactList}\small\item\em Writes relevant mesh data to the provided output file name. \end{DoxyCompactList}\item 
+unsigned \mbox{\hyperlink{class_mesh_a716f8cde80ac5f0ed592aaa56995f618}{size}} (void) const
+\begin{DoxyCompactList}\small\item\em Query the size of the mesh (equivalently, number of nodes in mesh/grid) \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_mesh}{Mesh}} \mbox{\hyperlink{class_mesh_a732e258583e090537f7c47b9a7594e85}{operator=}} (const \mbox{\hyperlink{class_mesh}{Mesh}} \&rhs)
+\begin{DoxyCompactList}\small\item\em Assignment operator. \end{DoxyCompactList}\item 
+const \mbox{\hyperlink{class_node}{Node}} $\ast$ \mbox{\hyperlink{class_mesh_afbb98e084a07e94b5d3ad503aaa82e08}{nodelist}} (size\+\_\+t i) const
+\begin{DoxyCompactList}\small\item\em Returns (as read-\/only) the i-\/th node in the \mbox{\hyperlink{class_mesh}{Mesh}} objects node list. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\mbox{\hyperlink{class_mesh}{Mesh}} class generates and stores a 2D mesh from an input grid points file. 
+
+This class generates and stores a 2D mesh from an input grid points file. A divide-\/and-\/conquer {\bfseries \href{https://en.wikipedia.org/wiki/Delaunay_triangulation}{\tt Delaunay Triangulation}} algorithm is implemented and requires as input a 2D grid point file. The class generates the list of nodes/adjacencies with the facet objects that are used in the finite element solver classes. \begin{DoxyRefDesc}{Todo}
+\item[\mbox{\hyperlink{todo__todo000005}{Todo}}]Allow for constrained DT \end{DoxyRefDesc}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{class_mesh_ade26657ad48e8e84af8a2614a8ac6b0c}\label{class_mesh_ade26657ad48e8e84af8a2614a8ac6b0c}} 
+\index{Mesh@{Mesh}!Mesh@{Mesh}}
+\index{Mesh@{Mesh}!Mesh@{Mesh}}
+\subsubsection{\texorpdfstring{Mesh()}{Mesh()}}
+{\footnotesize\ttfamily Mesh\+::\+Mesh (\begin{DoxyParamCaption}\item[{std\+::string}]{mesh\+Data\+Filename,  }\item[{bool}]{rot\+Flag = {\ttfamily false} }\end{DoxyParamCaption})}
+
+
+
+Public Constructor. 
+
+This public constructor parses the provided grid point file and performs the triangulation, constructing the node and facet list required 
+\begin{DoxyParams}{Parameters}
+{\em mesh\+Data\+Filename} & {\bfseries (std\+::string)} The grid point data file name to be parsed for grid point locations \\
+\hline
+{\em rot\+Flag} & {\bfseries (bool)} whether to linearly rotate the grid points prior to meshing (and rotate back after meshing) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Constructed \mbox{\hyperlink{class_mesh}{Mesh}} object 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_mesh_a5efe4da1a4c0971cfb037bd70304c303}\label{class_mesh_a5efe4da1a4c0971cfb037bd70304c303}} 
+\index{Mesh@{Mesh}!````~Mesh@{$\sim$\+Mesh}}
+\index{````~Mesh@{$\sim$\+Mesh}!Mesh@{Mesh}}
+\subsubsection{\texorpdfstring{$\sim$\+Mesh()}{~Mesh()}}
+{\footnotesize\ttfamily Mesh\+::$\sim$\+Mesh (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Destructor. 
+
+Performs necessary gargbage clean-\/up (frees node/facet list members) 
+\begin{DoxyParams}{Parameters}
+{\em None} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+None 
+\end{DoxyReturn}
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{class_mesh_afbb98e084a07e94b5d3ad503aaa82e08}\label{class_mesh_afbb98e084a07e94b5d3ad503aaa82e08}} 
+\index{Mesh@{Mesh}!nodelist@{nodelist}}
+\index{nodelist@{nodelist}!Mesh@{Mesh}}
+\subsubsection{\texorpdfstring{nodelist()}{nodelist()}}
+{\footnotesize\ttfamily const \mbox{\hyperlink{class_node}{Node}} $\ast$ Mesh\+::nodelist (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{i }\end{DoxyParamCaption}) const}
+
+
+
+Returns (as read-\/only) the i-\/th node in the \mbox{\hyperlink{class_mesh}{Mesh}} objects node list. 
+
+Note\+: this function performs an i $<$ {\bfseries this}-\/$>$nodelist.\+size() ? check to guard against invalid accesses. A runtime error is thrown if i $>$= {\bfseries this}-\/$>$node\+List.\+size() 
+\begin{DoxyParams}{Parameters}
+{\em i} & {\bfseries (size\+\_\+t)} index of node in node list to access \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+{\bfseries (const Node$\ast$)} \mbox{\hyperlink{class_node}{Node}} object at index i in {\bfseries this}-\/$>$node\+List 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_mesh_a732e258583e090537f7c47b9a7594e85}\label{class_mesh_a732e258583e090537f7c47b9a7594e85}} 
+\index{Mesh@{Mesh}!operator=@{operator=}}
+\index{operator=@{operator=}!Mesh@{Mesh}}
+\subsubsection{\texorpdfstring{operator=()}{operator=()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{class_mesh}{Mesh}} Mesh\+::operator= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_mesh}{Mesh}} \&}]{rhs }\end{DoxyParamCaption})}
+
+
+
+Assignment operator. 
+
+This operator performs a copy assignment to the left-\/hand side \mbox{\hyperlink{class_mesh}{Mesh}} object 
+\begin{DoxyParams}{Parameters}
+{\em rhs} & {\bfseries (\mbox{\hyperlink{class_mesh}{Mesh}})} the \mbox{\hyperlink{class_mesh}{Mesh}} object to be copied left \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+{\bfseries (\mbox{\hyperlink{class_mesh}{Mesh}})} the left-\/hand side \mbox{\hyperlink{class_mesh}{Mesh}} object, with data members set to rhs\textquotesingle{} 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_mesh_a716f8cde80ac5f0ed592aaa56995f618}\label{class_mesh_a716f8cde80ac5f0ed592aaa56995f618}} 
+\index{Mesh@{Mesh}!size@{size}}
+\index{size@{size}!Mesh@{Mesh}}
+\subsubsection{\texorpdfstring{size()}{size()}}
+{\footnotesize\ttfamily unsigned Mesh\+::size (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Query the size of the mesh (equivalently, number of nodes in mesh/grid) 
+
+Note\+: this size may significantly differ from the number of facet in the \mbox{\hyperlink{class_mesh}{Mesh}} object 
+\begin{DoxyParams}{Parameters}
+{\em None} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+{\bfseries (unsigned)} size of the \mbox{\hyperlink{class_mesh}{Mesh}} object (number of nodes in the \mbox{\hyperlink{class_mesh}{Mesh}}) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_mesh_a4d194fe4ce2b4fa4c11274c893c6ae29}\label{class_mesh_a4d194fe4ce2b4fa4c11274c893c6ae29}} 
+\index{Mesh@{Mesh}!write\+Mesh@{write\+Mesh}}
+\index{write\+Mesh@{write\+Mesh}!Mesh@{Mesh}}
+\subsubsection{\texorpdfstring{write\+Mesh()}{writeMesh()}}
+{\footnotesize\ttfamily void Mesh\+::write\+Mesh (\begin{DoxyParamCaption}\item[{std\+::string}]{mesh\+Out\+File = {\ttfamily \char`\"{}Mesh.out\char`\"{}} }\end{DoxyParamCaption})}
+
+
+
+Writes relevant mesh data to the provided output file name. 
+
+This function writes all data to the provided output file necessary to exactly reconstruct the computed mesh. 
+\begin{DoxyParams}{Parameters}
+{\em mesh\+Out\+File} & {\bfseries (std\+::string)} file name of output file in which to write the computed mesh data \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+None 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{_mesh_8hpp}{Mesh.\+hpp}}\item 
+\mbox{\hyperlink{_mesh_8cpp}{Mesh.\+cpp}}\end{DoxyCompactItemize}

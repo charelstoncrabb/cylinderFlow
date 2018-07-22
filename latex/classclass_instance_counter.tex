@@ -1,0 +1,71 @@
+\hypertarget{classclass_instance_counter}{}\section{class\+Instance\+Counter$<$ T $>$ Class Template Reference}
+\label{classclass_instance_counter}\index{class\+Instance\+Counter$<$ T $>$@{class\+Instance\+Counter$<$ T $>$}}
+
+
+Class that tracks number of instatiated objects of type T during program execution.  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classclass_instance_counter_a9d5f75752ecb644bd7e732a3b9d43702}{class\+Instance\+Counter}} ()
+\begin{DoxyCompactList}\small\item\em The constructor increments the global variable ci\+Counter$<$\+T$>$ \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classclass_instance_counter_aa4bb00c47ae2c87fa51e447624361a0a}{$\sim$class\+Instance\+Counter}} ()
+\begin{DoxyCompactList}\small\item\em The destructor decrements the global variable ci\+Counter$<$\+T$>$ \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Static Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static int \mbox{\hyperlink{classclass_instance_counter_a990f94f1650bb05ade3f4deba9110806}{ci\+Counter}} = 0
+\begin{DoxyCompactList}\small\item\em $<$ Data member that tracks the number of instances of type {\bfseries T} \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$class T$>$\newline
+class class\+Instance\+Counter$<$ T $>$}
+
+Class that tracks number of instatiated objects of type T during program execution. 
+
+This templated class uses a global variable to track the number of instantiations of type {\bfseries T} through incrementing/decrementing the counter variable in the constructor/destructor, respectively. To track number of instances of a class of type {\bfseries T}, ensure that the class {\bfseries T} inherits from class\+Instance\+Counter$<$\+T$>$. 
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classclass_instance_counter_a9d5f75752ecb644bd7e732a3b9d43702}\label{classclass_instance_counter_a9d5f75752ecb644bd7e732a3b9d43702}} 
+\index{class\+Instance\+Counter@{class\+Instance\+Counter}!class\+Instance\+Counter@{class\+Instance\+Counter}}
+\index{class\+Instance\+Counter@{class\+Instance\+Counter}!class\+Instance\+Counter@{class\+Instance\+Counter}}
+\subsubsection{\texorpdfstring{class\+Instance\+Counter()}{classInstanceCounter()}}
+{\footnotesize\ttfamily template$<$class T$>$ \\
+\mbox{\hyperlink{classclass_instance_counter}{class\+Instance\+Counter}}$<$ T $>$\+::\mbox{\hyperlink{classclass_instance_counter}{class\+Instance\+Counter}} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+The constructor increments the global variable ci\+Counter$<$\+T$>$ 
+
+\mbox{\Hypertarget{classclass_instance_counter_aa4bb00c47ae2c87fa51e447624361a0a}\label{classclass_instance_counter_aa4bb00c47ae2c87fa51e447624361a0a}} 
+\index{class\+Instance\+Counter@{class\+Instance\+Counter}!````~class\+Instance\+Counter@{$\sim$class\+Instance\+Counter}}
+\index{````~class\+Instance\+Counter@{$\sim$class\+Instance\+Counter}!class\+Instance\+Counter@{class\+Instance\+Counter}}
+\subsubsection{\texorpdfstring{$\sim$class\+Instance\+Counter()}{~classInstanceCounter()}}
+{\footnotesize\ttfamily template$<$class T$>$ \\
+\mbox{\hyperlink{classclass_instance_counter}{class\+Instance\+Counter}}$<$ T $>$\+::$\sim$\mbox{\hyperlink{classclass_instance_counter}{class\+Instance\+Counter}} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+The destructor decrements the global variable ci\+Counter$<$\+T$>$ 
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classclass_instance_counter_a990f94f1650bb05ade3f4deba9110806}\label{classclass_instance_counter_a990f94f1650bb05ade3f4deba9110806}} 
+\index{class\+Instance\+Counter@{class\+Instance\+Counter}!ci\+Counter@{ci\+Counter}}
+\index{ci\+Counter@{ci\+Counter}!class\+Instance\+Counter@{class\+Instance\+Counter}}
+\subsubsection{\texorpdfstring{ci\+Counter}{ciCounter}}
+{\footnotesize\ttfamily template$<$class T$>$ \\
+int \mbox{\hyperlink{classclass_instance_counter}{class\+Instance\+Counter}}$<$ T $>$\+::ci\+Counter = 0\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [protected]}}
+
+
+
+$<$ Data member that tracks the number of instances of type {\bfseries T} 
+
+Note that for any implementation of this class with type {\bfseries T}, this value should have a final state of {\bfseries 0} on program exit, otherwise a memory leak has ocurred somewhere. 
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{_mesh_8hpp}{Mesh.\+hpp}}\end{DoxyCompactItemize}
