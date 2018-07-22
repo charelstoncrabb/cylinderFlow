@@ -1,6 +1,7 @@
 var searchData=
 [
   ['range',['range',['../_vect_ops_8cpp.html#aad801f3d8698e1bb15e7b5a8a94ed7af',1,'range(std::vector&lt; T *&gt; u, size_t min, size_t max):&#160;VectOps.cpp'],['../_vect_ops_8cpp.html#abfb48e7a363f600ab75965d902c5638a',1,'range(std::vector&lt; Node *&gt;, size_t, size_t):&#160;VectOps.cpp'],['../_vect_ops_8hpp.html#aad801f3d8698e1bb15e7b5a8a94ed7af',1,'range(std::vector&lt; T *&gt; u, size_t min, size_t max):&#160;VectOps.cpp']]],
+  ['readme_2emd',['README.md',['../_r_e_a_d_m_e_8md.html',1,'']]],
   ['reprowwithdiff',['repRowWithDiff',['../class_matrix.html#a1385f13513c2f00cf9dbe9eb45ccbc01',1,'Matrix']]],
   ['revsort',['revSort',['../_vect_ops_8cpp.html#a6a269e1da45ae7e47221131a52b3fe88',1,'revSort(std::vector&lt; T *&gt; u):&#160;VectOps.cpp'],['../_vect_ops_8cpp.html#a8b8f13b2cb412e6d09ee216c08285816',1,'revSort(std::vector&lt; Node *&gt;):&#160;VectOps.cpp'],['../_vect_ops_8hpp.html#a6a269e1da45ae7e47221131a52b3fe88',1,'revSort(std::vector&lt; T *&gt; u):&#160;VectOps.cpp']]],
   ['rmcol',['rmCol',['../class_matrix.html#ac47f9d15d021312e0a33a341cc1e8032',1,'Matrix']]],
