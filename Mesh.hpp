@@ -46,7 +46,8 @@ class Facet;
 
 //! Mesh class generates and stores a 2D mesh from an input grid points file
 /*!
-  This class generates and stores a 2D mesh from an input grid points file. A divide-and-conquer Delaunay Triangulation algorithm is implemented and requires as input a 2D grid point file. The class generates the list of nodes/adjacencies with the facet objects that are used in the finite element solver classes.
+  This class generates and stores a 2D mesh from an input grid points file. A divide-and-conquer <B><A HREF="https://en.wikipedia.org/wiki/Delaunay_triangulation">Delaunay Triangulation</A></B> algorithm is implemented and requires as input a 2D grid point file. The class generates the list of nodes/adjacencies with the facet objects that are used in the finite element solver classes.
+  \todo Allow for constrained DT
 */
 class Mesh{
 public:
