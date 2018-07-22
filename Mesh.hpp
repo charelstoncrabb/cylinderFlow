@@ -5,15 +5,17 @@
 //  Created by Nicholas Crabb on 3/30/17.
 //  Copyright © 2017 Nicholas Crabb. All rights reserved.
 //
-
-#ifndef Mesh_h
-#define Mesh_h
-
 #include "Includes.hpp"
 #include "VectOps.hpp"
 #include "Matrix.hpp"
 
-//! classInstancesCounter class tracks number of instatiated objects of type T
+#ifndef Mesh_h
+#define Mesh_h
+
+//! Class that tracks number of instatiated objects of type T during program execution
+/*!
+This templated class uses a global variable to track the number of instantiations of type **T** through incrementing/decrementing the counter variable in the constructor/destructor, respectively. To track number of instances of a class of type **T**, ensure that the class **T** inherits from classInstanceCounter<T>.
+*/
 template<class T>
 class classInstanceCounter{
 public:
@@ -26,14 +28,20 @@ public:
 		ciCounter--;
 	}
 protected:
+	//!< Data member that tracks the number of instances of type **T**
+	/*!
+	Note that for any implementation of this class with type **T**, this value should have a final state of **0** on program exit, otherwise a memory leak has ocurred somewhere.
+	*/
     static int ciCounter;
 };
 
 template<class T>
 int classInstanceCounter<T>::ciCounter = 0;
 
-//Forward declarations
+//Forward declaration of Node class -- Needed for use in Mesh class
 class Node;
+
+// Forward declaration of Facet class -- Needed for use in Mesh class
 class Facet;
 
 //! Mesh class generates and stores a 2D mesh from an input grid points file
@@ -45,45 +53,52 @@ public:
 	//! Public Constructor
 	/*!
 	This public constructor parses the provided grid point file and performs the triangulation, constructing the node and facet list required
-		\param meshDataFilename (std::string) The grid point data file name to be parsed for grid point locations
-		\param rotFlag (bool) whether to linearly rotate the grid points prior to meshing (and rotate back after meshing)
+		\param meshDataFilename  <B>(std::string)</B> The grid point data file name to be parsed for grid point locations
+		\param rotFlag <B>(bool)</B> whether to linearly rotate the grid points prior to meshing (and rotate back after meshing)
+		\return Constructed Mesh object
 	*/
     Mesh(std::string meshDataFilename, bool rotFlag = false);
 
 	//! Destructor
 	/*!
 	Performs necessary gargbage clean-up (frees node/facet list members)
+		\param None
+		\return None
 	*/
     ~Mesh();
 
 	//! Writes relevant mesh data to the provided output file name
 	/*!
 	This function writes all data to the provided output file necessary to exactly reconstruct the computed mesh.
-		\param meshOutFile (std::string) file name of output file in which to write the computed mesh data
+		\param meshOutFile <B>(std::string)</B> file name of output file in which to write the computed mesh data
+		\return None
 	*/
     void writeMesh(std::string meshOutFile = "Mesh.out");
 
 	//! Query the size of the mesh (equivalently, number of nodes in mesh/grid)
 	/*!
 	Note: this size may significantly differ from the number of facet in the Mesh object
-		\return size of the Mesh object (number of nodes in the Mesh)
+		\param None
+		\return <B>(unsigned)</B> size of the Mesh object (number of nodes in the Mesh)
 	*/
     unsigned size(void) const {return (unsigned int)nodeList.size();};
 
 	//! Assignment operator
 	/*!
 	This operator performs a copy assignment to the left-hand side Mesh object
-		\param rhs (Mesh) the Mesh object to be copied left
-		\return (Mesh) the left-hand side Mesh object, with data members set to rhs'
+		\param rhs <B>(Mesh)</B> the Mesh object to be copied left
+		\return <B>(Mesh)</B> the left-hand side Mesh object, with data members set to rhs'
 	*/
     Mesh operator=(const Mesh& rhs);
 
 	//! Returns (as read-only) the i-th node in the Mesh objects node list
 	/*!
-	Note: this function performs a nodelist.size() to guard against invalid accesses
-		\param i (size_t) index of node in node list to access
+	Note: this function performs an i < **this**->nodelist.size() ? check to guard against invalid accesses. A runtime error is thrown if i >= **this**->nodeList.size()
+		\param i <B>(size_t)</B> index of node in node list to access
+		\return <B>(const Node*)</B> Node object at index i in **this**->nodeList
 	*/
     const Node* nodelist(size_t i) const;
+
 private:
     Mesh(){};
     Mesh(std::vector<Node*> nodes, std::vector<Facet*> facets);
@@ -114,12 +129,62 @@ private:
     double theta;
 };
 
-//! Node object 
+//! Node class provides API for a vertex object in a Mesh
+/*!
+	This class stores the (2D) location and adjacency information for each point (i.e., Node) in the Mesh object. It also provides (through a private API to it's friend class Mesh) the necessary computations (relative to **this**) for computing the Delaunay triangulation performed in the Mesh constructor.
+*/
 class Node : public classInstanceCounter<Node>{
 public:
+	//! Public Constructor
+	/*!
+	This public constructor initialized the Node object's location and ID (used for bookkeeping)
+		\param ID <B>(int)</B> identification number used for bookkeeping in Mesh class
+		\param x <B>(double)</B> abscissa value of Node object in 2D coordinate system
+		\param y <B>(double)</B> ordinate value of Node object in 2D coordinate system
+		\return Constructed Node object
+	*/
     Node(int ID, double x, double y);
-    std::vector<double> getLoc(void){return loc;};
-    unsigned short getDegree(void){return (unsigned short)adjacent.size();};
+
+	//! Public destructor
+	/*!
+	Note: the destructor is virtual to ensure proper decrementing of the inherited classInstanceCounter member ciCounter
+		\param None
+		\return None
+	*/
+	virtual ~Node() {};
+
+	//! Less than operator
+	/*!
+	This less than operator implements a dictionary order on the 2D coordinate location of **this** relative to rhs
+		\param rhs <B>(Node)</B> right-hand side of less-than operator (Node to be compared with **this**)
+		\return <B>(bool)</B> The dictionary order of (**this**->x,**this**->y) with (rhs->x,rhs->y)
+	*/
+	bool operator<(Node& rhs) const;
+
+	//! Query 2D location of Node object
+	/*!
+		\param None
+		\return <B>(std::vector<int>)</B> 2D coordinate system location of Node object
+	*/
+	std::vector<double> getLoc(void) const{return loc;};
+
+	//! Query abscissa value location of Node object
+	/*!
+		\param None
+		\return <B>(double)</B> **this** abscissa value
+	*/
+	double x(void) const {return loc[0];};
+
+	//! Query ordinate value location of Node object
+	/*!
+		\param None
+		\return <B>(double)</B> **this** ordinate value
+	*/
+    double y(void) const {return loc[1];};
+
+private:
+	// Private helper methods required for triangulation computation:
+	unsigned short getDegree(void){return (unsigned short)adjacent.size();};
     std::vector<Facet> getAdjFacets(void);
     void setNode(int ID, double x, double y);
     double calcAngle(Node P, Node Q);
@@ -129,35 +194,72 @@ public:
     std::vector<int> ordAdjByAng(void);
     bool isAdjacent(Node node);
     int findIndByID(std::vector<Node*> nodes);
-    double x(void){return loc[0];};
-    double y(void){return loc[1];};
-    bool operator<(Node& rhs) const;
-private:
+
+	// Data members:
     int nodeID;
     std::vector<double> loc;
     std::vector<Node*> adjacent;
     std::vector<Facet*> isVertexOf;
     bool traversed;
     bool isBoundaryNode;
+
+	// Allow Mesh and Facet classes private access
     friend class Mesh;
+	friend class Facet;
 };
 
+//! Facet object is a triangle defined by three Node objects
+/*!
+This class stores the position, defining nodes, centroid, area, other essential information, etc. for a facet element of the Mesh object.
+*/
 class Facet : public classInstanceCounter<Facet>{
 public:
+	//! Public Constructor
+	/*!
+	This constructs a Facet object with area a, under the assumption that the defining Nodes will be subsequently added. 
+		\todo Need to restructure some Mesh architecture to prevent the need for this constructor.
+		\param a <B>(double)</B> prescribed area of the Facet to be constructed
+		\return Constructed Facet object
+	*/
     Facet(double a): ID(ciCounter-1) ,area(a){};
+
+	//! Public Constructor
+	/*!
+	This constructs a Facet object with defining vertices given by argument nodeList
+		\todo provide checks within this constructor to either block nodeList.size() != 3 or generalize the Facet code to allow for arbitrary polygons as Facet objects.
+		\param nodeList <B>(std::vector<Node*>)</B> List of Node objects to use as the defining vertices for the Facet object.  It is implicitly assumed here that nodeList.size() == 3 
+		\return Constructed Facet object
+	*/
     Facet(std::vector<Node*> nodeList);
-    ~Facet(){ciCounter--;};
-    double getArea(void){return area;};
+
+	//! Public destructor
+	/*!
+	Note: the destructor is virtual to ensure proper decrementing of the inherited classInstanceCounter member ciCounter
+		\param None
+		\return None
+	*/
+    virtual ~Facet(){};
+
+	//! Query Facet object's area
+	/*!
+	This function allows for public access to the Facet object's area
+		\param None
+		\return <B>(double)</B> **this** area property.
+	*/
+    double getArea(void) const{return area;};
     
 private:
+	// Private methods:
     void sortVerticesByAngle(void);
     
+	// Private data members:
     const int ID;
     double area;
     std::vector<double> centroid;
     std::vector<Node*> nodes;
     std::vector<double> angles;
     
+	// Allow Mesh class private access
     friend class Mesh;
 };
 

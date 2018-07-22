@@ -12,16 +12,21 @@
 #include "Options.hpp"
 #include "Includes.hpp"
 
-int main(int argc, const char * argv[]) {
-    std::string meshplot = "./ProcScripts/MeshPlot.py ", amp = " &";
-    Options* options = new Options(argc,argv);
-    Mesh* mesh = new Mesh(options->infile(),options->rotflag());
-    mesh->writeMesh(options->outfile());
-    if( options->plot() ){
-        meshplot += options->outfile() + amp;
-        system( meshplot.c_str() );
-    }
-    delete mesh;
-    delete options;
-    return 1;
+int main(int argc, const char * argv[])
+{
+	if( argc > 1 )
+	{
+		std::string meshplot = "./ProcScripts/MeshPlot.py ", amp = " &";
+		Options* options = new Options(argc, argv);
+
+		Mesh* mesh = new Mesh(options->infile(), options->rotflag());
+		mesh->writeMesh(options->outfile());
+		if (options->plot()) {
+			meshplot += options->outfile() + amp;
+			system(meshplot.c_str());
+		}
+		delete mesh;
+		delete options;
+	}
+    return 0;
 }
