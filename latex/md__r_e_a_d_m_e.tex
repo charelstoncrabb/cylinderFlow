@@ -1,0 +1,46 @@
+C++ Finite Element C\+FD for Planar Flow
+
+See Documentation\textbackslash{}manual.\+pdf for more detailed explanations, or browse the source code documentation \href{https://charelstoncrabb.github.io/cylinderFlow/html/index.html}{\tt here}.
+
+The H\+E\+AD revision should build on both Mac and Windows machines, and a basic makefile is included for convenience; please feel free to contact me with questions, comments, issues, suggestions, etc.
+
+Note\+: the python scripts assume the python interpreter lives in \textquotesingle{}usr/bin/python\textquotesingle{}. If this is different on your machine, this will need to be changed.
+
+Architechture\+: \begin{quote}
+Classes\+: \end{quote}
+
+\begin{DoxyItemize}
+\item \mbox{\hyperlink{class_options}{Options}}\+: handles input/command line options for meshing
+\item \mbox{\hyperlink{class_node}{Node}}\+: graph node object for use in meshing
+\item \mbox{\hyperlink{class_facet}{Facet}}\+: class the represents the triangles produced in the mesh
+\item \mbox{\hyperlink{class_mesh}{Mesh}}\+: class that parses input node data and produces Delaunay Traingulation of nodes using divide and conquer algorithm
+\item \mbox{\hyperlink{class_matrix}{Matrix}}\+: class that has overloaded std\+::vector$<$double$>$ to allow for matrix operations, including but not limited to arithmetic, computing characteristic polynomials, and a QR eigenvalue solver/singular values solver
+\item T\+O\+DO\+: Solver\+: class that uses meshed grid to solve equations (want to keep this as general as possible, to hopefully be able to use the software for many different models)
+\end{DoxyItemize}
+
+\begin{quote}
+Python pre/post-\/processing\+: \end{quote}
+
+\begin{DoxyItemize}
+\item Mesh\+Plot.\+py\+: creates 2D plot of output graph written by \mbox{\hyperlink{class_mesh}{Mesh()}} class
+\item square\+Grid.\+py\+: creates a square grid input file of specified size
+\item rand\+Grid.\+py\+: creates a randomized grid of specified size
+\item \mbox{\hyperlink{cfgui_8py}{cfgui.\+py}}\+: provides a G\+UI to produce small meshes (more detailed and robust graphical user interface is planned)
+\end{DoxyItemize}
+
+\begin{quote}
+Using\+: \end{quote}
+
+\begin{DoxyItemize}
+\item Example input files are included for format demonstration
+\item Both code and processors support \textquotesingle{}-\/h\textquotesingle{} flag for syntax help
+\end{DoxyItemize}
+
+\begin{quote}
+Planned Features\+: \end{quote}
+
+\begin{DoxyItemize}
+\item Input-\/specified grid constraints (e.\+g., flow around a cylinder)
+\item A more robust mesh editing G\+UI; current approach with Tk in python with matplotlib is not very scalabe.
+\item Incorporate solution visualization into G\+UI 
+\end{DoxyItemize}
