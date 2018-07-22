@@ -1,8 +1,8 @@
-#include "Includes.hpp"
+
 
 #ifndef _VECTOPS_HPP_
 #define _VECTOPS_HPP_
-
+#include "Includes.hpp"
 std::vector<double> operator+(std::vector<double> lhs, std::vector<double> rhs);
 
 std::vector<double> operator-(std::vector<double> lhs, std::vector<double> rhs);

@@ -13,7 +13,7 @@
 
 class FEMesh : public Mesh{
     FEMesh(const char *meshDataFilename) : Mesh(meshDataFilename) {};
-    virtual ~FEMesh();
+	virtual ~FEMesh() {};
 };
 
 #endif
