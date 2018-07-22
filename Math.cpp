@@ -65,7 +65,7 @@ void Math::Combinatorics::testnChoosek(void){
 }
 
 // INTEGRATES A PLANAR FUNCTION OVER FACET facet WITH VALUES AT THE VERTICES vals  -------------------
-double Math::Function::integratePlane(std::vector<Node*> vertices, std::vector<double> vals){
+double Math::Function::integrateOnDomain(void){
     return 0.0;
 }//---------------------------------------------------------------------------------------------------
 

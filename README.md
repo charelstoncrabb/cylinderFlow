@@ -1,6 +1,7 @@
 # cylinderFlow
 C++ Finite Element CFD for Planar Flow
-SEE manual.pdf FOR MORE DETAILED EXPLANATIONS:
+SEE Documentation\manual.pdf FOR MORE DETAILED EXPLANATIONS:
+<A HREF="https://charelstoncrabb.github.io/cylinderFlow/html/index.html">BROWSE SOURCE DOCUMENTATION IN GH-PAGES</A>
 
 Installation:
  - Download full repository into a working folder of choice
