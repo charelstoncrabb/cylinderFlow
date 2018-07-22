@@ -6,7 +6,7 @@ See Documentation\manual.pdf for more detailed explanations, or browse the sourc
 
 The HEAD revision should build on both Mac and Windows machines, and a basic makefile is included for convenience; please feel free to contact me with questions, comments, issues, suggestions, etc.
 
-Note: the python scripts assume the python interpreter lives in 'usr/bin/python'. If this is different on your machine, this will need to be changed. Just type 'which python' into the command line to view the interpreter path
+Note: the python scripts assume the python interpreter lives in 'usr/bin/python'. If this is different on your machine, this will need to be changed.
 
 Architechture:
 > Classes:
