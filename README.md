@@ -29,4 +29,5 @@ Architechture:
 
 > Planned Features:
  - Input-specified grid constraints (e.g., flow around a cylinder)
- - Graphical grid input file generator, with possibly incorporating the actual mesher into the GUI
+ - A more robust mesh editing GUI; current approach with Tk in python with matplotlib is not very scalabe.
+ - Incorporate solution visualization into GUI
