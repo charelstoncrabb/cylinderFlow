@@ -11,6 +11,11 @@
 #include "Math.hpp"
 #include "VectOps.hpp"
 
+//! Wrapper class for basic matrix operations
+/*!
+This class stores data in a vector<double> container, with methods intended for convenient and basic matrix operations. Currently, the Matrix class implements relatively naive solutions to the most common linear algebra problems. Since the interface with the SolverBase classes has not yet been implemented, there is much room for refactoring here; See the associated TODO.
+\todo Refactor this class as a SolverBase -friendly wrapper for an existing linear algebra package, such as Eigen or LAPACK++.
+*/
 class Matrix{
 public:
     Matrix();

@@ -12,6 +12,9 @@
 #include "Options.hpp"
 #include "Includes.hpp"
 
+/*!
+Main program execution. Command line options are parsed from argc & argv into the Options class.
+*/
 int main(int argc, const char * argv[])
 {
 	if( argc > 1 )

@@ -11,8 +11,29 @@
 #include "Solver.hpp"
 #include "Mesh.hpp"
 
+//! Class for implementing Poisson equation on provided finite element mesh. See SolverBase for boundary conditions specifications.
 class SolverPoisson : public SolverBase {
-    SolverPoisson(const Mesh* mesh) : SolverBase(mesh) {};
+public:
+	//! Public Constructor
+	/*!
+		\param mesh <b>(const Mesh*)</b>
+		\return Initialized SolverEuler object
+	*/
+    SolverPoisson(const FEMesh* mesh) : SolverBase(mesh) {};
+
+	//! Time-step the solution
+	/*!
+	\todo This interface is deprecated, and should be implemented in inherited classes (Poisson solver is not time-dependent).
+	*/
+	virtual void integrateInTime(void) {};
+
+	//! Compute the current state of the solution
+	/*!
+	This function computes the current state of the solution
+		\param None
+		\return None
+	*/
+	virtual void computeState(void) {};
 };
 
 

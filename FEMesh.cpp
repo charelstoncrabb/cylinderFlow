@@ -7,3 +7,7 @@
 //
 
 #include "FEMesh.hpp"
+
+FEMesh::FEMesh(std::string meshDataFilename) : Mesh(meshDataFilename)
+{
+}
