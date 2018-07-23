@@ -42,7 +42,7 @@ This class stores the position, defining nodes, centroid, area, other essential 
 Public Constructor. 
 
 This constructs a \mbox{\hyperlink{class_facet}{Facet}} object with area a, under the assumption that the defining Nodes will be subsequently added. \begin{DoxyRefDesc}{Todo}
-\item[\mbox{\hyperlink{todo__todo000006}{Todo}}]Need to restructure some \mbox{\hyperlink{class_mesh}{Mesh}} architecture to prevent the need for this constructor. \end{DoxyRefDesc}
+\item[\mbox{\hyperlink{todo__todo000008}{Todo}}]Need to restructure some \mbox{\hyperlink{class_mesh}{Mesh}} architecture to prevent the need for this constructor. \end{DoxyRefDesc}
 
 \begin{DoxyParams}{Parameters}
 {\em a} & {\bfseries (double)} prescribed area of the \mbox{\hyperlink{class_facet}{Facet}} to be constructed \\
@@ -62,7 +62,7 @@ Constructed \mbox{\hyperlink{class_facet}{Facet}} object
 Public Constructor. 
 
 This constructs a \mbox{\hyperlink{class_facet}{Facet}} object with defining vertices given by argument node\+List \begin{DoxyRefDesc}{Todo}
-\item[\mbox{\hyperlink{todo__todo000007}{Todo}}]provide checks within this constructor to either block node\+List.\+size() != 3 or generalize the \mbox{\hyperlink{class_facet}{Facet}} code to allow for arbitrary polygons as \mbox{\hyperlink{class_facet}{Facet}} objects. \end{DoxyRefDesc}
+\item[\mbox{\hyperlink{todo__todo000009}{Todo}}]provide checks within this constructor to either block node\+List.\+size() != 3 or generalize the \mbox{\hyperlink{class_facet}{Facet}} code to allow for arbitrary polygons as \mbox{\hyperlink{class_facet}{Facet}} objects. \end{DoxyRefDesc}
 
 \begin{DoxyParams}{Parameters}
 {\em node\+List} & {\bfseries (std\+::vector$<$\+Node$\ast$$>$)} List of \mbox{\hyperlink{class_node}{Node}} objects to use as the defining vertices for the \mbox{\hyperlink{class_facet}{Facet}} object. It is implicitly assumed here that node\+List.\+size() == 3 \\

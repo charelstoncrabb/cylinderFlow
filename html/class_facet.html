@@ -166,7 +166,7 @@ Additional Inherited Members</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Public Constructor. </p>
-<p>This constructs a <a class="el" href="class_facet.html" title="Facet object is a triangle defined by three Node objects. ">Facet</a> object with area a, under the assumption that the defining Nodes will be subsequently added. </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000006">Todo:</a></b></dt><dd>Need to restructure some <a class="el" href="class_mesh.html" title="Mesh class generates and stores a 2D mesh from an input grid points file. ">Mesh</a> architecture to prevent the need for this constructor. </dd></dl>
+<p>This constructs a <a class="el" href="class_facet.html" title="Facet object is a triangle defined by three Node objects. ">Facet</a> object with area a, under the assumption that the defining Nodes will be subsequently added. </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000008">Todo:</a></b></dt><dd>Need to restructure some <a class="el" href="class_mesh.html" title="Mesh class generates and stores a 2D mesh from an input grid points file. ">Mesh</a> architecture to prevent the need for this constructor. </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">a</td><td><b>(double)</b> prescribed area of the <a class="el" href="class_facet.html" title="Facet object is a triangle defined by three Node objects. ">Facet</a> to be constructed </td></tr>
@@ -194,7 +194,7 @@ Additional Inherited Members</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Public Constructor. </p>
-<p>This constructs a <a class="el" href="class_facet.html" title="Facet object is a triangle defined by three Node objects. ">Facet</a> object with defining vertices given by argument nodeList </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000007">Todo:</a></b></dt><dd>provide checks within this constructor to either block nodeList.size() != 3 or generalize the <a class="el" href="class_facet.html" title="Facet object is a triangle defined by three Node objects. ">Facet</a> code to allow for arbitrary polygons as <a class="el" href="class_facet.html" title="Facet object is a triangle defined by three Node objects. ">Facet</a> objects. </dd></dl>
+<p>This constructs a <a class="el" href="class_facet.html" title="Facet object is a triangle defined by three Node objects. ">Facet</a> object with defining vertices given by argument nodeList </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000009">Todo:</a></b></dt><dd>provide checks within this constructor to either block nodeList.size() != 3 or generalize the <a class="el" href="class_facet.html" title="Facet object is a triangle defined by three Node objects. ">Facet</a> code to allow for arbitrary polygons as <a class="el" href="class_facet.html" title="Facet object is a triangle defined by three Node objects. ">Facet</a> objects. </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">nodeList</td><td><b>(std::vector&lt;Node*&gt;)</b> List of <a class="el" href="class_node.html" title="Node class provides API for a vertex object in a Mesh. ">Node</a> objects to use as the defining vertices for the <a class="el" href="class_facet.html" title="Facet object is a triangle defined by three Node objects. ">Facet</a> object. It is implicitly assumed here that nodeList.size() == 3 </td></tr>

@@ -93,20 +93,32 @@ $(document).ready(function(){initNavTree('todo.html','');});
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><dl class="reflist">
-<dt><a class="anchor" id="_todo000006"></a>Member <a class="el" href="class_facet.html#acfcdcc63ac32fc2a1d0378a899441bbc">Facet::Facet</a>  (double a)</dt>
+<dt><a class="anchor" id="_todo000008"></a>Member <a class="el" href="class_facet.html#acfcdcc63ac32fc2a1d0378a899441bbc">Facet::Facet</a>  (double a)</dt>
 <dd>Need to restructure some <a class="el" href="class_mesh.html" title="Mesh class generates and stores a 2D mesh from an input grid points file. ">Mesh</a> architecture to prevent the need for this constructor.  </dd>
-<dt><a class="anchor" id="_todo000007"></a>Member <a class="el" href="class_facet.html#aaecf4566bbdbfb3904d9c3ce6f7c41cf">Facet::Facet</a>  (std::vector&lt; Node *&gt; nodeList)</dt>
+<dt><a class="anchor" id="_todo000009"></a>Member <a class="el" href="class_facet.html#aaecf4566bbdbfb3904d9c3ce6f7c41cf">Facet::Facet</a>  (std::vector&lt; Node *&gt; nodeList)</dt>
 <dd>provide checks within this constructor to either block nodeList.size() != 3 or generalize the <a class="el" href="class_facet.html" title="Facet object is a triangle defined by three Node objects. ">Facet</a> code to allow for arbitrary polygons as <a class="el" href="class_facet.html" title="Facet object is a triangle defined by three Node objects. ">Facet</a> objects.  </dd>
-<dt><a class="anchor" id="_todo000001"></a>Class <a class="el" href="class_math_1_1_basis_rep.html">Math::BasisRep</a>  </dt>
+<dt><a class="anchor" id="_todo000001"></a>Member <a class="el" href="class_f_e_mesh.html#a3d79a6cd8810a53661cea79ed1fbe922">FEMesh::FEMesh</a>  (std::string meshDataFilename)</dt>
+<dd>Need to implement initialization of BasisEl list associated with mesh  </dd>
+<dt><a class="anchor" id="_todo000002"></a>Class <a class="el" href="class_math_1_1_basis_rep.html">Math::BasisRep</a>  </dt>
 <dd>Re-evaluate appropriateness of this class' inheritance from <a class="el" href="class_math_1_1_function.html" title="This class associates a list of. ">Function</a> class; it seems inappropriate. Intuitively, a basis element representation/decomposition should really just be a list of <a class="el" href="class_math_1_1_basis_el.html" title="Basis element class. ">BasisEl</a> objects along with corresponding scalar coefficients.  </dd>
-<dt><a class="anchor" id="_todo000002"></a>Member <a class="el" href="class_math_1_1_combinatorics.html#a174253b11651917aab46bc879449e59b">Math::Combinatorics::testnChoosek</a>  (void)</dt>
+<dt><a class="anchor" id="_todo000003"></a>Member <a class="el" href="class_math_1_1_combinatorics.html#a174253b11651917aab46bc879449e59b">Math::Combinatorics::testnChoosek</a>  (void)</dt>
 <dd>Implement automatic testing of the nChoosek operation  </dd>
-<dt><a class="anchor" id="_todo000003"></a>Member <a class="el" href="class_math_1_1_function.html#a97e51108b0374f8adc7982f92af4d0de">Math::Function::Function</a>  ()</dt>
+<dt><a class="anchor" id="_todo000004"></a>Member <a class="el" href="class_math_1_1_function.html#a97e51108b0374f8adc7982f92af4d0de">Math::Function::Function</a>  ()</dt>
 <dd>Implement a constructor with the specified parameters  </dd>
-<dt><a class="anchor" id="_todo000004"></a>Member <a class="el" href="class_math_1_1_function.html#ad85e716accc64c1ea4962c828c4e216c">Math::Function::integrateOnDomain</a>  (void)</dt>
+<dt><a class="anchor" id="_todo000005"></a>Member <a class="el" href="class_math_1_1_function.html#ad85e716accc64c1ea4962c828c4e216c">Math::Function::integrateOnDomain</a>  (void)</dt>
 <dd>Method is currently not implemented  </dd>
-<dt><a class="anchor" id="_todo000005"></a>Class <a class="el" href="class_mesh.html">Mesh</a>  </dt>
-<dd>Allow for constrained DT </dd>
+<dt><a class="anchor" id="_todo000006"></a>Class <a class="el" href="class_matrix.html">Matrix</a>  </dt>
+<dd>Refactor this class as a <a class="el" href="class_solver_base.html" title="Abstract base solver class. ">SolverBase</a> -friendly wrapper for an existing linear algebra package, such as Eigen or LAPACK++.  </dd>
+<dt><a class="anchor" id="_todo000007"></a>Class <a class="el" href="class_mesh.html">Mesh</a>  </dt>
+<dd>Allow for constrained DT  </dd>
+<dt><a class="anchor" id="_todo000010"></a>Class <a class="el" href="class_solver_base.html">SolverBase</a>  </dt>
+<dd>Still need to design &amp; implement boudary condition UI; a need for flexibility in the types of boundary conditions means it should be done within the Solver classes, though there is a strong dependency on the finite element mesh/basis used.  </dd>
+<dt><a class="anchor" id="_todo000011"></a>Member <a class="el" href="class_solver_base.html#af2c51a926b461351926101b11cc6b60a">SolverBase::integrateInTime</a>  (void)=0</dt>
+<dd>This interface is deprecated, and should be implemented in inherited classes (not all solvers may be time-dependent).  </dd>
+<dt><a class="anchor" id="_todo000012"></a>Member <a class="el" href="class_solver_euler.html#a64caa7276a35f9e5408bec75bc2d3189">SolverEuler::integrateInTime</a>  (double currentTime, double dt)</dt>
+<dd>This interface is deprecated, and should be implemented within base class' computeState function.  </dd>
+<dt><a class="anchor" id="_todo000013"></a>Member <a class="el" href="class_solver_poisson.html#a4ff8a1c96b933bc01fdd411d3ae45f20">SolverPoisson::integrateInTime</a>  (void)</dt>
+<dd>This interface is deprecated, and should be implemented in inherited classes (Poisson solver is not time-dependent). </dd>
 </dl>
 </div></div><!-- contents -->
 </div><!-- doc-content -->

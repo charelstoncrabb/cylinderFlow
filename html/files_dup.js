@@ -3,7 +3,7 @@ var files_dup =
     [ "cfgui.py", "cfgui_8py.html", "cfgui_8py" ],
     [ "FEMesh.cpp", "_f_e_mesh_8cpp.html", null ],
     [ "FEMesh.hpp", "_f_e_mesh_8hpp.html", [
-      [ "FEMesh", "class_f_e_mesh.html", null ]
+      [ "FEMesh", "class_f_e_mesh.html", "class_f_e_mesh" ]
     ] ],
     [ "Includes.hpp", "_includes_8hpp.html", null ],
     [ "main.cpp", "main_8cpp.html", "main_8cpp" ],
@@ -39,7 +39,7 @@ var files_dup =
     ] ],
     [ "SolverPoisson.cpp", "_solver_poisson_8cpp.html", null ],
     [ "SolverPoisson.hpp", "_solver_poisson_8hpp.html", [
-      [ "SolverPoisson", "class_solver_poisson.html", null ]
+      [ "SolverPoisson", "class_solver_poisson.html", "class_solver_poisson" ]
     ] ],
     [ "VectOps.cpp", "_vect_ops_8cpp.html", "_vect_ops_8cpp" ],
     [ "VectOps.hpp", "_vect_ops_8hpp.html", "_vect_ops_8hpp" ]

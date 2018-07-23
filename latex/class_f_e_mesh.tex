@@ -1,14 +1,64 @@
 \hypertarget{class_f_e_mesh}{}\section{F\+E\+Mesh Class Reference}
 \label{class_f_e_mesh}\index{F\+E\+Mesh@{F\+E\+Mesh}}
+
+
+Finite element \mbox{\hyperlink{class_mesh}{Mesh}} class.  
+
+
 Inheritance diagram for F\+E\+Mesh\+:\begin{figure}[H]
 \begin{center}
 \leavevmode
 \includegraphics[height=2.000000cm]{class_f_e_mesh}
 \end{center}
 \end{figure}
-\subsection*{Additional Inherited Members}
-
-
-The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
 \item 
-\mbox{\hyperlink{_f_e_mesh_8hpp}{F\+E\+Mesh.\+hpp}}\end{DoxyCompactItemize}
+\mbox{\hyperlink{class_f_e_mesh_a3d79a6cd8810a53661cea79ed1fbe922}{F\+E\+Mesh}} (std\+::string mesh\+Data\+Filename)
+\begin{DoxyCompactList}\small\item\em Public Constructor. \end{DoxyCompactList}\item 
+virtual \mbox{\hyperlink{class_f_e_mesh_af4ea40d79e331fb1646da1f5766e22eb}{$\sim$\+F\+E\+Mesh}} ()
+\begin{DoxyCompactList}\small\item\em Destructor. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Finite element \mbox{\hyperlink{class_mesh}{Mesh}} class. 
+
+This class, inherited from the slightly more general \mbox{\hyperlink{class_mesh}{Mesh}} class, includes the necessary components for running a finite element solver (child of \mbox{\hyperlink{class_solver_base}{Solver\+Base}}). Specifically, the \mbox{\hyperlink{class_f_e_mesh}{F\+E\+Mesh}} class includes a \mbox{\hyperlink{class_mesh}{Mesh}} object along with the associated element basis function list. 
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{class_f_e_mesh_a3d79a6cd8810a53661cea79ed1fbe922}\label{class_f_e_mesh_a3d79a6cd8810a53661cea79ed1fbe922}} 
+\index{F\+E\+Mesh@{F\+E\+Mesh}!F\+E\+Mesh@{F\+E\+Mesh}}
+\index{F\+E\+Mesh@{F\+E\+Mesh}!F\+E\+Mesh@{F\+E\+Mesh}}
+\subsubsection{\texorpdfstring{F\+E\+Mesh()}{FEMesh()}}
+{\footnotesize\ttfamily F\+E\+Mesh\+::\+F\+E\+Mesh (\begin{DoxyParamCaption}\item[{std\+::string}]{mesh\+Data\+Filename }\end{DoxyParamCaption})}
+
+
+
+Public Constructor. 
+
+Public constructor for \mbox{\hyperlink{class_f_e_mesh}{F\+E\+Mesh}} performs meshing of given data points, and additionally creates associated finite element basis functions \begin{DoxyRefDesc}{Todo}
+\item[\mbox{\hyperlink{todo__todo000001}{Todo}}]Need to implement initialization of Basis\+El list associated with mesh \end{DoxyRefDesc}
+
+\begin{DoxyParams}{Parameters}
+{\em mesh\+Data\+Filename} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Initialized \mbox{\hyperlink{class_f_e_mesh}{F\+E\+Mesh}} object 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_f_e_mesh_af4ea40d79e331fb1646da1f5766e22eb}\label{class_f_e_mesh_af4ea40d79e331fb1646da1f5766e22eb}} 
+\index{F\+E\+Mesh@{F\+E\+Mesh}!````~F\+E\+Mesh@{$\sim$\+F\+E\+Mesh}}
+\index{````~F\+E\+Mesh@{$\sim$\+F\+E\+Mesh}!F\+E\+Mesh@{F\+E\+Mesh}}
+\subsubsection{\texorpdfstring{$\sim$\+F\+E\+Mesh()}{~FEMesh()}}
+{\footnotesize\ttfamily virtual F\+E\+Mesh\+::$\sim$\+F\+E\+Mesh (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+Destructor. 
+
+Note the destructor is virtual to ensure proper freeing of members if parent class delete is called 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{_f_e_mesh_8hpp}{F\+E\+Mesh.\+hpp}}\item 
+\mbox{\hyperlink{_f_e_mesh_8cpp}{F\+E\+Mesh.\+cpp}}\end{DoxyCompactItemize}

@@ -1,5 +1,10 @@
 \hypertarget{class_solver_euler}{}\section{Solver\+Euler Class Reference}
 \label{class_solver_euler}\index{Solver\+Euler@{Solver\+Euler}}
+
+
+Class for implementing compressible Euler equations on provided finite element mesh. See \mbox{\hyperlink{class_solver_base}{Solver\+Base}} for boundary conditions specifications.  
+
+
 Inheritance diagram for Solver\+Euler\+:\begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -10,10 +15,17 @@ Inheritance diagram for Solver\+Euler\+:\begin{figure}[H]
 \begin{DoxyCompactItemize}
 \item 
 \mbox{\hyperlink{class_solver_euler_a636fce8aa919afe62be090e99d9346bf}{Solver\+Euler}} (const \mbox{\hyperlink{class_mesh}{Mesh}} $\ast$mesh)
-\item 
+\begin{DoxyCompactList}\small\item\em Public Constructor. \end{DoxyCompactList}\item 
+virtual \mbox{\hyperlink{class_solver_euler_a16777db2c518c46a6c41f5437376e479}{$\sim$\+Solver\+Euler}} ()
+\begin{DoxyCompactList}\small\item\em Destructor. \end{DoxyCompactList}\item 
 virtual void \mbox{\hyperlink{class_solver_euler_a64caa7276a35f9e5408bec75bc2d3189}{integrate\+In\+Time}} (double current\+Time, double dt)
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Time-\/step the solution. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{class_solver_euler_a5aa41447d61bd488d39ad12f97022473}{compute\+State}} (void)
+\begin{DoxyCompactList}\small\item\em Compute the current state of the solution. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
+
+\subsection{Detailed Description}
+Class for implementing compressible Euler equations on provided finite element mesh. See \mbox{\hyperlink{class_solver_base}{Solver\+Base}} for boundary conditions specifications. 
 
 \subsection{Constructor \& Destructor Documentation}
 \mbox{\Hypertarget{class_solver_euler_a636fce8aa919afe62be090e99d9346bf}\label{class_solver_euler_a636fce8aa919afe62be090e99d9346bf}} 
@@ -24,7 +36,51 @@ virtual void \mbox{\hyperlink{class_solver_euler_a64caa7276a35f9e5408bec75bc2d31
 
 
 
+Public Constructor. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em mesh} & {\bfseries (const Mesh$\ast$)} \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Initialized \mbox{\hyperlink{class_solver_euler}{Solver\+Euler}} object 
+\end{DoxyReturn}
+\mbox{\Hypertarget{class_solver_euler_a16777db2c518c46a6c41f5437376e479}\label{class_solver_euler_a16777db2c518c46a6c41f5437376e479}} 
+\index{Solver\+Euler@{Solver\+Euler}!````~Solver\+Euler@{$\sim$\+Solver\+Euler}}
+\index{````~Solver\+Euler@{$\sim$\+Solver\+Euler}!Solver\+Euler@{Solver\+Euler}}
+\subsubsection{\texorpdfstring{$\sim$\+Solver\+Euler()}{~SolverEuler()}}
+{\footnotesize\ttfamily virtual Solver\+Euler\+::$\sim$\+Solver\+Euler (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+Destructor. 
+
+Note the destructor is virtual to ensure proper freeing of members if parent class delete is called 
+
 \subsection{Member Function Documentation}
+\mbox{\Hypertarget{class_solver_euler_a5aa41447d61bd488d39ad12f97022473}\label{class_solver_euler_a5aa41447d61bd488d39ad12f97022473}} 
+\index{Solver\+Euler@{Solver\+Euler}!compute\+State@{compute\+State}}
+\index{compute\+State@{compute\+State}!Solver\+Euler@{Solver\+Euler}}
+\subsubsection{\texorpdfstring{compute\+State()}{computeState()}}
+{\footnotesize\ttfamily virtual void Solver\+Euler\+::compute\+State (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+Compute the current state of the solution. 
+
+This function computes the current state of the solution 
+\begin{DoxyParams}{Parameters}
+{\em None} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+None 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{class_solver_base_a818006b80f29f641b6784905e1babe0f}{Solver\+Base}}.
+
 \mbox{\Hypertarget{class_solver_euler_a64caa7276a35f9e5408bec75bc2d3189}\label{class_solver_euler_a64caa7276a35f9e5408bec75bc2d3189}} 
 \index{Solver\+Euler@{Solver\+Euler}!integrate\+In\+Time@{integrate\+In\+Time}}
 \index{integrate\+In\+Time@{integrate\+In\+Time}!Solver\+Euler@{Solver\+Euler}}
@@ -33,8 +89,10 @@ virtual void \mbox{\hyperlink{class_solver_euler_a64caa7276a35f9e5408bec75bc2d31
 
 
 
-Implements \mbox{\hyperlink{class_solver_base_a14b5e9482f698d36dff3b43d3a4f05f1}{Solver\+Base}}.
+Time-\/step the solution. 
 
+\begin{DoxyRefDesc}{Todo}
+\item[\mbox{\hyperlink{todo__todo000012}{Todo}}]This interface is deprecated, and should be implemented within base class\textquotesingle{} compute\+State function. \end{DoxyRefDesc}
 
 
 The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}

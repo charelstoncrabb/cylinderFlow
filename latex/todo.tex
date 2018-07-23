@@ -1,24 +1,42 @@
 
 \begin{DoxyRefList}
-\item[\label{todo__todo000006}%
-\Hypertarget{todo__todo000006}%
+\item[\label{todo__todo000008}%
+\Hypertarget{todo__todo000008}%
 Member \mbox{\hyperlink{class_facet_acfcdcc63ac32fc2a1d0378a899441bbc}{Facet\+:\+:Facet}} (double a)]Need to restructure some \mbox{\hyperlink{class_mesh}{Mesh}} architecture to prevent the need for this constructor.  
-\item[\label{todo__todo000007}%
-\Hypertarget{todo__todo000007}%
+\item[\label{todo__todo000009}%
+\Hypertarget{todo__todo000009}%
 Member \mbox{\hyperlink{class_facet_aaecf4566bbdbfb3904d9c3ce6f7c41cf}{Facet\+:\+:Facet}} (std\+::vector$<$ Node $\ast$$>$ node\+List)]provide checks within this constructor to either block node\+List.\+size() != 3 or generalize the \mbox{\hyperlink{class_facet}{Facet}} code to allow for arbitrary polygons as \mbox{\hyperlink{class_facet}{Facet}} objects.  
 \item[\label{todo__todo000001}%
 \Hypertarget{todo__todo000001}%
-Class \mbox{\hyperlink{class_math_1_1_basis_rep}{Math\+:\+:Basis\+Rep}} ]Re-\/evaluate appropriateness of this class\textquotesingle{} inheritance from \mbox{\hyperlink{class_math_1_1_function}{Function}} class; it seems inappropriate. Intuitively, a basis element representation/decomposition should really just be a list of \mbox{\hyperlink{class_math_1_1_basis_el}{Basis\+El}} objects along with corresponding scalar coefficients.  
+Member \mbox{\hyperlink{class_f_e_mesh_a3d79a6cd8810a53661cea79ed1fbe922}{F\+E\+Mesh\+:\+:F\+E\+Mesh}} (std\+::string mesh\+Data\+Filename)]Need to implement initialization of Basis\+El list associated with mesh  
 \item[\label{todo__todo000002}%
 \Hypertarget{todo__todo000002}%
-Member \mbox{\hyperlink{class_math_1_1_combinatorics_a174253b11651917aab46bc879449e59b}{Math\+:\+:Combinatorics\+:\+:testn\+Choosek}} (void)]Implement automatic testing of the n\+Choosek operation  
+Class \mbox{\hyperlink{class_math_1_1_basis_rep}{Math\+:\+:Basis\+Rep}} ]Re-\/evaluate appropriateness of this class\textquotesingle{} inheritance from \mbox{\hyperlink{class_math_1_1_function}{Function}} class; it seems inappropriate. Intuitively, a basis element representation/decomposition should really just be a list of \mbox{\hyperlink{class_math_1_1_basis_el}{Basis\+El}} objects along with corresponding scalar coefficients.  
 \item[\label{todo__todo000003}%
 \Hypertarget{todo__todo000003}%
-Member \mbox{\hyperlink{class_math_1_1_function_a97e51108b0374f8adc7982f92af4d0de}{Math\+:\+:Function\+:\+:Function}} ()]Implement a constructor with the specified parameters  
+Member \mbox{\hyperlink{class_math_1_1_combinatorics_a174253b11651917aab46bc879449e59b}{Math\+:\+:Combinatorics\+:\+:testn\+Choosek}} (void)]Implement automatic testing of the n\+Choosek operation  
 \item[\label{todo__todo000004}%
 \Hypertarget{todo__todo000004}%
-Member \mbox{\hyperlink{class_math_1_1_function_ad85e716accc64c1ea4962c828c4e216c}{Math\+:\+:Function\+:\+:integrate\+On\+Domain}} (void)]Method is currently not implemented  
+Member \mbox{\hyperlink{class_math_1_1_function_a97e51108b0374f8adc7982f92af4d0de}{Math\+:\+:Function\+:\+:Function}} ()]Implement a constructor with the specified parameters  
 \item[\label{todo__todo000005}%
 \Hypertarget{todo__todo000005}%
-Class \mbox{\hyperlink{class_mesh}{Mesh}} ]Allow for constrained DT 
+Member \mbox{\hyperlink{class_math_1_1_function_ad85e716accc64c1ea4962c828c4e216c}{Math\+:\+:Function\+:\+:integrate\+On\+Domain}} (void)]Method is currently not implemented  
+\item[\label{todo__todo000006}%
+\Hypertarget{todo__todo000006}%
+Class \mbox{\hyperlink{class_matrix}{Matrix}} ]Refactor this class as a \mbox{\hyperlink{class_solver_base}{Solver\+Base}} -\/friendly wrapper for an existing linear algebra package, such as Eigen or L\+A\+P\+A\+C\+K++.  
+\item[\label{todo__todo000007}%
+\Hypertarget{todo__todo000007}%
+Class \mbox{\hyperlink{class_mesh}{Mesh}} ]Allow for constrained DT  
+\item[\label{todo__todo000010}%
+\Hypertarget{todo__todo000010}%
+Class \mbox{\hyperlink{class_solver_base}{Solver\+Base}} ]Still need to design \& implement boudary condition UI; a need for flexibility in the types of boundary conditions means it should be done within the Solver classes, though there is a strong dependency on the finite element mesh/basis used.  
+\item[\label{todo__todo000011}%
+\Hypertarget{todo__todo000011}%
+Member \mbox{\hyperlink{class_solver_base_af2c51a926b461351926101b11cc6b60a}{Solver\+Base\+:\+:integrate\+In\+Time}} (void)=0]This interface is deprecated, and should be implemented in inherited classes (not all solvers may be time-\/dependent).  
+\item[\label{todo__todo000012}%
+\Hypertarget{todo__todo000012}%
+Member \mbox{\hyperlink{class_solver_euler_a64caa7276a35f9e5408bec75bc2d3189}{Solver\+Euler\+:\+:integrate\+In\+Time}} (double current\+Time, double dt)]This interface is deprecated, and should be implemented within base class\textquotesingle{} compute\+State function.  
+\item[\label{todo__todo000013}%
+\Hypertarget{todo__todo000013}%
+Member \mbox{\hyperlink{class_solver_poisson_a4ff8a1c96b933bc01fdd411d3ae45f20}{Solver\+Poisson\+:\+:integrate\+In\+Time}} (void)]This interface is deprecated, and should be implemented in inherited classes (Poisson solver is not time-\/dependent). 
 \end{DoxyRefList}

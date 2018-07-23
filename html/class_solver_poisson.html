@@ -89,29 +89,148 @@ $(document).ready(function(){initNavTree('class_solver_poisson.html','');});
 
 <div class="header">
   <div class="summary">
+<a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="class_solver_poisson-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">SolverPoisson Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Class for implementing Poisson equation on provided finite element mesh. See <a class="el" href="class_solver_base.html" title="Abstract base solver class. ">SolverBase</a> for boundary conditions specifications.  
+ <a href="class_solver_poisson.html#details">More...</a></p>
 <div class="dynheader">
 Inheritance diagram for SolverPoisson:</div>
 <div class="dyncontent">
  <div class="center">
   <img src="class_solver_poisson.png" usemap="#SolverPoisson_map" alt=""/>
   <map id="SolverPoisson_map" name="SolverPoisson_map">
-<area href="class_solver_base.html" alt="SolverBase" shape="rect" coords="0,0,93,24"/>
+<area href="class_solver_base.html" title="Abstract base solver class. " alt="SolverBase" shape="rect" coords="0,0,93,24"/>
 </map>
  </div></div>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
-Additional Inherited Members</h2></td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
+Public Member Functions</h2></td></tr>
+<tr class="memitem:a7e4c1e8605790e219590214893f916b5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_solver_poisson.html#a7e4c1e8605790e219590214893f916b5">SolverPoisson</a> (const <a class="el" href="class_f_e_mesh.html">FEMesh</a> *mesh)</td></tr>
+<tr class="memdesc:a7e4c1e8605790e219590214893f916b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Public Constructor.  <a href="#a7e4c1e8605790e219590214893f916b5">More...</a><br /></td></tr>
+<tr class="separator:a7e4c1e8605790e219590214893f916b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4ff8a1c96b933bc01fdd411d3ae45f20"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_solver_poisson.html#a4ff8a1c96b933bc01fdd411d3ae45f20">integrateInTime</a> (void)</td></tr>
+<tr class="memdesc:a4ff8a1c96b933bc01fdd411d3ae45f20"><td class="mdescLeft">&#160;</td><td class="mdescRight">Time-step the solution.  <a href="#a4ff8a1c96b933bc01fdd411d3ae45f20">More...</a><br /></td></tr>
+<tr class="separator:a4ff8a1c96b933bc01fdd411d3ae45f20"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1955e79999fcf055aebad5b15fda1563"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_solver_poisson.html#a1955e79999fcf055aebad5b15fda1563">computeState</a> (void)</td></tr>
+<tr class="memdesc:a1955e79999fcf055aebad5b15fda1563"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute the current state of the solution.  <a href="#a1955e79999fcf055aebad5b15fda1563">More...</a><br /></td></tr>
+<tr class="separator:a1955e79999fcf055aebad5b15fda1563"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_solver_base"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_solver_base')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_solver_base.html">SolverBase</a></td></tr>
-<tr class="memitem:a378bd67662e76348c3ef38edd312b5e1 inherit pub_methods_class_solver_base"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_solver_base.html#a378bd67662e76348c3ef38edd312b5e1">SolverBase</a> (const <a class="el" href="class_mesh.html">Mesh</a> *mesh)</td></tr>
-<tr class="separator:a378bd67662e76348c3ef38edd312b5e1 inherit pub_methods_class_solver_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a14b5e9482f698d36dff3b43d3a4f05f1 inherit pub_methods_class_solver_base"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_solver_base.html#a14b5e9482f698d36dff3b43d3a4f05f1">integrateInTime</a> (double currentTime, double dt)=0</td></tr>
-<tr class="separator:a14b5e9482f698d36dff3b43d3a4f05f1 inherit pub_methods_class_solver_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac7330a480ee6025fe3abad4f3e4bd662 inherit pub_methods_class_solver_base"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_solver_base.html#ac7330a480ee6025fe3abad4f3e4bd662">SolverBase</a> (const <a class="el" href="class_f_e_mesh.html">FEMesh</a> *mesh)</td></tr>
+<tr class="memdesc:ac7330a480ee6025fe3abad4f3e4bd662 inherit pub_methods_class_solver_base"><td class="mdescLeft">&#160;</td><td class="mdescRight">Public Constructor.  <a href="class_solver_base.html#ac7330a480ee6025fe3abad4f3e4bd662">More...</a><br /></td></tr>
+<tr class="separator:ac7330a480ee6025fe3abad4f3e4bd662 inherit pub_methods_class_solver_base"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Class for implementing Poisson equation on provided finite element mesh. See <a class="el" href="class_solver_base.html" title="Abstract base solver class. ">SolverBase</a> for boundary conditions specifications. </p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a7e4c1e8605790e219590214893f916b5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7e4c1e8605790e219590214893f916b5">&#9670;&nbsp;</a></span>SolverPoisson()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">SolverPoisson::SolverPoisson </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="class_f_e_mesh.html">FEMesh</a> *&#160;</td>
+          <td class="paramname"><em>mesh</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Public Constructor. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">mesh</td><td><b>(const Mesh*)</b> </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Initialized <a class="el" href="class_solver_euler.html" title="Class for implementing compressible Euler equations on provided finite element mesh. See SolverBase for boundary conditions specifications. ">SolverEuler</a> object </dd></dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a1955e79999fcf055aebad5b15fda1563"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1955e79999fcf055aebad5b15fda1563">&#9670;&nbsp;</a></span>computeState()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void SolverPoisson::computeState </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Compute the current state of the solution. </p>
+<p>This function computes the current state of the solution </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">None</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>None </dd></dl>
+
+<p>Implements <a class="el" href="class_solver_base.html#a818006b80f29f641b6784905e1babe0f">SolverBase</a>.</p>
+
+</div>
+</div>
+<a id="a4ff8a1c96b933bc01fdd411d3ae45f20"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4ff8a1c96b933bc01fdd411d3ae45f20">&#9670;&nbsp;</a></span>integrateInTime()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void SolverPoisson::integrateInTime </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Time-step the solution. </p>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000013">Todo:</a></b></dt><dd>This interface is deprecated, and should be implemented in inherited classes (Poisson solver is not time-dependent). </dd></dl>
+
+<p>Implements <a class="el" href="class_solver_base.html#af2c51a926b461351926101b11cc6b60a">SolverBase</a>.</p>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li><a class="el" href="_solver_poisson_8hpp_source.html">SolverPoisson.hpp</a></li>
 </ul>

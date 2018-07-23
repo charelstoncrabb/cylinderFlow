@@ -1,12 +1,90 @@
 \hypertarget{class_solver_poisson}{}\section{Solver\+Poisson Class Reference}
 \label{class_solver_poisson}\index{Solver\+Poisson@{Solver\+Poisson}}
+
+
+Class for implementing Poisson equation on provided finite element mesh. See \mbox{\hyperlink{class_solver_base}{Solver\+Base}} for boundary conditions specifications.  
+
+
 Inheritance diagram for Solver\+Poisson\+:\begin{figure}[H]
 \begin{center}
 \leavevmode
 \includegraphics[height=2.000000cm]{class_solver_poisson}
 \end{center}
 \end{figure}
-\subsection*{Additional Inherited Members}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_solver_poisson_a7e4c1e8605790e219590214893f916b5}{Solver\+Poisson}} (const \mbox{\hyperlink{class_f_e_mesh}{F\+E\+Mesh}} $\ast$mesh)
+\begin{DoxyCompactList}\small\item\em Public Constructor. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{class_solver_poisson_a4ff8a1c96b933bc01fdd411d3ae45f20}{integrate\+In\+Time}} (void)
+\begin{DoxyCompactList}\small\item\em Time-\/step the solution. \end{DoxyCompactList}\item 
+virtual void \mbox{\hyperlink{class_solver_poisson_a1955e79999fcf055aebad5b15fda1563}{compute\+State}} (void)
+\begin{DoxyCompactList}\small\item\em Compute the current state of the solution. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Class for implementing Poisson equation on provided finite element mesh. See \mbox{\hyperlink{class_solver_base}{Solver\+Base}} for boundary conditions specifications. 
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{class_solver_poisson_a7e4c1e8605790e219590214893f916b5}\label{class_solver_poisson_a7e4c1e8605790e219590214893f916b5}} 
+\index{Solver\+Poisson@{Solver\+Poisson}!Solver\+Poisson@{Solver\+Poisson}}
+\index{Solver\+Poisson@{Solver\+Poisson}!Solver\+Poisson@{Solver\+Poisson}}
+\subsubsection{\texorpdfstring{Solver\+Poisson()}{SolverPoisson()}}
+{\footnotesize\ttfamily Solver\+Poisson\+::\+Solver\+Poisson (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_f_e_mesh}{F\+E\+Mesh}} $\ast$}]{mesh }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Public Constructor. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em mesh} & {\bfseries (const Mesh$\ast$)} \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Initialized \mbox{\hyperlink{class_solver_euler}{Solver\+Euler}} object 
+\end{DoxyReturn}
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{class_solver_poisson_a1955e79999fcf055aebad5b15fda1563}\label{class_solver_poisson_a1955e79999fcf055aebad5b15fda1563}} 
+\index{Solver\+Poisson@{Solver\+Poisson}!compute\+State@{compute\+State}}
+\index{compute\+State@{compute\+State}!Solver\+Poisson@{Solver\+Poisson}}
+\subsubsection{\texorpdfstring{compute\+State()}{computeState()}}
+{\footnotesize\ttfamily virtual void Solver\+Poisson\+::compute\+State (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+Compute the current state of the solution. 
+
+This function computes the current state of the solution 
+\begin{DoxyParams}{Parameters}
+{\em None} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+None 
+\end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{class_solver_base_a818006b80f29f641b6784905e1babe0f}{Solver\+Base}}.
+
+\mbox{\Hypertarget{class_solver_poisson_a4ff8a1c96b933bc01fdd411d3ae45f20}\label{class_solver_poisson_a4ff8a1c96b933bc01fdd411d3ae45f20}} 
+\index{Solver\+Poisson@{Solver\+Poisson}!integrate\+In\+Time@{integrate\+In\+Time}}
+\index{integrate\+In\+Time@{integrate\+In\+Time}!Solver\+Poisson@{Solver\+Poisson}}
+\subsubsection{\texorpdfstring{integrate\+In\+Time()}{integrateInTime()}}
+{\footnotesize\ttfamily virtual void Solver\+Poisson\+::integrate\+In\+Time (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+Time-\/step the solution. 
+
+\begin{DoxyRefDesc}{Todo}
+\item[\mbox{\hyperlink{todo__todo000013}{Todo}}]This interface is deprecated, and should be implemented in inherited classes (Poisson solver is not time-\/dependent). \end{DoxyRefDesc}
+
+
+Implements \mbox{\hyperlink{class_solver_base_af2c51a926b461351926101b11cc6b60a}{Solver\+Base}}.
+
 
 
 The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}

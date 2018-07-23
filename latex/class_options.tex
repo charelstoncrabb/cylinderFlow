@@ -1,26 +1,36 @@
 \hypertarget{class_options}{}\section{Options Class Reference}
 \label{class_options}\index{Options@{Options}}
+
+
+Class that handles program command line options.  
+
+
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
 \mbox{\hyperlink{class_options_af65f2f452a673db877590dbff53115ff}{Options}} (int argc, const char $\ast$argv\mbox{[}$\,$\mbox{]})
-\item 
+\begin{DoxyCompactList}\small\item\em Public Constructor. \end{DoxyCompactList}\item 
 \mbox{\hyperlink{class_options_a86ddb85b183f8b58af5481f30a42fa92}{$\sim$\+Options}} ()
-\item 
+\begin{DoxyCompactList}\small\item\em Destructor. \end{DoxyCompactList}\item 
 std\+::string \mbox{\hyperlink{class_options_af5fc0ecb4b117c5438f07762fa7f565a}{infile}} (void) const
-\item 
+\begin{DoxyCompactList}\small\item\em Command line options input filename access. \end{DoxyCompactList}\item 
 std\+::string \mbox{\hyperlink{class_options_a35e8029289fef81902b98422e5b9aff8}{outfile}} (void) const
-\item 
+\begin{DoxyCompactList}\small\item\em Command line options output filename access. \end{DoxyCompactList}\item 
 bool \mbox{\hyperlink{class_options_a6d00df300abbec9c39990eb8858f1255}{plot}} (void)
-\item 
+\begin{DoxyCompactList}\small\item\em Command line options plot mesh flag. \end{DoxyCompactList}\item 
 bool \mbox{\hyperlink{class_options_a896737c665d9c0ee7a17a0cdedf66bb7}{rotflag}} (void)
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Command line options rotate grid flag. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Public Attributes}
 \begin{DoxyCompactItemize}
 \item 
 bool \mbox{\hyperlink{class_options_a762a0775c9b60ceb2737dc90c96f7c0b}{run}}
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Boolean value that is set to true if a valid \mbox{\hyperlink{class_mesh}{Mesh}} data input file has been provided, or the -\/h help flag has not been included in command line args. When set to True, the full program will be executed. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
+
+\subsection{Detailed Description}
+Class that handles program command line options. 
+
+This class handles the program execution options, parsed from the command line arguments. 
 
 \subsection{Constructor \& Destructor Documentation}
 \mbox{\Hypertarget{class_options_af65f2f452a673db877590dbff53115ff}\label{class_options_af65f2f452a673db877590dbff53115ff}} 
@@ -29,11 +39,29 @@ bool \mbox{\hyperlink{class_options_a762a0775c9b60ceb2737dc90c96f7c0b}{run}}
 \subsubsection{\texorpdfstring{Options()}{Options()}}
 {\footnotesize\ttfamily Options\+::\+Options (\begin{DoxyParamCaption}\item[{int}]{argc,  }\item[{const char $\ast$}]{argv\mbox{[}$\,$\mbox{]} }\end{DoxyParamCaption})}
 
+
+
+Public Constructor. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em argc} & {\bfseries (int)} argc value from \mbox{\hyperlink{main_8cpp_ac0f2228420376f4db7e1274f2b41667c}{main()}} function; used for parsing command line arguments. \\
+\hline
+{\em argv} & {\bfseries (const char $\ast$$\ast$argv)} argv variable from \mbox{\hyperlink{main_8cpp_ac0f2228420376f4db7e1274f2b41667c}{main()}} function; used for parsing command line arguments. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Initialized \mbox{\hyperlink{class_options}{Options}} object 
+\end{DoxyReturn}
 \mbox{\Hypertarget{class_options_a86ddb85b183f8b58af5481f30a42fa92}\label{class_options_a86ddb85b183f8b58af5481f30a42fa92}} 
 \index{Options@{Options}!````~Options@{$\sim$\+Options}}
 \index{````~Options@{$\sim$\+Options}!Options@{Options}}
 \subsubsection{\texorpdfstring{$\sim$\+Options()}{~Options()}}
 {\footnotesize\ttfamily Options\+::$\sim$\+Options (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Destructor. 
 
 
 
@@ -44,18 +72,54 @@ bool \mbox{\hyperlink{class_options_a762a0775c9b60ceb2737dc90c96f7c0b}{run}}
 \subsubsection{\texorpdfstring{infile()}{infile()}}
 {\footnotesize\ttfamily std\+::string Options\+::infile (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
+
+
+Command line options input filename access. 
+
+This function provides public access to the command line arg-\/provided {\itshape input} \mbox{\hyperlink{class_mesh}{Mesh}} data filename 
+\begin{DoxyParams}{Parameters}
+{\em None} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+{\bfseries (std\+::string)} \mbox{\hyperlink{class_mesh}{Mesh}} input data filename, as parsed from command line arguments 
+\end{DoxyReturn}
 \mbox{\Hypertarget{class_options_a35e8029289fef81902b98422e5b9aff8}\label{class_options_a35e8029289fef81902b98422e5b9aff8}} 
 \index{Options@{Options}!outfile@{outfile}}
 \index{outfile@{outfile}!Options@{Options}}
 \subsubsection{\texorpdfstring{outfile()}{outfile()}}
 {\footnotesize\ttfamily std\+::string Options\+::outfile (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
+
+
+Command line options output filename access. 
+
+This function provides public access to the command line arg-\/provided {\itshape output} \mbox{\hyperlink{class_mesh}{Mesh}} data filename. This is the name of the file that is written to with the \mbox{\hyperlink{class_mesh}{Mesh}} method \mbox{\hyperlink{class_mesh_a4d194fe4ce2b4fa4c11274c893c6ae29}{Mesh\+::write\+Mesh(std\+::string)}}. 
+\begin{DoxyParams}{Parameters}
+{\em None} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+{\bfseries (std\+::string)} \mbox{\hyperlink{class_mesh}{Mesh}} output data filename, as parsed from command line arguments 
+\end{DoxyReturn}
 \mbox{\Hypertarget{class_options_a6d00df300abbec9c39990eb8858f1255}\label{class_options_a6d00df300abbec9c39990eb8858f1255}} 
 \index{Options@{Options}!plot@{plot}}
 \index{plot@{plot}!Options@{Options}}
 \subsubsection{\texorpdfstring{plot()}{plot()}}
 {\footnotesize\ttfamily bool Options\+::plot (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
+
+
+Command line options plot mesh flag. 
+
+This function provides public acccess to the command line arg-\/provided plot flag. If the option {\bfseries -\/p} is included with the command line arguments, then the program will produce a plot of the computed \mbox{\hyperlink{class_mesh}{Mesh}} after execution. 
+\begin{DoxyParams}{Parameters}
+{\em None} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+{\bfseries (bool)} True if the \char`\"{}plot computed Mesh\char`\"{} flag has been specified in the command line options 
+\end{DoxyReturn}
 \mbox{\Hypertarget{class_options_a896737c665d9c0ee7a17a0cdedf66bb7}\label{class_options_a896737c665d9c0ee7a17a0cdedf66bb7}} 
 \index{Options@{Options}!rotflag@{rotflag}}
 \index{rotflag@{rotflag}!Options@{Options}}
@@ -64,12 +128,28 @@ bool \mbox{\hyperlink{class_options_a762a0775c9b60ceb2737dc90c96f7c0b}{run}}
 
 
 
+Command line options rotate grid flag. 
+
+This function provides public acccess to the command line arg-\/provided rotate grid flag. If the option {\bfseries -\/r} is included with the command line arguments, then the program will perform a linear rotation on the grid points before triangulation; the grid is then rotated back to original specifications after triangulation. 
+\begin{DoxyParams}{Parameters}
+{\em None} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+{\bfseries (bool)} True if the \char`\"{}rotate grid points\char`\"{} flag has been specified in the command line options 
+\end{DoxyReturn}
+
+
 \subsection{Member Data Documentation}
 \mbox{\Hypertarget{class_options_a762a0775c9b60ceb2737dc90c96f7c0b}\label{class_options_a762a0775c9b60ceb2737dc90c96f7c0b}} 
 \index{Options@{Options}!run@{run}}
 \index{run@{run}!Options@{Options}}
 \subsubsection{\texorpdfstring{run}{run}}
 {\footnotesize\ttfamily bool Options\+::run}
+
+
+
+Boolean value that is set to true if a valid \mbox{\hyperlink{class_mesh}{Mesh}} data input file has been provided, or the -\/h help flag has not been included in command line args. When set to True, the full program will be executed. 
 
 
 

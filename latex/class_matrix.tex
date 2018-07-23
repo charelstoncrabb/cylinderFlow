@@ -1,5 +1,10 @@
 \hypertarget{class_matrix}{}\section{Matrix Class Reference}
 \label{class_matrix}\index{Matrix@{Matrix}}
+
+
+Wrapper class for basic matrix operations.  
+
+
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
@@ -83,6 +88,13 @@ std\+::vector$<$ double $>$ \mbox{\hyperlink{class_matrix_aac8f997f1cfa7b0a0ed1d
 \item 
 std\+::ostream \& \mbox{\hyperlink{class_matrix_ac7214274c9ef83ebef022af7225ac068}{operator$<$$<$}} (std\+::ostream \&os, const \mbox{\hyperlink{class_matrix}{Matrix}} A)
 \end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Wrapper class for basic matrix operations. 
+
+This class stores data in a vector$<$double$>$ container, with methods intended for convenient and basic matrix operations. Currently, the \mbox{\hyperlink{class_matrix}{Matrix}} class implements relatively naive solutions to the most common linear algebra problems. Since the interface with the \mbox{\hyperlink{class_solver_base}{Solver\+Base}} classes has not yet been implemented, there is much room for refactoring here; See the associated T\+O\+DO. \begin{DoxyRefDesc}{Todo}
+\item[\mbox{\hyperlink{todo__todo000006}{Todo}}]Refactor this class as a \mbox{\hyperlink{class_solver_base}{Solver\+Base}} -\/friendly wrapper for an existing linear algebra package, such as Eigen or L\+A\+P\+A\+C\+K++. \end{DoxyRefDesc}
 
 
 \subsection{Constructor \& Destructor Documentation}
