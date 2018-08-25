@@ -7,9 +7,9 @@ from matplotlib.backend_bases import key_press_handler, MouseEvent
 from matplotlib.pyplot import Figure
 import sys
 import os
-import Tkinter as tk
-from Tkinter import Menu
-from tkFileDialog import *
+import tkinter as tk
+from tkinter import Menu
+from tkinter.filedialog import *
 import ProcScripts.plotmesh as pm
 import numpy as np
 
@@ -30,7 +30,7 @@ def _newFile():
 		a.cla()
 		canvas.draw()
 	else:
-		print 'Please select a valid file.'
+		print('Please select a valid file.')
 
 def _save():
 	global filehandle, activeNodeList, unmeshed
@@ -50,14 +50,14 @@ def _saveAs():
 		filehandle = 0
 
 	else:
-		print 'Please select a valid file.'
+		print('Please select a valid file.')
 
 def _about():
-    print "cylinderFlow version 0.1 - 2017 NCC"
+    print("cylinderFlow version 0.1 - 2017 NCC")
 
 def _mesh():
 	global filename, filehandle, newfilename, unmeshed, activeNodeList
-	print unmeshed
+	print(unmeshed)
 	if unmeshed:
 		_save()
 		datfile = newfilename
@@ -71,7 +71,7 @@ def _mesh():
 			os.system(command)
 			_plot()
 		else:
-			print 'cylinderFlow needs to be compiled!'
+			print('cylinderFlow needs to be compiled!')
 
 def _plot():
 	global canvas, filename, a, unmeshed
@@ -89,14 +89,14 @@ def _quit():
 
 def _editCurrent():
 	global filehandle, unmeshed, activeNodeList
-	print filehandle
-	print unmeshed
+	print(filehandle)
+	print(unmeshed)
 	if filehandle is not 0 and not unmeshed:
-		print 'TODO'
+		print('TODO')
 		# Make sure activeNodeList has all the currently meshed nodes, and newNodeID is OK
 		# Then proceed with same interface as when creating a new mesh
 	else:
-		print 'Open or create mesh for editing.'
+		print('Open or create mesh for editing.')
 
 def _on_key_event(event):
     key_press_handler(event, canvas, toolbar)

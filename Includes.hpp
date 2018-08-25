@@ -19,6 +19,7 @@
 #include <map>
 #include <list>
 #include <queue>
+#include <set>
 #include <Eigen/Dense>
 #include "Utilities.hpp"
 #endif /* Includes_h */

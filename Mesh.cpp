@@ -205,38 +205,52 @@ void Mesh::triangulate(void){
 
 // BUILDS FACET LIST BY GRAPH TRAVERSAL AFTER TRIANGULATION HAS OCCURRED  -----------------------------
 // TODO: Debug -- hangs for square grids over 14 X 14
-void Mesh::buildFacetList(void){
-    std::map< int, std::map<int,bool> > facetMap;
-    std::queue<Node*> nodeQ;
-    Node* currNode = NULL;
-    if( nodeList.size() > 0 ){
-        nodeQ.push(nodeList[0]);
-        while( !nodeQ.empty() ){
-            currNode = nodeQ.front();
-            nodeQ.pop();
-            for(size_t i = 0; i < currNode->adjacent.size(); i++){
-                if( !currNode->adjacent[i]->traversed )
-                    nodeQ.push(currNode->adjacent[i]);
-                for(size_t j = 0; j < currNode->adjacent[i]->adjacent.size(); j++){
-                    if( currNode->isAdjacent(*currNode->adjacent[i]->adjacent[j]) ){
-                        double xbardbl = (currNode->loc[0]+currNode->adjacent[i]->loc[0]+currNode->adjacent[i] ->adjacent[j]->loc[0])/3,
-                               ybardbl = (currNode->loc[1]+currNode->adjacent[i]->loc[1]+currNode->adjacent[i]->adjacent[j]->loc[1])/3;
-                        int xbar = 100000*(int)xbardbl,
-                            ybar = 100000*(int)ybardbl;
-                        if( !facetMap[xbar][ybar] ){
-                            facetMap[xbar][ybar] = true;
-                            Facet* newFacet = new Facet({currNode,currNode->adjacent[i],currNode->adjacent[i]->adjacent[j]});
-                            facetList.push_back(newFacet);
-                            currNode->isVertexOf.push_back(newFacet);
-                            currNode->adjacent[i]->isVertexOf.push_back(newFacet);
-                            currNode->adjacent[i]->adjacent[j]->isVertexOf.push_back(newFacet);
-                        }
-                    }
-                }
-            }
-        currNode->traversed = true;
-        }
-    }
+void Mesh::buildFacetList(void)
+{
+	double tol = 1.e-3;
+	std::map<double, std::set<Node*>> facetsFound;
+
+	for (size_t i = 0; i < nodeList.size(); i++)
+	{
+		for (size_t j = 0; j < nodeList[i]->adjacent.size(); j++)
+		{
+			for (size_t k = 0; k < nodeList[i]->adjacent[j]->adjacent.size(); k++)
+			{
+				if (nodeList[i]->isAdjacent(*(nodeList[i]->adjacent[j]->adjacent[k])))
+				{
+					// We have found a triangle, and need to check if we've already found it
+					// in some sort of efficient way.
+					// We do this by mapping the set of 3 Nodes, keyed by centroid x value, 
+					// and iterate over an interval of tolerance on x centroids, checking 
+					// if the same set has already been found; if it hasn't construct a facet.
+					std::set<Node*> currentSet{ nodeList[i],nodeList[i]->adjacent[j],nodeList[i]->adjacent[j]->adjacent[k] };
+					double centroidX = (nodeList[i]->x() + nodeList[i]->adjacent[j]->x()
+						+ nodeList[i]->adjacent[j]->adjacent[k]->x()) / 3.0;
+					std::map<double, std::set<Node*>>::iterator lbound = facetsFound.lower_bound(centroidX - tol),
+						ubound = facetsFound.upper_bound(centroidX + tol);
+					bool foundCurrentSet = false;
+					while (lbound != ubound)
+					{
+						if (lbound->second == currentSet)
+						{
+							foundCurrentSet = true;
+							break;
+						}
+						lbound++;
+					}
+					if (!foundCurrentSet)
+					{
+						facetsFound[centroidX] = currentSet;
+						Facet* newFacet = new Facet({ nodeList[i],nodeList[i]->adjacent[j],nodeList[i]->adjacent[j]->adjacent[k] });
+						facetList.push_back(newFacet);
+						nodeList[i]->isVertexOf.push_back(newFacet);
+						nodeList[i]->adjacent[j]->isVertexOf.push_back(newFacet);
+						nodeList[i]->adjacent[j]->adjacent[k]->isVertexOf.push_back(newFacet);
+					}
+				}
+			}
+		}
+	}
 }
 
 // SETS SUBMESH ADJACENCY IN COMBINED MESH WHEN MERGING SUBMESHES  ------------------------------------
@@ -263,8 +277,6 @@ void Mesh::mergeMeshes(const Mesh* leftSubMesh, const Mesh* rightSubMesh){
     leftBaseInd = leftBase->findIndByID(nodeList); rightBaseInd = rightBase->findIndByID(nodeList);
     setEdges({nodeList[leftBaseInd],nodeList[rightBaseInd]});
     while( noCandidate == false ){
-        if( leftBase->nodeID == 11 && rightBase->nodeID == 12 )
-            std::cout << "this is stupod." << std::endl;
         rightCand = false;
         std::vector<int> potRtCandInds = {};
         std::vector<int> potLtCandInds = {};
@@ -333,6 +345,7 @@ void Mesh::mergeMeshes(const Mesh* leftSubMesh, const Mesh* rightSubMesh){
 void Mesh::setBoundaryNodes(void){
     double tol = 1e-5;
     for(size_t i = 0; i < nodeList.size(); i++){
+
         double totAng = 0.0;
         for(size_t j = 0; j < nodeList[i]->isVertexOf.size(); j++){
 			int thisFacetsNodelistIndex = nodeList[i]->findIndByID(nodeList[i]->isVertexOf[j]->nodes);
@@ -678,6 +691,20 @@ bool Node::operator<(Node& rhs) const {
         return true;
     }
     return false;
+}//----------------------------------------------------------------------------------------------------
+
+// RETURNS TRUE IF this AND node ARE BOTH VERTICES OF THE SAME FACET  ---------------------------------
+bool Node::sharesFacet(Node* node)
+{
+	for (size_t i = 0; i < isVertexOf.size(); i++)
+	{
+		for (size_t j = 0; j < node->isVertexOf.size(); j++)
+		{
+			if (isVertexOf[i] == node->isVertexOf[j])
+				return true;
+		}
+	}
+	return false;
 }//----------------------------------------------------------------------------------------------------
 
 // =======================  FACET CLASS MEMBERS  ======================================================

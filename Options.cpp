@@ -67,7 +67,7 @@ Options::Options(int argc, const char* argv[]):plotFlag(false){
             if( !options["outfile"] )
                 outFile = "default.out";
             if( !options["plotflag"] )
-                plotFlag = true;
+                plotFlag = false;
             if( !options["rotflag"] )
                 rotFlag = false;
         }

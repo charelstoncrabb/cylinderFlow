@@ -19,7 +19,7 @@ int main(int argc, const char * argv[])
 {
 	if( argc > 1 )
 	{
-		std::string meshplot = "./ProcScripts/MeshPlot.py ", amp = " &";
+		std::string meshplot = "python ..\ProcScripts\MeshPlot.py ", amp = " &";
 		Options* options = new Options(argc, argv);
 
 		Mesh* mesh = new Mesh(options->infile(), options->rotflag());
@@ -31,5 +31,6 @@ int main(int argc, const char * argv[])
 		delete mesh;
 		delete options;
 	}
+
     return 0;
 }

@@ -168,6 +168,7 @@ private:
     std::vector<int> ordAdjByAng(void);
     bool isAdjacent(Node node);
     int findIndByID(std::vector<Node*> nodes);
+	bool sharesFacet(Node* node);
 
 	// Data members:
     int nodeID;

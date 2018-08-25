@@ -18,20 +18,20 @@ def openOutfile():
 	if len(sys.argv) > 1:
 		if sys.argv[1][0] == '-':
 			if sys.argv[1][1] in helpDict:
-				print '\n' + helpDict[sys.argv[1][1]] + '\n'
+				print('\n' + helpDict[sys.argv[1][1]] + '\n')
 			return 0
 		else:
 			if os.path.isfile(sys.argv[1]):
 				return open(sys.argv[1])
 			else:
-				print "ERROR in openOutfile(): file ", sys.argv[1], " not found!"
+				print("ERROR in openOutfile(): file " + sys.argv[1] + " not found!")
 				return 0
 	else:
 		if os.path.isfile("FirstMesh.out"):
-			print "Warning: using default file FirstMesh.out."
+			print("Warning: using default file FirstMesh.out.")
 			return open("FirstMesh.out")
 		else:
-			print "ERROR IN openOutfile(): file FirstMesh.out not found!"
+			print("ERROR IN openOutfile(): file FirstMesh.out not found!")
 			return 0
 
 def findIndByID(nodes,ID):
