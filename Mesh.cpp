@@ -204,7 +204,6 @@ void Mesh::triangulate(void){
 }//----------------------------------------------------------------------------------------------------
 
 // BUILDS FACET LIST BY GRAPH TRAVERSAL AFTER TRIANGULATION HAS OCCURRED  -----------------------------
-// TODO: Debug -- hangs for square grids over 14 X 14
 void Mesh::buildFacetList(void)
 {
 	double tol = 1.e-3;
@@ -356,10 +355,14 @@ void Mesh::setBoundaryNodes(void)
 		if (nodeList[i]->adjacent.size() == nodeList[i]->isVertexOf.size())
 			nodeList[i]->isBoundaryNode = false;
 		else if (nodeList[i]->adjacent.size() == nodeList[i]->isVertexOf.size() + 1)
+		{
 			nodeList[i]->isBoundaryNode = true;
+			boundaryNodes.push_back(nodeList[i]);
+		}
 		else
 			throw "node/facet adjacency error!";
     }
+	sortNodesByAngle(boundaryNodes);
 }//----------------------------------------------------------------------------------------------------
 
 // FINDS BASE NODES FOR LEFT AND RIGHT SUBMESHES  -----------------------------------------------------
@@ -785,3 +788,44 @@ void Facet::sortVerticesByAngle(void){
         i++;
     }
 }//----------------------------------------------------------------------------------------------------
+
+void sortNodesByAngle(std::vector<Node*>& nodeList)
+{
+	if (nodeList.size() == 0)
+		return;
+
+	double centroidX = nodeList[0]->x(), centroidY = nodeList[0]->y();
+
+	for (size_t i = 1; i < nodeList.size(); i++)
+	{
+		centroidX += nodeList[i]->x();
+		centroidY += nodeList[i]->y();
+	}
+	centroidX /= (double)nodeList.size();
+	centroidY /= (double)nodeList.size();
+
+	std::vector<Node*> nlCopy = nodeList;
+	std::map<double, int> theta;
+
+	std::vector<Eigen::Vector2d> cent2Nodes_normal;
+	for (size_t i = 0; i < nodeList.size(); i++)
+	{
+		Eigen::Vector2d u(nodeList[i]->x() - centroidX, nodeList[i]->y() - centroidY);
+		u /= u.norm();
+		cent2Nodes_normal.push_back(u);
+	}
+	size_t i = 0;
+	double vDotE;
+	for (; i < nodeList.size(); i++) {
+		vDotE = acos(cent2Nodes_normal[i](0));
+		if (cent2Nodes_normal[i](1) >= 0)
+			theta[vDotE] = i;
+		else
+			theta[2 * acos(-1) - vDotE] = i;
+	}
+	i = 0;
+	for (std::map<double, int>::iterator itr = theta.begin(); itr != theta.end() && i < nodeList.size(); ++itr) {
+		nodeList[i] = nlCopy[itr->second];
+		i++;
+	}
+}

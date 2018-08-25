@@ -238,4 +238,6 @@ private:
     friend class Mesh;
 };
 
+void sortNodesByAngle(std::vector<Node*>& nodeList);
+
 #endif /* Mesh_h */
