@@ -9,7 +9,7 @@ def openOutfile():
 	if len(sys.argv) > 1:
 		if sys.argv[1][0] == '-':
 			if sys.argv[1][1] in helpDict:
-				print '\n' + helpDict[sys.argv[1][1]] + '\n'
+				print('\n' + helpDict[sys.argv[1][1]] + '\n')
 			return 0
 		else:
 			return open(sys.argv[1],'w+')

@@ -165,7 +165,7 @@ private:
     bool isInCirc(Node A, Node B, Node C);
     bool isCoCirc(Node A, Node B, Node C);
     std::vector<int> ordCandList(Node* node, std::string orientation = "ccw");
-    std::vector<int> ordAdjByAng(void);
+    void ordAdjByAng(void);
     bool isAdjacent(Node node);
     int findIndByID(std::vector<Node*> nodes);
 	bool sharesFacet(Node* node);

@@ -208,45 +208,52 @@ void Mesh::triangulate(void){
 void Mesh::buildFacetList(void)
 {
 	double tol = 1.e-3;
-	std::map<double, std::set<Node*>> facetsFound;
+	std::map<std::pair<double,double>, std::set<Node*>> facetsFound;
 
 	for (size_t i = 0; i < nodeList.size(); i++)
 	{
+		nodeList[i]->ordAdjByAng();
 		for (size_t j = 0; j < nodeList[i]->adjacent.size(); j++)
 		{
-			for (size_t k = 0; k < nodeList[i]->adjacent[j]->adjacent.size(); k++)
+			int k = (j + 1) % nodeList[i]->adjacent.size();
+			if (nodeList[i]->adjacent[j]->isAdjacent(*nodeList[i]->adjacent[k]))
 			{
-				if (nodeList[i]->isAdjacent(*(nodeList[i]->adjacent[j]->adjacent[k])))
+				// We have found a triangle, and need to check if we've already found it
+				// in some sort of efficient way.
+				// We do this by mapping the set of 3 Nodes, keyed by centroid x value, 
+				// and iterate over an interval of tolerance on x centroids, checking 
+				// if the same set has already been found; if it hasn't construct a facet.
+				std::set<Node*> currentSet;
+				currentSet.insert(nodeList[i]);
+				currentSet.insert(nodeList[i]->adjacent[j]);
+				currentSet.insert(nodeList[i]->adjacent[k]);
+
+				double centroidX = (nodeList[i]->x() + nodeList[i]->adjacent[j]->x()
+					+ nodeList[i]->adjacent[k]->x()) / 3.0,
+					centroidY = (nodeList[i]->y() + nodeList[i]->adjacent[j]->y()
+						+ nodeList[i]->adjacent[k]->y()) / 3.0;
+
+				std::map<std::pair<double, double>, std::set<Node*>>::iterator 
+					lbound = facetsFound.lower_bound(std::pair<double, double>(centroidX - tol, centroidY - tol)),
+					ubound = facetsFound.upper_bound(std::pair<double, double>(centroidX + tol, centroidY + tol));
+				bool foundCurrentSet = false;
+				while (lbound != ubound)
 				{
-					// We have found a triangle, and need to check if we've already found it
-					// in some sort of efficient way.
-					// We do this by mapping the set of 3 Nodes, keyed by centroid x value, 
-					// and iterate over an interval of tolerance on x centroids, checking 
-					// if the same set has already been found; if it hasn't construct a facet.
-					std::set<Node*> currentSet{ nodeList[i],nodeList[i]->adjacent[j],nodeList[i]->adjacent[j]->adjacent[k] };
-					double centroidX = (nodeList[i]->x() + nodeList[i]->adjacent[j]->x()
-						+ nodeList[i]->adjacent[j]->adjacent[k]->x()) / 3.0;
-					std::map<double, std::set<Node*>>::iterator lbound = facetsFound.lower_bound(centroidX - tol),
-						ubound = facetsFound.upper_bound(centroidX + tol);
-					bool foundCurrentSet = false;
-					while (lbound != ubound)
+					if (lbound->second == currentSet)
 					{
-						if (lbound->second == currentSet)
-						{
-							foundCurrentSet = true;
-							break;
-						}
-						lbound++;
+						foundCurrentSet = true;
+						break;
 					}
-					if (!foundCurrentSet)
-					{
-						facetsFound[centroidX] = currentSet;
-						Facet* newFacet = new Facet({ nodeList[i],nodeList[i]->adjacent[j],nodeList[i]->adjacent[j]->adjacent[k] });
-						facetList.push_back(newFacet);
-						nodeList[i]->isVertexOf.push_back(newFacet);
-						nodeList[i]->adjacent[j]->isVertexOf.push_back(newFacet);
-						nodeList[i]->adjacent[j]->adjacent[k]->isVertexOf.push_back(newFacet);
-					}
+					lbound++;
+				}
+				if (!foundCurrentSet)
+				{
+					facetsFound[std::pair<double, double>(centroidX, centroidY)] = currentSet;
+					Facet* newFacet = new Facet({ nodeList[i],nodeList[i]->adjacent[j],nodeList[i]->adjacent[k] });
+					facetList.push_back(newFacet);
+					nodeList[i]->isVertexOf.push_back(newFacet);
+					nodeList[i]->adjacent[j]->isVertexOf.push_back(newFacet);
+					nodeList[i]->adjacent[k]->isVertexOf.push_back(newFacet);
 				}
 			}
 		}
@@ -342,20 +349,16 @@ void Mesh::mergeMeshes(const Mesh* leftSubMesh, const Mesh* rightSubMesh){
 }//----------------------------------------------------------------------------------------------------
 
 // SETS BOUNDARY NODE LIST AFTER TRIANGULATION  -------------------------------------------------------
-void Mesh::setBoundaryNodes(void){
-    double tol = 1e-5;
-    for(size_t i = 0; i < nodeList.size(); i++){
-
-        double totAng = 0.0;
-        for(size_t j = 0; j < nodeList[i]->isVertexOf.size(); j++){
-			int thisFacetsNodelistIndex = nodeList[i]->findIndByID(nodeList[i]->isVertexOf[j]->nodes);
-            double vertAng = nodeList[i]->isVertexOf[j]->angles[thisFacetsNodelistIndex];
-            totAng += vertAng;
-        }
-        if( totAng < 2*acos(-1)-tol ){
-            boundaryNodes.push_back(nodeList[i]);
-            nodeList[i]->isBoundaryNode = true;
-        }
+void Mesh::setBoundaryNodes(void)
+{
+    for(size_t i = 0; i < nodeList.size(); i++)
+	{
+		if (nodeList[i]->adjacent.size() == nodeList[i]->isVertexOf.size())
+			nodeList[i]->isBoundaryNode = false;
+		else if (nodeList[i]->adjacent.size() == nodeList[i]->isVertexOf.size() + 1)
+			nodeList[i]->isBoundaryNode = true;
+		else
+			throw "node/facet adjacency error!";
     }
 }//----------------------------------------------------------------------------------------------------
 
@@ -653,15 +656,31 @@ std::vector<int> Node::ordCandList(Node* node, std::string orientation){
 }//----------------------------------------------------------------------------------------------------
 
 // ORDERS ADJACENCT NODES BY ANGLE WITH +X AXIS  ------------------------------------------------------
-std::vector<int> Node::ordAdjByAng(void){
-    double tol = 1e-4;
-    Node e1(-1,loc[0]+1,loc[1]-tol), me1(-2,loc[0]-1,loc[1]+tol);
-    std::vector<int> orderedUpper = ordCandList(&e1,"ccw"), orderedLower = ordCandList(&me1,"ccw"), ordered;
-    for(size_t i = 0; i < orderedUpper.size(); i++)
-        ordered.push_back(orderedUpper[i]);
-    for(size_t i = 0; i < orderedLower.size() && i < adjacent.size(); i++)
-        ordered.push_back(orderedLower[i]);
-    return ordered;
+void Node::ordAdjByAng(void){
+	std::vector<Node*> adjCopy = adjacent;
+	std::map<double, int> theta;
+
+	std::vector<Eigen::Vector2d> cent2Nodes_normal;
+	for (size_t i = 0; i < adjacent.size(); i++)
+	{
+		Eigen::Vector2d u(adjacent[i]->loc[0] - loc[0], adjacent[i]->loc[1] - loc[1]);
+		u /= u.norm();
+		cent2Nodes_normal.push_back(u);
+	}
+	size_t i = 0;
+	double vDotE;
+	for (i = 0; i < adjacent.size(); i++) {
+		vDotE = acos(cent2Nodes_normal[i](0));
+		if (cent2Nodes_normal[i](1) >= 0)
+			theta[vDotE] = i;
+		else
+			theta[2 * acos(-1) - vDotE] = i;
+	}
+	i = 0;
+	for (std::map<double, int>::iterator itr = theta.begin(); itr != theta.end() && i < adjacent.size(); ++itr) {
+		adjacent[i] = adjCopy[itr->second];
+		i++;
+	}
 }//----------------------------------------------------------------------------------------------------
 
 // DECIDES IF GIVEN NODE IS ADJACENT TO this
