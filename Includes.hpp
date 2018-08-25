@@ -10,8 +10,8 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <math.h>
-#include <time.h>
+#include <cmath>
+#include <ctime>
 #include <vector>
 #include <string>
 #include <complex>
@@ -19,5 +19,6 @@
 #include <map>
 #include <list>
 #include <queue>
+#include <Eigen/Dense>
 #include "Utilities.hpp"
 #endif /* Includes_h */

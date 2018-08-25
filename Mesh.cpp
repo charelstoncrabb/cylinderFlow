@@ -129,21 +129,28 @@ void Mesh::parseMeshData(std::string meshDataFilename){
 
 // ROTATES THE GRID POINTS PRIOR TO MESHING  ----------------------------------------------------------
 void Mesh::preRotate(void){
-    Matrix rot(2,2,{cos(theta),-sin(theta),sin(theta),cos(theta)});
+	double x, y;
     if( this->rotateFlag ){
         output << "Pre-rotating grid..." << std::endl;
         for(size_t i = 0; i < nodeList.size(); i++){
-            nodeList[i]->loc = rot*nodeList[i]->loc;
+			x = nodeList[i]->loc[0];
+			y = nodeList[i]->loc[1];
+			nodeList[i]->loc[0] = cos(theta)*x - sin(theta)*y;
+			nodeList[i]->loc[1] = sin(theta)*x + cos(theta)*y;
         }
     }
 }//----------------------------------------------------------------------------------------------------
 
 // ROTATES THE GRID POINTS AFTER MESHING  ----------------------------------------------------------
 void Mesh::postRotate(void){
-    Matrix rotInv(2,2,{cos(theta),sin(theta),-sin(theta),cos(theta)});
+	double x, y;
     if( this->rotateFlag ){
+		output << "Post-rotating grid to original orientation..." << std::endl;
         for(size_t i = 0; i < nodeList.size(); i++){
-            nodeList[i]->loc = rotInv*nodeList[i]->loc;
+			x = nodeList[i]->loc[0];
+			y = nodeList[i]->loc[1];
+			nodeList[i]->loc[0] = cos(theta)*x + sin(theta)*y;
+			nodeList[i]->loc[1] = cos(theta)*y - sin(theta)*x;
         }
     }
 }//----------------------------------------------------------------------------------------------------
@@ -328,7 +335,8 @@ void Mesh::setBoundaryNodes(void){
     for(size_t i = 0; i < nodeList.size(); i++){
         double totAng = 0.0;
         for(size_t j = 0; j < nodeList[i]->isVertexOf.size(); j++){
-            double vertAng = nodeList[i]->isVertexOf[j]->angles[nodeList[i]->findIndByID(nodeList[i]->isVertexOf[j]->nodes)];
+			int thisFacetsNodelistIndex = nodeList[i]->findIndByID(nodeList[i]->isVertexOf[j]->nodes);
+            double vertAng = nodeList[i]->isVertexOf[j]->angles[thisFacetsNodelistIndex];
             totAng += vertAng;
         }
         if( totAng < 2*acos(-1)-tol ){
@@ -542,55 +550,59 @@ double Node::calcAngle(Node P, Node Q){
 bool Node::isInCirc(Node A, Node B, Node C){
     double tol = 0.0, r = 1e99;
 
-    Matrix A1(2,2,{B.loc[0]-A.loc[0], B.loc[1]-A.loc[1],  C.loc[0]-A.loc[0], C.loc[1]-A.loc[1]}),
-           A2(2,2,{B.loc[0]-A.loc[0], B.loc[1]-A.loc[1],  C.loc[0]-B.loc[0], C.loc[1]-B.loc[1]}),
-           A3(2,2,{C.loc[0]-A.loc[0], C.loc[1]-A.loc[1],  C.loc[0]-B.loc[0], C.loc[1]-B.loc[1]});
-    std::vector<double> center(2),
-                        b1 = {0.5*(pow(B.loc[0],2.0)+pow(B.loc[1],2.0)-pow(A.loc[0],2.0)-pow(A.loc[1],2.0)),0.5*(pow(C.loc[0],2.0)+pow(C.loc[1],2.0)-pow(A.loc[0],2.0)-pow(A.loc[1],2.0))},
-                        b2 = {0.5*(pow(B.loc[0],2.0)+pow(B.loc[1],2.0)-pow(A.loc[0],2.0)-pow(A.loc[1],2.0)),0.5*(pow(C.loc[0],2.0)+pow(C.loc[1],2.0)-pow(B.loc[0],2.0)-pow(B.loc[1],2.0))},
-                        b3 = {0.5*(pow(C.loc[0],2.0)+pow(C.loc[1],2.0)-pow(A.loc[0],2.0)-pow(A.loc[1],2.0)),0.5*(pow(C.loc[0],2.0)+pow(C.loc[1],2.0)-pow(B.loc[0],2.0)-pow(B.loc[1],2.0))};
-    if( A1.det() ){
-        center = A1.solveAxb(b1);
-        r = pow(pow(A.loc[0]-center[0],2)+pow(A.loc[1]-center[1],2),0.5);
-    }else if( A2.det() ){
-        center = A2.solveAxb(b2);
-        r = pow(pow(A.loc[0]-center[0],2)+pow(A.loc[1]-center[1],2),0.5);
-    }else if( A3.det() ){
-        center = A3.solveAxb(b3);
-        r = pow(pow(A.loc[0]-center[0],2)+pow(A.loc[1]-center[1],2),0.5);
-    }
+	Eigen::Matrix2d A1, A2, A3;
+	A1 << B.loc[0] - A.loc[0], B.loc[1] - A.loc[1], C.loc[0] - A.loc[0], C.loc[1] - A.loc[1];
+	A2 << B.loc[0] - A.loc[0], B.loc[1] - A.loc[1], C.loc[0] - B.loc[0], C.loc[1] - B.loc[1];
+	A3 << C.loc[0] - A.loc[0], C.loc[1] - A.loc[1], C.loc[0] - B.loc[0], C.loc[1] - B.loc[1];
 
-    if( pow(pow(loc[0]-center[0],2)+pow(loc[1]-center[1],2),0.5) > r+tol ){
+	Eigen::Vector2d center, b1, b2, b3;
+	b1 << 0.5*(pow(B.loc[0], 2.0) + pow(B.loc[1], 2.0) - pow(A.loc[0], 2.0) - pow(A.loc[1], 2.0)), 0.5*(pow(C.loc[0], 2.0) + pow(C.loc[1], 2.0) - pow(A.loc[0], 2.0) - pow(A.loc[1], 2.0));
+	b2 << 0.5*(pow(B.loc[0], 2.0) + pow(B.loc[1], 2.0) - pow(A.loc[0], 2.0) - pow(A.loc[1], 2.0)), 0.5*(pow(C.loc[0], 2.0) + pow(C.loc[1], 2.0) - pow(B.loc[0], 2.0) - pow(B.loc[1], 2.0));
+	b3 << 0.5*(pow(C.loc[0], 2.0) + pow(C.loc[1], 2.0) - pow(A.loc[0], 2.0) - pow(A.loc[1], 2.0)), 0.5*(pow(C.loc[0], 2.0) + pow(C.loc[1], 2.0) - pow(B.loc[0], 2.0) - pow(B.loc[1], 2.0));
+
+	if( A1.determinant() ){
+        center = A1.inverse()*b1;
+    }else if( A2.determinant() ){
+        center = A2.inverse()*b2;
+    }else if( A3.determinant() ){
+        center = A3.inverse()*b3;   
+    }
+	r = pow(pow(A.loc[0]-center(0),2)+pow(A.loc[1]-center(1),2),0.5);
+	double dist2CircCenter = pow(pow(loc[0] - center(0), 2) + pow(loc[1] - center(1), 2), 0.5);
+    if( dist2CircCenter > r+tol ){
         return false;
     }else{
         return true;
     }
 }//----------------------------------------------------------------------------------------------------
 
-// DECIDES IF this IS INSIDE CIRCUMCIRCLE OF TRIANGLE ABC  --------------------------------------------
+// DECIDES IF this IS COCIRCULAR WITH CIRCUMCIRCLE OF TRIANGLE ABC  --------------------------------------------
 bool Node::isCoCirc(Node A, Node B, Node C){
     double tol = 1e-5, r = 1e99;
     
-    Matrix A1(2,2,{B.loc[0]-A.loc[0], B.loc[1]-A.loc[1],  C.loc[0]-A.loc[0], C.loc[1]-A.loc[1]}),
-    A2(2,2,{B.loc[0]-A.loc[0], B.loc[1]-A.loc[1],  C.loc[0]-B.loc[0], C.loc[1]-B.loc[1]}),
-    A3(2,2,{C.loc[0]-A.loc[0], C.loc[1]-A.loc[1],  C.loc[0]-B.loc[0], C.loc[1]-B.loc[1]});
-    std::vector<double> center(2),
-    b1 = {0.5*(pow(B.loc[0],2.0)+pow(B.loc[1],2.0)-pow(A.loc[0],2.0)-pow(A.loc[1],2.0)),0.5*(pow(C.loc[0],2.0)+pow(C.loc[1],2.0)-pow(A.loc[0],2.0)-pow(A.loc[1],2.0))},
-    b2 = {0.5*(pow(B.loc[0],2.0)+pow(B.loc[1],2.0)-pow(A.loc[0],2.0)-pow(A.loc[1],2.0)),0.5*(pow(C.loc[0],2.0)+pow(C.loc[1],2.0)-pow(B.loc[0],2.0)-pow(B.loc[1],2.0))},
-    b3 = {0.5*(pow(C.loc[0],2.0)+pow(C.loc[1],2.0)-pow(A.loc[0],2.0)-pow(A.loc[1],2.0)),0.5*(pow(C.loc[0],2.0)+pow(C.loc[1],2.0)-pow(B.loc[0],2.0)-pow(B.loc[1],2.0))};
-    if( A1.det() ){
-        center = A1.solveAxb(b1);
-        r = pow(pow(A.loc[0]-center[0],2)+pow(A.loc[1]-center[1],2),0.5);
-    }else if( A2.det() ){
-        center = A2.solveAxb(b2);
-        r = pow(pow(A.loc[0]-center[0],2)+pow(A.loc[1]-center[1],2),0.5);
-    }else if( A3.det() ){
-        center = A3.solveAxb(b3);
-        r = pow(pow(A.loc[0]-center[0],2)+pow(A.loc[1]-center[1],2),0.5);
-    }
+	Eigen::Matrix2d A1, A2, A3;
+	A1 << B.loc[0] - A.loc[0], B.loc[1] - A.loc[1], C.loc[0] - A.loc[0], C.loc[1] - A.loc[1];
+	A2 << B.loc[0] - A.loc[0], B.loc[1] - A.loc[1], C.loc[0] - B.loc[0], C.loc[1] - B.loc[1];
+	A3 << C.loc[0] - A.loc[0], C.loc[1] - A.loc[1], C.loc[0] - B.loc[0], C.loc[1] - B.loc[1];
+
+	Eigen::Vector2d center(0, 0), b1, b2, b3;
+	b1 << 0.5*(pow(B.loc[0], 2.0) + pow(B.loc[1], 2.0) - pow(A.loc[0], 2.0) - pow(A.loc[1], 2.0)), 0.5*(pow(C.loc[0], 2.0) + pow(C.loc[1], 2.0) - pow(A.loc[0], 2.0) - pow(A.loc[1], 2.0));
+	b2 << 0.5*(pow(B.loc[0], 2.0) + pow(B.loc[1], 2.0) - pow(A.loc[0], 2.0) - pow(A.loc[1], 2.0)), 0.5*(pow(C.loc[0], 2.0) + pow(C.loc[1], 2.0) - pow(B.loc[0], 2.0) - pow(B.loc[1], 2.0));
+	b3 << 0.5*(pow(C.loc[0], 2.0) + pow(C.loc[1], 2.0) - pow(A.loc[0], 2.0) - pow(A.loc[1], 2.0)), 0.5*(pow(C.loc[0], 2.0) + pow(C.loc[1], 2.0) - pow(B.loc[0], 2.0) - pow(B.loc[1], 2.0));
+
+	if (A1.determinant()) {
+		center = A1.inverse()*b1;
+	}
+	else if (A2.determinant()) {
+		center = A2.inverse()*b2;
+	}
+	else if (A3.determinant()) {
+		center = A3.inverse()*b3;
+	}
+	r = pow(pow(A.loc[0] - center(0), 2) + pow(A.loc[1] - center(1), 2), 0.5);
+	double dist2CircCenter = pow(pow(loc[0] - center(0), 2) + pow(loc[1] - center(1), 2), 0.5);
     
-    if( pow(pow(loc[0]-center[0],2)+pow(loc[1]-center[1],2),0.5) > r-tol &&
-        pow(pow(loc[0]-center[0],2)+pow(loc[1]-center[1],2),0.5) < r+tol ){
+    if(dist2CircCenter > r-tol && dist2CircCenter < r+tol ){
         return true;
     }else{
         return false;
@@ -671,13 +683,14 @@ bool Node::operator<(Node& rhs) const {
 // =======================  FACET CLASS MEMBERS  ======================================================
 Facet::Facet(std::vector<Node*> nodeList) : ID(ciCounter), nodes(nodeList){
     double tol = 1e-10;
-    
+
     if( nodeList.size() == 3 ){
         std::vector<double> node1Loc = nodes[0]->getLoc(), node2Loc = nodes[1]->getLoc(),
             node3Loc = nodes[2]->getLoc();
-        Matrix matArray(2,2,{ node2Loc[0]-node1Loc[0], node2Loc[1]-node1Loc[1],
-            node3Loc[0]-node1Loc[0], node3Loc[1]-node1Loc[1]});
-        area = fabs(matArray.det())/2.0;
+
+        area = fabs((node2Loc[0] - node1Loc[0])*(node3Loc[1] - node1Loc[1]) 
+			- (node2Loc[1] - node1Loc[1])*(node3Loc[0] - node1Loc[0]))/2.0;
+
         centroid.push_back( (node1Loc[0]+node2Loc[0]+node3Loc[0])/3.0 );
         centroid.push_back( (node1Loc[1]+node2Loc[1]+node3Loc[1])/3.0 );
         double ang1 = fmin(nodes[0]->calcAngle(*nodes[1],*nodes[2]),nodes[0]->calcAngle(*nodes[2],*nodes[1])),
@@ -702,11 +715,19 @@ void Facet::sortVerticesByAngle(void){
     std::vector<Node*> nlCopy = nodes;
     std::vector<double> angCopy = angles;
     std::map<double,int> theta;
+	
+	std::vector<Eigen::Vector2d> cent2Nodes_normal;
+	for (size_t i = 0; i < nodes.size(); i++)
+	{
+		Eigen::Vector2d u(nodes[i]->loc[0] - centroid[0], nodes[i]->loc[1] - centroid[1]);
+		u /= u.norm();
+		cent2Nodes_normal.push_back(u);
+	}
 	size_t i = 0;
     double vDotE;
     for( i = 0; i < nodes.size(); i++ ){
-        vDotE = acos( nodes[i]->x() - centroid[0] );
-        if( nodes[i]->y() >= centroid[1] )
+        vDotE = acos( cent2Nodes_normal[i](0) );
+        if(cent2Nodes_normal[i](1) >= 0 )
             theta[vDotE] = i;
         else
             theta[2*acos(-1)-vDotE] = i;

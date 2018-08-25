@@ -20,7 +20,7 @@ Options::Options(int argc, const char* argv[]):plotFlag(false){
     try{
         if( argc == 2 && !strcmp(args[0],"-h") ){
             printOptions();
-        }else if(argc <= 2 || !argc%2 ){
+        }else if(argc <= 2 || !(argc%2) ){
             throw "bad syntax or missing flag definition -- use \'-h\' for options syntax.";
         }else{
             int i = 0;

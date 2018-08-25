@@ -20,7 +20,7 @@ public:
 		\param mesh <b>(const Mesh*)</b>
 		\return Initialized SolverEuler object
 	*/
-    SolverEuler(const Mesh* mesh);
+    SolverEuler(const FEMesh* mesh);
     
 	//! Destructor
 	/*!

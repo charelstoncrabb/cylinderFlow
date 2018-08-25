@@ -8,6 +8,6 @@
 
 #include "SolverEuler.hpp"
 
-SolverEuler::SolverEuler(const Mesh* mesh) : SolverBase(mesh) {}
+SolverEuler::SolverEuler(const FEMesh* mesh) : SolverBase(mesh) {}
 
 void SolverEuler::integrateInTime(double currentTime, double dt) {}

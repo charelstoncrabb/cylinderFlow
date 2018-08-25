@@ -7,7 +7,7 @@
 //
 #include "Includes.hpp"
 #include "VectOps.hpp"
-#include "Matrix.hpp"
+
 
 #ifndef Mesh_h
 #define Mesh_h
@@ -78,7 +78,6 @@ private:
     Mesh(){};
     Mesh(std::vector<Node*> nodes, std::vector<Facet*> facets);
     Mesh(std::vector<Node*> nodes);
-    void cleanUp();
     void parseMeshData(std::string meshDataFilename);
     void preRotate(void);
     void postRotate(void);

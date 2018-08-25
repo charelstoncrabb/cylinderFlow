@@ -40,7 +40,7 @@ public:
 	virtual void computeState(void) = 0;
 private:
 
-    const Mesh* feMesh;
+    const FEMesh* feMesh;
 
 	double currentTime;
 	double dt;
