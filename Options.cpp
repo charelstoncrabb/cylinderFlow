@@ -15,6 +15,7 @@ Options::Options(int argc, const char* argv[]):plotFlag(false){
     std::map<std::string,bool> options;
     options["infile"] = false;
     options["outfile"] = false;
+	options["constrained"] = false;
     options["plotflag"] = false;
     options["rotflag"] = false;
     try{
@@ -27,6 +28,11 @@ Options::Options(int argc, const char* argv[]):plotFlag(false){
             while( i < argc-1 ){
                 if( strcmp(&args[i][0],"-") && strlen(args[i]) == 2 ){
                     switch(args[i][1]){
+						case 'c':
+							constraintFile = args[i + 1];
+							options["constrained"] = true;
+							constrained = true;
+						break;
                         case 'i':
                             inFile = args[i+1];
                             options["infile"] = true;
@@ -66,6 +72,8 @@ Options::Options(int argc, const char* argv[]):plotFlag(false){
                 throw "no input file specified.";
             if( !options["outfile"] )
                 outFile = "default.out";
+			if( !options["constrained"] )
+				constrained = false;
             if( !options["plotflag"] )
                 plotFlag = false;
             if( !options["rotflag"] )

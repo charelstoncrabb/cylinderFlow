@@ -10,7 +10,7 @@
 
 // ========================  MESH CLASS MEMBERS  ======================================================
 // CONSTRUCTOR - USES NODE LOCATIONS FROM meshDataFilename  -------------------------------------------
-Mesh::Mesh(std::string meshDataFilename, bool rotFlag) : rotateFlag(rotFlag), theta(0.1) {
+Mesh::Mesh(std::string meshDataFilename, bool rotFlag, Mesh* constraintMesh) : rotateFlag(rotFlag), theta(0.1) {
     std::cout << "Parsing input data...";
     parseMeshData(meshDataFilename);
     std::cout << " ... Done!" << std::endl;
@@ -22,6 +22,12 @@ Mesh::Mesh(std::string meshDataFilename, bool rotFlag) : rotateFlag(rotFlag), th
     postRotate();
     buildFacetList();
     std::cout << " ... Done!" << std::endl;
+	if (constraintMesh != NULL)
+	{
+		std::cout << "Applying constraint mesh to triangulation...";
+		constrainMesh(constraintMesh);
+		std::cout << "... Done!" << std::endl;
+	}
     std::cout << "Identifying boundary nodes...";
     setBoundaryNodes();
     std::cout << " ... Done!" << std::endl;
@@ -50,13 +56,13 @@ void Mesh::writeMesh(std::string meshOutFile){
     }
     outfile << std::endl << std::endl << "FACET DATA:" << std::endl << "ID AREA CENTROID VERTICES" << std::endl;
     for(size_t i = 0; i < facetList.size(); i++){
-        outfile << facetList[i]->ID << " " << facetList[i]->area << " (" << facetList[i]->centroid[0] << "," << facetList[i]->centroid[1] << ") " << facetList[i]->nodes[0]->nodeID << " " << facetList[i]->nodes[1]->nodeID << " "<< facetList[i]->nodes[2]->nodeID << std::endl;
+        outfile << facetList[i]->facetID << " " << facetList[i]->area << " (" << facetList[i]->centroid[0] << "," << facetList[i]->centroid[1] << ") " << facetList[i]->nodes[0]->nodeID << " " << facetList[i]->nodes[1]->nodeID << " "<< facetList[i]->nodes[2]->nodeID << std::endl;
     }
     outfile << std::endl << "NODE VERTEX DATA:" << std::endl << "NODE_ID FACET_IDS" << std::endl;
     for(size_t i = 0; i < nodeList.size(); i++){
         outfile << nodeList[i]->nodeID << " ";
         for(size_t j = 0; j < nodeList[i]->isVertexOf.size(); j++){
-            outfile << nodeList[i]->isVertexOf[j]->ID << " ";
+            outfile << nodeList[i]->isVertexOf[j]->facetID << " ";
         }
         outfile << std::endl;
     }
@@ -258,6 +264,83 @@ void Mesh::buildFacetList(void)
 		}
 	}
 }
+
+// CONSTRAINS THE CONSTRUCTED MESH BASED ON PROVIDED CONSTRAINT MESH  ---------------------------------
+void Mesh::constrainMesh(Mesh* constraintMesh)
+{
+	std::vector<std::vector<Node*>::iterator> toRemove;
+
+	// A node in this mesh is inside the convhull of the constraint mesh iff all 
+	// consecutive pairs of constraint boundary nodes form a positive angle with
+	// the given node in this mesh
+	for (std::vector<Node*>::iterator i = nodeList.begin(); i != nodeList.end(); ++i)
+	{
+		size_t j = 0,
+			jp1 = (j + 1) % constraintMesh->boundaryNodes.size();
+
+		Eigen::Vector2d u(constraintMesh->boundaryNodes[j]->x() - (*i)->x(),
+			constraintMesh->boundaryNodes[j]->y() - (*i)->y()),
+			v(constraintMesh->boundaryNodes[jp1]->x() - (*i)->x(),
+				constraintMesh->boundaryNodes[jp1]->y() - (*i)->y());
+
+		double totBoundaryAng = 0.,
+			det = u(0)*v(1) - u(1)*v(0);
+
+		while( det > 0 && j < constraintMesh->boundaryNodes.size() )
+		{
+			jp1 = (j + 1) % constraintMesh->boundaryNodes.size();
+
+			u(0) = constraintMesh->boundaryNodes[j]->x() - (*i)->x();
+			u(1) = constraintMesh->boundaryNodes[j]->y() - (*i)->y();
+			v(0) = constraintMesh->boundaryNodes[jp1]->x() - (*i)->x();
+			v(1) = constraintMesh->boundaryNodes[jp1]->y() - (*i)->y();
+
+			det = det = u(0)*v(1) - u(1)*v(0);
+			j++;
+
+			totBoundaryAng += (det >= 0 ? acos(u.dot(v) / pow(u.dot(u)*v.dot(v),0.5)) : -acos(u.dot(v) / pow(u.dot(u)*v.dot(v), 0.5)));
+		}
+		
+		if (j == constraintMesh->boundaryNodes.size() && fabs(totBoundaryAng - 2.0*acos(-1)) < 1.e-6)
+			toRemove.push_back(i);
+	}
+
+	// Order of operations MUST occur as follows:
+	// 1. Remove all facets to delete from this->facetList
+	// 2. Delete the facets to delete (this will release all nodes' references to the respective facets)
+	// 3. Remove node to delete from this->nodeList
+	// 4. Delete the node to delete (this will release all adjacent nodes' references to itself)
+	
+
+
+
+	// Find all facets that need deleting:
+	std::map<int,Facet*> facetsToDelete;
+	for (size_t i = toRemove.size()-1; i < UINT_MAX; i--)
+		for (size_t j = 0; j < (*(toRemove[i]))->isVertexOf.size(); j++)
+			facetsToDelete[(*(toRemove[i]))->isVertexOf[j]->facetID] = (*(toRemove[i]))->isVertexOf[j];
+
+	// Erase all facets to delete from this->facetList and delete:
+	std::map<int,Facet*>::iterator ftditr = facetsToDelete.end();
+	size_t firstFacetID = facetList[0]->facetID; // Need to figure out why this isn't starting at 0...
+	do
+	{
+		ftditr--;
+		facetList.erase( facetList.begin() + (ftditr->first - firstFacetID) );
+		ftditr->second->freeReferences();
+		delete ftditr->second;
+	} while (ftditr != facetsToDelete.begin());
+
+	std::vector<std::vector<Node*>::iterator>::iterator ntditr = toRemove.end();
+	do
+	{
+		ntditr--;
+		Node* nodeToDelete = **ntditr;
+		nodeList.erase(*ntditr);
+		nodeToDelete->freeReferences();
+		delete nodeToDelete;
+	} while (ntditr != toRemove.begin());
+}//----------------------------------------------------------------------------------------------------
 
 // SETS SUBMESH ADJACENCY IN COMBINED MESH WHEN MERGING SUBMESHES  ------------------------------------
 void Mesh::setSubmeshAdjacency(const Mesh* submesh){
@@ -534,6 +617,22 @@ Node::Node(int ID, double x, double y) : nodeID(ID), traversed(false), isBoundar
     loc.push_back(y);
 }//----------------------------------------------------------------------------------------------------
 
+Node::~Node()
+{
+
+}
+
+void Node::freeReferences(void)
+{
+	// Remove self from adjacent list of all adjacent nodes
+	for (size_t i = 0; i < adjacent.size(); i++)
+	{
+		int indToErase = findIndByID(adjacent[i]->adjacent);
+		if (indToErase > -1 && indToErase < (int)adjacent[i]->adjacent.size())
+			adjacent[i]->adjacent.erase(adjacent[i]->adjacent.begin() + indToErase);
+	}
+}
+
 // SETS NODE DATA TO EXISTING NODE OBJECT  ------------------------------------------------------------
 void Node::setNode(int ID, double x, double y){
 //    nodeID = ID;
@@ -715,22 +814,8 @@ bool Node::operator<(Node& rhs) const {
     return false;
 }//----------------------------------------------------------------------------------------------------
 
-// RETURNS TRUE IF this AND node ARE BOTH VERTICES OF THE SAME FACET  ---------------------------------
-bool Node::sharesFacet(Node* node)
-{
-	for (size_t i = 0; i < isVertexOf.size(); i++)
-	{
-		for (size_t j = 0; j < node->isVertexOf.size(); j++)
-		{
-			if (isVertexOf[i] == node->isVertexOf[j])
-				return true;
-		}
-	}
-	return false;
-}//----------------------------------------------------------------------------------------------------
-
 // =======================  FACET CLASS MEMBERS  ======================================================
-Facet::Facet(std::vector<Node*> nodeList) : ID(ciCounter), nodes(nodeList){
+Facet::Facet(std::vector<Node*> nodeList) : facetID(ciCounter-1), nodes(nodeList){
     double tol = 1e-10;
 
     if( nodeList.size() == 3 ){
@@ -759,6 +844,23 @@ Facet::Facet(std::vector<Node*> nodeList) : ID(ciCounter), nodes(nodeList){
     sortVerticesByAngle();
 }//----------------------------------------------------------------------------------------------------
 
+Facet::~Facet(void)
+{
+
+}
+
+void Facet::freeReferences(void)
+{
+	// Remove self from isVertexOf list of all nodes
+	for (size_t i = 0; i < nodes.size(); i++)
+	{
+		int indToErase = -1;
+		for (int j = 0; j < (int)nodes[i]->isVertexOf.size() && indToErase == -1; j++)
+			indToErase = this == nodes[i]->isVertexOf[j] ? j : -1;
+		if(indToErase > -1 && indToErase < nodes[i]->isVertexOf.size())
+			nodes[i]->isVertexOf.erase(nodes[i]->isVertexOf.begin() + indToErase);
+	}
+}
 // SORTS THE FACET'S VERTICES BY CCW ORIENTATION  -----------------------------------------------------
 void Facet::sortVerticesByAngle(void){
     std::vector<Node*> nlCopy = nodes;

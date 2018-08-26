@@ -32,7 +32,7 @@ public:
 		\param rotFlag <B>(bool)</B> whether to linearly rotate the grid points prior to meshing (and rotate back after meshing)
 		\return Constructed Mesh object
 	*/
-    Mesh(std::string meshDataFilename, bool rotFlag = false);
+    Mesh(std::string meshDataFilename, bool rotFlag = false, Mesh* constraintMesh = NULL);
 
 	//! Destructor
 	/*!
@@ -85,6 +85,7 @@ private:
     void buildFacetList(void);
     void setSubmeshAdjacency(const Mesh* submesh);
     void mergeMeshes(const Mesh* leftSubMesh, const Mesh* rightSubMesh);
+	void constrainMesh(Mesh* constraintMesh);
     void setBoundaryNodes(void);
     void findBaseIndices(std::vector<int>& baseInds, const Mesh* leftMesh, const Mesh* rightMesh);
     int findLeftBaseNode(void) const;
@@ -125,7 +126,7 @@ public:
 		\param None
 		\return None
 	*/
-	virtual ~Node() {};
+	virtual ~Node();
 
 	//! Less than operator
 	/*!
@@ -158,6 +159,7 @@ public:
 
 private:
 	// Private helper methods required for triangulation computation:
+	void freeReferences(void);
 	unsigned short getDegree(void){return (unsigned short)adjacent.size();};
     std::vector<Facet> getAdjFacets(void);
     void setNode(int ID, double x, double y);
@@ -168,7 +170,6 @@ private:
     void ordAdjByAng(void);
     bool isAdjacent(Node node);
     int findIndByID(std::vector<Node*> nodes);
-	bool sharesFacet(Node* node);
 
 	// Data members:
     int nodeID;
@@ -196,7 +197,7 @@ public:
 		\param a <B>(double)</B> prescribed area of the Facet to be constructed
 		\return Constructed Facet object
 	*/
-    Facet(double a): ID(ciCounter-1) ,area(a){};
+    Facet(double a): facetID(ciCounter-1) ,area(a){};
 
 	//! Public Constructor
 	/*!
@@ -213,7 +214,7 @@ public:
 		\param None
 		\return None
 	*/
-    virtual ~Facet(){};
+	virtual ~Facet();
 
 	//! Query Facet object's area
 	/*!
@@ -225,10 +226,11 @@ public:
     
 private:
 	// Private methods:
+	void freeReferences(void);
     void sortVerticesByAngle(void);
-    
+
 	// Private data members:
-    const int ID;
+    int facetID;
     double area;
     std::vector<double> centroid;
     std::vector<Node*> nodes;

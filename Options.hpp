@@ -58,6 +58,14 @@ public:
 	*/
     bool rotflag(void){return rotFlag;};
 
+	//! Command line options constrained triangulation flag
+	/*!
+	This function provides public access to the command line-specified constraint mesh filename
+		\param None
+		\return <b>(std::string)</b> Constraint mesh filename, as parsed from command line arguments
+	*/
+	std::string constraintMeshFile(void) { return constraintFile; };
+
 	//! Boolean value that is set to true if a valid Mesh data input file has been provided, or the -h help flag has not been included in command line args. When set to True, the full program will be executed.
     bool run;
 
@@ -66,8 +74,10 @@ private:
     int parseBoolFlag(const char* flag);
     std::string inFile;
     std::string outFile;
+	std::string constraintFile;
     bool plotFlag;
     bool rotFlag;
+	bool constrained;
 };
 
 #endif /* Options_hpp */

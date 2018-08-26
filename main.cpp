@@ -19,15 +19,26 @@ int main(int argc, const char * argv[])
 {
 	if( argc > 1 )
 	{
-		std::string meshplot = "python ..\ProcScripts\MeshPlot.py ", amp = " &";
+		std::string meshplot = "python ..\\ProcScripts\\MeshPlot.py ", amp = " &";
 		Options* options = new Options(argc, argv);
 
-		Mesh* mesh = new Mesh(options->infile(), options->rotflag());
+		Mesh* constraintMesh;
+		if (options->constraintMeshFile().size())
+			constraintMesh = new Mesh(options->constraintMeshFile(), options->rotflag());
+		else
+			constraintMesh = NULL;
+
+		Mesh* mesh = new Mesh(options->infile(), options->rotflag(), constraintMesh);
 		mesh->writeMesh(options->outfile());
+		
 		if (options->plot()) {
+			std::cout << "Plotting constructed mesh..." << std::endl;
 			meshplot += options->outfile() + amp;
 			system(meshplot.c_str());
 		}
+
+		if (constraintMesh != NULL)
+			delete constraintMesh;
 		delete mesh;
 		delete options;
 	}
