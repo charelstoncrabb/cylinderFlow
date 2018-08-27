@@ -3,11 +3,31 @@
 \subsection*{Classes}
 \begin{DoxyCompactItemize}
 \item 
-class \mbox{\hyperlink{classclass_instance_counter}{class\+Instance\+Counter$<$ T $>$}}
-\begin{DoxyCompactList}\small\item\em Class that tracks number of instatiated objects of type T during program execution. \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{class_mesh}{Mesh}}
 \begin{DoxyCompactList}\small\item\em \mbox{\hyperlink{class_mesh}{Mesh}} class generates and stores a 2D mesh from an input grid points file. \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{class_node}{Node}}
 \begin{DoxyCompactList}\small\item\em \mbox{\hyperlink{class_node}{Node}} class provides A\+PI for a vertex object in a \mbox{\hyperlink{class_mesh}{Mesh}}. \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{class_facet}{Facet}}
 \begin{DoxyCompactList}\small\item\em \mbox{\hyperlink{class_facet}{Facet}} object is a triangle defined by three \mbox{\hyperlink{class_node}{Node}} objects. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{_mesh_8hpp_a47943ea5ef9ca7fe072bed4c62c757ce}{sort\+Nodes\+By\+Angle}} (std\+::vector$<$ \mbox{\hyperlink{class_node}{Node}} $\ast$$>$ \&node\+List)
+\item 
+bool \mbox{\hyperlink{_mesh_8hpp_a70c68e42378612e2400bbeda26d60a8e}{compare\+Nodes}} (\mbox{\hyperlink{class_node}{Node}} $\ast$const a, \mbox{\hyperlink{class_node}{Node}} $\ast$const b)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{_mesh_8hpp_a70c68e42378612e2400bbeda26d60a8e}\label{_mesh_8hpp_a70c68e42378612e2400bbeda26d60a8e}} 
+\index{Mesh.\+hpp@{Mesh.\+hpp}!compare\+Nodes@{compare\+Nodes}}
+\index{compare\+Nodes@{compare\+Nodes}!Mesh.\+hpp@{Mesh.\+hpp}}
+\subsubsection{\texorpdfstring{compare\+Nodes()}{compareNodes()}}
+{\footnotesize\ttfamily bool compare\+Nodes (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_node}{Node}} $\ast$const}]{a,  }\item[{\mbox{\hyperlink{class_node}{Node}} $\ast$const}]{b }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{_mesh_8hpp_a47943ea5ef9ca7fe072bed4c62c757ce}\label{_mesh_8hpp_a47943ea5ef9ca7fe072bed4c62c757ce}} 
+\index{Mesh.\+hpp@{Mesh.\+hpp}!sort\+Nodes\+By\+Angle@{sort\+Nodes\+By\+Angle}}
+\index{sort\+Nodes\+By\+Angle@{sort\+Nodes\+By\+Angle}!Mesh.\+hpp@{Mesh.\+hpp}}
+\subsubsection{\texorpdfstring{sort\+Nodes\+By\+Angle()}{sortNodesByAngle()}}
+{\footnotesize\ttfamily void sort\+Nodes\+By\+Angle (\begin{DoxyParamCaption}\item[{std\+::vector$<$ \mbox{\hyperlink{class_node}{Node}} $\ast$$>$ \&}]{node\+List }\end{DoxyParamCaption})}
+

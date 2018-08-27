@@ -1,7 +1,7 @@
 var class_node =
 [
     [ "Node", "class_node.html#a75560296eb48863988f31c8adf370dcf", null ],
-    [ "~Node", "class_node.html#af5e3fa79300bf5f3f2f3ecae6e795a94", null ],
+    [ "~Node", "class_node.html#aa0840c3cb5c7159be6d992adecd2097c", null ],
     [ "getLoc", "class_node.html#ae59cc8d62b6cfa623252b98341c3084c", null ],
     [ "operator<", "class_node.html#aeda47a1decedb8fc3835579d75b7d65f", null ],
     [ "x", "class_node.html#a05d427a6fef833a49306b2adb52ef722", null ],

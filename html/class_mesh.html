@@ -110,9 +110,9 @@ Inheritance diagram for Mesh:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ade26657ad48e8e84af8a2614a8ac6b0c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mesh.html#ade26657ad48e8e84af8a2614a8ac6b0c">Mesh</a> (std::string meshDataFilename, bool rotFlag=false)</td></tr>
-<tr class="memdesc:ade26657ad48e8e84af8a2614a8ac6b0c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Public Constructor.  <a href="#ade26657ad48e8e84af8a2614a8ac6b0c">More...</a><br /></td></tr>
-<tr class="separator:ade26657ad48e8e84af8a2614a8ac6b0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:accec9e9595c1e3a0d915344b7dda4a82"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mesh.html#accec9e9595c1e3a0d915344b7dda4a82">Mesh</a> (std::string meshDataFilename, bool rotFlag=false, <a class="el" href="class_mesh.html">Mesh</a> *constraintMesh=NULL)</td></tr>
+<tr class="memdesc:accec9e9595c1e3a0d915344b7dda4a82"><td class="mdescLeft">&#160;</td><td class="mdescRight">Public Constructor.  <a href="#accec9e9595c1e3a0d915344b7dda4a82">More...</a><br /></td></tr>
+<tr class="separator:accec9e9595c1e3a0d915344b7dda4a82"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5efe4da1a4c0971cfb037bd70304c303"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mesh.html#a5efe4da1a4c0971cfb037bd70304c303">~Mesh</a> ()</td></tr>
 <tr class="memdesc:a5efe4da1a4c0971cfb037bd70304c303"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor.  <a href="#a5efe4da1a4c0971cfb037bd70304c303">More...</a><br /></td></tr>
 <tr class="separator:a5efe4da1a4c0971cfb037bd70304c303"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -133,8 +133,8 @@ Public Member Functions</h2></td></tr>
 <div class="textblock"><p><a class="el" href="class_mesh.html" title="Mesh class generates and stores a 2D mesh from an input grid points file. ">Mesh</a> class generates and stores a 2D mesh from an input grid points file. </p>
 <p>This class generates and stores a 2D mesh from an input grid points file. A divide-and-conquer <b><a href="https://en.wikipedia.org/wiki/Delaunay_triangulation">Delaunay Triangulation</a></b> algorithm is implemented and requires as input a 2D grid point file. The class generates the list of nodes/adjacencies with the facet objects that are used in the finite element solver classes. </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000007">Todo:</a></b></dt><dd>Allow for constrained DT </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="ade26657ad48e8e84af8a2614a8ac6b0c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ade26657ad48e8e84af8a2614a8ac6b0c">&#9670;&nbsp;</a></span>Mesh()</h2>
+<a id="accec9e9595c1e3a0d915344b7dda4a82"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#accec9e9595c1e3a0d915344b7dda4a82">&#9670;&nbsp;</a></span>Mesh()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -149,7 +149,13 @@ Public Member Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>rotFlag</em> = <code>false</code>&#160;</td>
+          <td class="paramname"><em>rotFlag</em> = <code>false</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="class_mesh.html">Mesh</a> *&#160;</td>
+          <td class="paramname"><em>constraintMesh</em> = <code>NULL</code>&#160;</td>
         </tr>
         <tr>
           <td></td>

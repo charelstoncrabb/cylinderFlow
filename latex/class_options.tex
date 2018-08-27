@@ -19,7 +19,9 @@ std\+::string \mbox{\hyperlink{class_options_a35e8029289fef81902b98422e5b9aff8}{
 bool \mbox{\hyperlink{class_options_a6d00df300abbec9c39990eb8858f1255}{plot}} (void)
 \begin{DoxyCompactList}\small\item\em Command line options plot mesh flag. \end{DoxyCompactList}\item 
 bool \mbox{\hyperlink{class_options_a896737c665d9c0ee7a17a0cdedf66bb7}{rotflag}} (void)
-\begin{DoxyCompactList}\small\item\em Command line options rotate grid flag. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Command line options rotate grid flag. \end{DoxyCompactList}\item 
+std\+::string \mbox{\hyperlink{class_options_a9a48486277bc0f417308735c88f06a21}{constraint\+Mesh\+File}} (void)
+\begin{DoxyCompactList}\small\item\em Command line options constrained triangulation flag. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Public Attributes}
 \begin{DoxyCompactItemize}
 \item 
@@ -66,6 +68,24 @@ Destructor.
 
 
 \subsection{Member Function Documentation}
+\mbox{\Hypertarget{class_options_a9a48486277bc0f417308735c88f06a21}\label{class_options_a9a48486277bc0f417308735c88f06a21}} 
+\index{Options@{Options}!constraint\+Mesh\+File@{constraint\+Mesh\+File}}
+\index{constraint\+Mesh\+File@{constraint\+Mesh\+File}!Options@{Options}}
+\subsubsection{\texorpdfstring{constraint\+Mesh\+File()}{constraintMeshFile()}}
+{\footnotesize\ttfamily std\+::string Options\+::constraint\+Mesh\+File (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Command line options constrained triangulation flag. 
+
+This function provides public access to the command line-\/specified constraint mesh filename 
+\begin{DoxyParams}{Parameters}
+{\em None} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+{\bfseries (std\+::string)} Constraint mesh filename, as parsed from command line arguments 
+\end{DoxyReturn}
 \mbox{\Hypertarget{class_options_af5fc0ecb4b117c5438f07762fa7f565a}\label{class_options_af5fc0ecb4b117c5438f07762fa7f565a}} 
 \index{Options@{Options}!infile@{infile}}
 \index{infile@{infile}!Options@{Options}}

@@ -18,13 +18,8 @@ var files_dup =
     [ "Matrix.hpp", "_matrix_8hpp.html", [
       [ "Matrix", "class_matrix.html", "class_matrix" ]
     ] ],
-    [ "Mesh.cpp", "_mesh_8cpp.html", null ],
-    [ "Mesh.hpp", "_mesh_8hpp.html", [
-      [ "classInstanceCounter", "classclass_instance_counter.html", "classclass_instance_counter" ],
-      [ "Mesh", "class_mesh.html", "class_mesh" ],
-      [ "Node", "class_node.html", "class_node" ],
-      [ "Facet", "class_facet.html", "class_facet" ]
-    ] ],
+    [ "Mesh.cpp", "_mesh_8cpp.html", "_mesh_8cpp" ],
+    [ "Mesh.hpp", "_mesh_8hpp.html", "_mesh_8hpp" ],
     [ "Options.cpp", "_options_8cpp.html", null ],
     [ "Options.hpp", "_options_8hpp.html", [
       [ "Options", "class_options.html", "class_options" ]
@@ -40,6 +35,9 @@ var files_dup =
     [ "SolverPoisson.cpp", "_solver_poisson_8cpp.html", null ],
     [ "SolverPoisson.hpp", "_solver_poisson_8hpp.html", [
       [ "SolverPoisson", "class_solver_poisson.html", "class_solver_poisson" ]
+    ] ],
+    [ "Utilities.hpp", "_utilities_8hpp.html", [
+      [ "classInstanceCounter", "classclass_instance_counter.html", "classclass_instance_counter" ]
     ] ],
     [ "VectOps.cpp", "_vect_ops_8cpp.html", "_vect_ops_8cpp" ],
     [ "VectOps.hpp", "_vect_ops_8hpp.html", "_vect_ops_8hpp" ]
