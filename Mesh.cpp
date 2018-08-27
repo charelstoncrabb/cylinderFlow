@@ -130,7 +130,7 @@ void Mesh::parseMeshData(std::string meshDataFilename){
         output << "ERROR IN parseMeshData(): cannot open file "
         << meshDataFilename << "!" << std::endl;
     }
-    sortNodeList();
+	std::sort(nodeList.begin(), nodeList.end(), compareNodes);
 }//----------------------------------------------------------------------------------------------------
 
 // ROTATES THE GRID POINTS PRIOR TO MESHING  ----------------------------------------------------------
@@ -298,10 +298,10 @@ void Mesh::constrainMesh(Mesh* constraintMesh)
 			det = det = u(0)*v(1) - u(1)*v(0);
 			j++;
 
-			totBoundaryAng += (det >= 0 ? acos(u.dot(v) / pow(u.dot(u)*v.dot(v),0.5)) : -acos(u.dot(v) / pow(u.dot(u)*v.dot(v), 0.5)));
+			totBoundaryAng += (det > -1.e-6 ? acos(u.dot(v) / pow(u.dot(u)*v.dot(v),0.5)) : -acos(u.dot(v) / pow(u.dot(u)*v.dot(v), 0.5)));
 		}
 		
-		if (j == constraintMesh->boundaryNodes.size() && fabs(totBoundaryAng - 2.0*acos(-1)) < 1.e-6)
+		if (j == constraintMesh->boundaryNodes.size() && fabs(totBoundaryAng - 2.0*acos(-1)) < 1.e-4)
 			toRemove.push_back(i);
 	}
 
@@ -437,13 +437,16 @@ void Mesh::setBoundaryNodes(void)
 	{
 		if (nodeList[i]->adjacent.size() == nodeList[i]->isVertexOf.size())
 			nodeList[i]->isBoundaryNode = false;
-		else if (nodeList[i]->adjacent.size() == nodeList[i]->isVertexOf.size() + 1)
+		else if (nodeList[i]->adjacent.size() > nodeList[i]->isVertexOf.size())
 		{
 			nodeList[i]->isBoundaryNode = true;
 			boundaryNodes.push_back(nodeList[i]);
 		}
 		else
-			throw "node/facet adjacency error!";
+			std::cout << "WARNING: potential node/facet adjacency error: " << 
+			"nodeID: " << nodeList[i]->nodeID << ",\tno. adjacent nodes = " << 
+			nodeList[i]->adjacent.size() << ",\tno. adjacent facets = " << 
+			nodeList[i]->isVertexOf.size() << std::endl;
     }
 	sortNodesByAngle(boundaryNodes);
 }//----------------------------------------------------------------------------------------------------
@@ -857,7 +860,7 @@ void Facet::freeReferences(void)
 		int indToErase = -1;
 		for (int j = 0; j < (int)nodes[i]->isVertexOf.size() && indToErase == -1; j++)
 			indToErase = this == nodes[i]->isVertexOf[j] ? j : -1;
-		if(indToErase > -1 && indToErase < nodes[i]->isVertexOf.size())
+		if(indToErase > -1 && indToErase < (int)nodes[i]->isVertexOf.size())
 			nodes[i]->isVertexOf.erase(nodes[i]->isVertexOf.begin() + indToErase);
 	}
 }
@@ -930,4 +933,10 @@ void sortNodesByAngle(std::vector<Node*>& nodeList)
 		nodeList[i] = nlCopy[itr->second];
 		i++;
 	}
+}
+
+// Returns true if *a < *b
+bool compareNodes(Node* const a, Node* const b)
+{
+	return *a < *b;
 }

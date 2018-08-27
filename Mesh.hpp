@@ -242,4 +242,6 @@ private:
 
 void sortNodesByAngle(std::vector<Node*>& nodeList);
 
+bool compareNodes(Node* const a, Node* const b);
+
 #endif /* Mesh_h */

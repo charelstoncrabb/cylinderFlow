@@ -73,10 +73,10 @@ if __name__ == "__main__":
 				minY = nd.y
 			if nd.y > maxY:
 				maxY = nd.y
-			if nd.isbound:
-				plt.plot(nd.x,nd.y,'gs')
-			else:
-				plt.plot(nd.x,nd.y,'bs')
+#			if nd.isbound:
+#				plt.plot(nd.x,nd.y,'gs')
+#			else:
+#				plt.plot(nd.x,nd.y,'bs')
 			for adjnode in nd.adj:
 				plt.plot([nd.x, nodes[findIndByID(nodes,adjnode)].x],[nd.y, nodes[findIndByID(nodes,adjnode)].y], 'k')
 		plt.xlim([minX-1,maxX+1])
